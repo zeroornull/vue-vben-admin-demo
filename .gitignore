@@ -1,0 +1,41 @@
+# Archived original vue-vben-admin (local reference only, do not commit)
+legacy/
+
+# Dependencies & build
+node_modules/
+dist/
+.output/
+.nitro/
+.turbo/
+*.local
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Test / coverage
+coverage/
+*.tsbuildinfo
+
+# Editor / OS
+.idea/
+.history/
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Agent / local tooling
+.omc/
+.omx/
+.cursor/
+.agent/
+.agents/
+.claude/
+.codex/

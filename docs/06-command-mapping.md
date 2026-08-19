@@ -1,0 +1,77 @@
+# 06 · 命令对照
+
+旧命令在 `legacy/` 里才有意义（需要自己在 `legacy/` 执行，且该目录未提交）。新命令从第 2 轮起可用，入口在仓库根。
+
+## 包管理
+
+| 目的 | pnpm（旧） | Bun（新） |
+| --- | --- | --- |
+| 安装 | `pnpm install` | `bun install` |
+| CI 冻结锁文件 | `pnpm install --frozen-lockfile` | `bun ci` 或 `bun install --frozen-lockfile` |
+| 加依赖 | `pnpm add vue` | `bun add vue` |
+| 加 dev 依赖 | `pnpm add -D vite` | `bun add -d vite` |
+| 加到指定 workspace | `pnpm add pinia --filter @vben/web-antd` | `bun add pinia --filter @app/web` |
+| 删依赖 | `pnpm remove vue` | `bun remove vue` |
+| 为什么有这个包 | `pnpm why vue` | `bun why vue` |
+| 更新依赖 | `npx taze -r -w`（旧仓脚本） | 先改 catalog，再 `bun install`；或按包 `bun update` |
+| 禁止别的包管理器 | `only-allow pnpm` | 不要移植；用 `packageManager` 字段提示即可 |
+
+## 跑脚本
+
+| 目的 | pnpm / turbo（旧） | Bun（新） |
+| --- | --- | --- |
+| 交互选 app 开发 | `pnpm dev` → `turbo-run` | 单 app：`bun run dev` |
+| 指定 app 开发 | `pnpm dev:antd` / `pnpm -F @vben/web-antd run dev` | `bun run --filter @app/web dev` |
+| 全仓构建 | `pnpm build` → `turbo build` | 前期：`bun run --filter @app/web build` |
+| 类型检查 | `pnpm check:type` → `turbo typecheck` | `bun run typecheck`（内部仍是 `vue-tsc`） |
+| 单测 | `pnpm test:unit` → vitest | `bun run test`（仍建议 vitest，与 Vue 工具链一致） |
+| 清产物 | `pnpm clean` | 第 2 轮写一个 `rm -rf dist node_modules` 脚本即可 |
+
+## 文档与演示（仅 legacy）
+
+| 目的 | 旧命令 | 新仓 |
+| --- | --- | --- |
+| 开官方文档站 | `pnpm dev:docs` | 需要时在 `legacy/` 用原方式；或看 https://doc.vben.pro/ |
+| playground | `pnpm dev:play` | 只作对照，不迁 |
+
+## Vite 相关
+
+无论 pnpm 还是 Bun，app 里的脚本本质都是调 Vite：
+
+```json
+{
+  "scripts": {
+    "dev": "vite --mode development",
+    "build": "vite build --mode production",
+    "preview": "vite preview",
+    "typecheck": "vue-tsc --noEmit --skipLibCheck"
+  }
+}
+```
+
+旧仓写成 `pnpm vite …` 是为了用 workspace 里的二进制。新仓写成 `vite` 即可，由 Bun 解析 `node_modules/.bin`。
+
+## 环境与文件
+
+| 旧 | 新 |
+| --- | --- |
+| `pnpm-workspace.yaml` | 根 `package.json` 的 `workspaces` |
+| catalog 在 yaml | catalog 在 `package.json` |
+| `pnpm-lock.yaml` | `bun.lock` |
+| `.npmrc`（pnpm） | 一般不需要；私有源再写 `.npmrc` |
+| `turbo.json` | 单 app 阶段省略 |
+| `lefthook.yml` | 需要 git hook 时再加 |
+| `VITE_*` | 不变，仍是 Vite 环境变量 |
+
+## 在 legacy 里临时跑旧仓
+
+`legacy/` 被 ignore，但本机还在。若只是对照运行：
+
+```bash
+cd legacy
+corepack enable
+pnpm install
+pnpm dev:antd
+```
+
+不要在 `legacy/` 里执行 `bun install` 覆盖锁文件，也不要把生成的 `node_modules` 拷回根目录。对照完毕可删 `legacy/node_modules`。
