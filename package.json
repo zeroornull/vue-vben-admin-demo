@@ -8,6 +8,8 @@
     "dev": "bun run --filter @app/web dev",
     "build": "bun run --filter @app/web build",
     "preview": "bun run --filter @app/web preview",
-    "typecheck": "bun run --filter @app/web type-check"
+    "typecheck": "bun run --filter @app/web type-check",
+    "test": "bun run --filter @app/web test",
+    "lint": "bun run --filter @app/web lint"
   }
 }

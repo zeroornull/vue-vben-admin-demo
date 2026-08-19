@@ -11,7 +11,7 @@ export type AccessMenuItem = {
   title: string
 }
 
-function canSee(route: RouteRecordRaw, roles: string[]) {
+export function canSeeRoute(route: RouteRecordRaw, roles: string[]) {
   if (!route.meta?.title || route.meta.hideInMenu) {
     return false
   }
@@ -28,7 +28,7 @@ export function useAccessMenu() {
   return computed<AccessMenuItem[]>(() => {
     const roles = authStore.userInfo?.roles ?? []
     return layoutChildren
-      .filter((route) => canSee(route, roles))
+      .filter((route) => canSeeRoute(route, roles))
       .map((route) => ({
         name: String(route.name),
         order: route.meta?.order ?? 0,

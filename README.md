@@ -21,7 +21,7 @@ bun install
 bun run dev
 ```
 
-构建与类型检查：`bun run build`、`bun run typecheck`。
+构建与类型检查：`bun run build`、`bun run typecheck`。质量门：`bun run lint`、`bun run test`。
 
 ## 已完成轮次
 
@@ -30,3 +30,4 @@ bun run dev
 3. 登录闭环：mock 账号、守卫、前端角色、刷新保持登录
 4. 布局壳：侧栏菜单按角色过滤，顶栏 + 内容区
 5. 工作区业务页：本地卡片，未引入 ECharts / 组件库
+6. 工程化：oxlint、Vitest；CI 工作流保留但已停自动跑

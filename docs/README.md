@@ -23,6 +23,7 @@
 | 09 | [round-03-login.md](./09-round-03-login.md) | 第 3 轮 | 登录闭环、请求客户端、前端角色 |
 | 10 | [round-04-layout.md](./10-round-04-layout.md) | 第 4 轮 | 侧栏顶栏壳、按角色菜单、preferences |
 | 11 | [round-05-workspace.md](./11-round-05-workspace.md) | 第 5 轮 | 工作区业务页（未引入图表库） |
+| 12 | [round-06-engineering.md](./12-round-06-engineering.md) | 第 6 轮 | oxlint、Vitest；CI 文件保留但已停自动跑 |
 
 后续轮次会继续加 `08-…`、`09-…`，并在本表追加一行。已拍板的结论不要默默改掉；必须修正时在原文加短注并改决策表（第 1 轮已按此修正：第 2 轮改用 `create-vue`，见 [03](./03-migration-roadmap.md)）。
 

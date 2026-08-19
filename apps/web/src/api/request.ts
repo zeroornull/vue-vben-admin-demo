@@ -3,10 +3,17 @@ import axios, { type AxiosError, type AxiosRequestConfig } from 'axios'
 import { LOGIN_PATH } from '@/constants/auth'
 import { useAuthStore } from '@/stores/auth'
 
-type ApiBody<T> = {
+export type ApiBody<T> = {
   code: number
   data: T
   message: string
+}
+
+export function unwrapBody<T>(body: ApiBody<T>): T {
+  if (body.code !== 0) {
+    throw new Error(body.message || '请求失败')
+  }
+  return body.data
 }
 
 export const requestClient = axios.create({
@@ -44,10 +51,7 @@ async function unwrap<T>(
   request: Promise<{ data: ApiBody<T> }>,
 ): Promise<T> {
   const { data: body } = await request
-  if (body.code !== 0) {
-    throw new Error(body.message || '请求失败')
-  }
-  return body.data
+  return unwrapBody(body)
 }
 
 export function get<T>(url: string, config?: AxiosRequestConfig) {

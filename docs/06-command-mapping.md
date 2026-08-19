@@ -24,7 +24,9 @@
 | 指定 app 开发 | `pnpm dev:antd` / `pnpm -F @vben/web-antd run dev` | `bun run --filter @app/web dev` |
 | 全仓构建 | `pnpm build` → `turbo build` | 前期：`bun run --filter @app/web build` |
 | 类型检查 | `pnpm check:type` → `turbo typecheck` | `bun run typecheck`（内部仍是 `vue-tsc`） |
-| 单测 | `pnpm test:unit` → vitest | `bun run test`（仍建议 vitest，与 Vue 工具链一致） |
+| lint | `pnpm lint` → eslint/oxlint 多套 | `bun run lint`（只有 oxlint） |
+| 单测 | `pnpm test:unit` → vitest | `bun run test` |
+| CI 安装 | `pnpm install --frozen-lockfile` | `bun ci` |
 | 清产物 | `pnpm clean` | 第 2 轮写一个 `rm -rf dist node_modules` 脚本即可 |
 
 ## 文档与演示（仅 legacy）

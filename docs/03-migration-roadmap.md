@@ -9,8 +9,8 @@
 第 2 轮  create-vue 初始化 + Bun workspace
 第 3 轮  请求 / 登录 / 权限路由
 第 4 轮  布局壳 + 偏好 + 基础样式
-第 5 轮  业务页按需移植（dashboard 等）  ← 当前
-第 6 轮  工程化（lint / test / CI）与依赖冻结
+第 5 轮  业务页按需移植（dashboard 等）
+第 6 轮  工程化（lint / test / CI）与依赖冻结  ← 当前
 ```
 
 轮次可以按实际卡点拆开（例如第 3 轮只做登录、第 3b 轮再做动态路由），但不要跳过「可运行」去堆包。
@@ -123,6 +123,8 @@
 
 ## 第 6 轮 · 工程化
 
+> 已完成，执行记录见 [12-round-06-engineering.md](./12-round-06-engineering.md)。
+
 - lint / format（不要同时上 eslint + oxlint + stylelint，先选一套）
 - Vitest 覆盖请求拦截和路由守卫
 - CI：`bun ci` + typecheck + build
@@ -139,6 +141,8 @@
 | `legacy/` 是否提交 | 否 | 体积大，且与上游仓库重复；本机对照即可 |
 | 包管理 | Bun | 用户指定；workspace 与 catalog 已具备 |
 | 第 2 轮如何初始化 | **`bun x create-vue@latest apps/web`**，再套 Bun workspace | 官方模板对齐最新稳定 Vue/Vite/TS；手写配置容易漏；monorepo 是后加的一层，不是手写整个 app 的理由 |
+| 第 6 轮 lint | 只上 oxlint | 不叠 ESLint / Stylelint |
+| 第 6 轮 Turbo | 不上 | 单 app，`bun run --filter` 足够 |
 
 需要改上述决定时，开新一轮文档，不要默默改这一节而不留痕迹。
 
