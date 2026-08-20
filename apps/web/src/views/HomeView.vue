@@ -13,7 +13,7 @@ const isAdmin = computed(() => userInfo.value?.roles.includes('admin'))
 <template>
   <div class="page">
     <p>
-      部门树能记住展开。内嵌页能重载、能新窗口打开。核心迁移已经齐了，后面是边角。
+      登录用 antd 表单。页签能右键、能拖。个人中心能改密。日志能按导出格式导回去。部门树也能开关列。
     </p>
     <p v-access:role="'admin'">
       这段用 <code>v-access:role="'admin'"</code>，看的是登录角色，不是业务角色码 biz-admin。

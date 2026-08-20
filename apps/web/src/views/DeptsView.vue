@@ -9,10 +9,13 @@ import { onBeforeRouteLeave } from 'vue-router'
 import { useAccess } from '@/access/use-access'
 import { createDept, deleteDept, deleteDepts, getDeptList, updateDept } from '@/api/system/dept'
 import AntdPage from '@/components/AntdPage.vue'
+import TableColumnPicker from '@/components/TableColumnPicker.vue'
 import type { UnsavedFormHandle } from '@/forms/use-unsaved'
 
+import { useTableColumnsStore } from '@/stores/table-columns'
 import { useTableExpandStore } from '@/stores/table-expand'
 import { batchDeleteDoneText, normalizeIds } from '@/tables/batch'
+import { tableColumnKey } from '@/tables/columns'
 import { csvFileName } from '@/tables/csv'
 
 import {
@@ -51,6 +54,7 @@ const query = reactive<{ name: string; status: UserStatus | undefined }>({
 })
 
 const { hasAnyAction } = useAccess()
+const tableColumns = useTableColumnsStore()
 const tableExpand = useTableExpandStore()
 const selectedKeys = ref<string[]>([])
 const rowSelection = computed(() => {
@@ -79,8 +83,9 @@ const columns = computed<TableColumnsType<SystemDept>>(() => {
     { dataIndex: 'remark', title: '备注' },
     { dataIndex: 'createTime', title: '创建时间', width: 180 },
   ]
-  if (!hasAnyAction('dept:create', 'dept:update', 'dept:delete')) return base
-  return [...base, { key: 'actions', title: '操作', width: 220 }]
+  const visible = base.filter((column) => tableColumns.isVisible('depts', tableColumnKey(column)))
+  if (!hasAnyAction('dept:create', 'dept:update', 'dept:delete')) return visible
+  return [...visible, { key: 'actions', title: '操作', width: 220 }]
 })
 
 const flat = computed(() => flattenDepts(catalog.value))
@@ -286,6 +291,7 @@ onMounted(() => {
           <Button @click="onReset">重置</Button>
           <Button :loading="exporting" @click="onExport">导出</Button>
           <Button v-access="'dept:create'" :loading="importing" @click="pickImportFile">导入</Button>
+          <TableColumnPicker table="depts" />
           <Button
             v-access="'dept:delete'"
             :disabled="!selectedKeys.length"

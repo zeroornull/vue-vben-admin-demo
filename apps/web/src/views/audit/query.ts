@@ -132,3 +132,82 @@ export function prependAudit(
 ): AuditEntry[] {
   return [{ ...entry, id }, ...items].slice(0, max)
 }
+
+export const AUDIT_AT_PATTERN = /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/
+
+export type AuditImportItem = Omit<AuditEntry, 'id'>
+
+export type AuditImportValidation =
+  | { message: string; ok: false }
+  | { ok: true; value: AuditImportItem }
+
+export function parseAuditActionLabel(value: unknown): AuditAction | '' {
+  const text = String(value ?? '').trim()
+  if (isAuditAction(text)) return text
+  for (const action of auditActions) {
+    if (auditActionLabels[action] === text) return action
+  }
+  return ''
+}
+
+export function parseAuditTargetLabel(value: unknown): AuditTarget | '' {
+  const text = String(value ?? '').trim()
+  if (isAuditTarget(text)) return text
+  for (const target of auditTargets) {
+    if (auditTargetLabels[target] === text) return target
+  }
+  return ''
+}
+
+export function validateAuditImportItem(value: unknown): AuditImportValidation {
+  if (!value || typeof value !== 'object') {
+    return { message: '格式不对', ok: false }
+  }
+  const row = value as Record<string, unknown>
+  const at = String(row.at ?? '').trim()
+  if (!AUDIT_AT_PATTERN.test(at)) {
+    return { message: '时间格式应是 YYYY-MM-DD HH:mm:ss', ok: false }
+  }
+  const actor = String(row.actor ?? '').trim()
+  if (!actor) {
+    return { message: '请填写操作者', ok: false }
+  }
+  const action = parseAuditActionLabel(row.action)
+  if (!action) {
+    return { message: '动作只能是新建、修改、删除', ok: false }
+  }
+  const target = parseAuditTargetLabel(row.target)
+  if (!target) {
+    return { message: '对象不对', ok: false }
+  }
+  return {
+    ok: true,
+    value: {
+      action,
+      actor,
+      at,
+      summary: String(row.summary ?? '').trim(),
+      target,
+    },
+  }
+}
+
+export function applyAuditImports(
+  items: unknown,
+  append: (entry: AuditImportItem) => void,
+): { created: number; skipped: number } {
+  if (!Array.isArray(items)) return { created: 0, skipped: 0 }
+  const extra = Math.max(0, items.length - AUDIT_MAX)
+  let created = 0
+  let skipped = extra
+  for (const item of items.slice(0, AUDIT_MAX)) {
+    const checked = validateAuditImportItem(item)
+    if (!checked.ok) {
+      skipped += 1
+      continue
+    }
+    append(checked.value)
+    created += 1
+  }
+  return { created, skipped }
+}

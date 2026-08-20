@@ -2,14 +2,20 @@ import { describe, expect, it } from 'vitest'
 
 import {
   cachedViewNames,
+  closeAllTabs,
+  closeLeftTabs,
   closeOtherTabs,
+  closeRightTabs,
   closeTab,
   ensureHome,
   HOME_TAB,
   nextPathAfterClose,
+  nextPathIfMissing,
   pruneTabs,
+  reorderTabs,
   tabFromRoute,
   tabIconName,
+  tabMenuActions,
   upsertTab,
 } from '../tab-query'
 
@@ -97,5 +103,49 @@ describe('nextPathAfterClose / cachedViewNames', () => {
 
   it('lists unique component names for KeepAlive', () => {
     expect(cachedViewNames([HOME_TAB, users, users])).toEqual(['HomeView', 'UsersView'])
+  })
+})
+
+describe('closeLeftTabs / closeRightTabs / closeAllTabs', () => {
+  const list = [HOME_TAB, users, depts]
+
+  it('keeps affix tabs and the pivot', () => {
+    expect(closeLeftTabs(list, 'depts')).toEqual([HOME_TAB, depts])
+    expect(closeRightTabs(list, 'users')).toEqual([HOME_TAB, users])
+    expect(closeAllTabs(list)).toEqual([HOME_TAB])
+  })
+})
+
+describe('nextPathIfMissing / reorderTabs / tabMenuActions', () => {
+  const list = [HOME_TAB, users, depts]
+
+  it('stays put when the current tab remains', () => {
+    expect(nextPathIfMissing(list, 'users')).toBeNull()
+    expect(nextPathIfMissing([HOME_TAB], 'users', 'home')).toBe('/')
+  })
+
+  it('cannot move the affix home tab and drops onto home after it', () => {
+    expect(reorderTabs(list, 'home', 'depts')).toEqual(list)
+    expect(reorderTabs(list, 'depts', 'home')).toEqual([HOME_TAB, depts, users])
+    expect(reorderTabs(list, 'users', 'depts')).toEqual([HOME_TAB, depts, users])
+  })
+
+  it('hides close actions that would do nothing', () => {
+    expect(tabMenuActions([HOME_TAB], 'home')).toEqual(['refresh'])
+    expect(tabMenuActions(list, 'home')).toEqual(['refresh', 'closeOthers', 'closeRight', 'closeAll'])
+    expect(tabMenuActions(list, 'users')).toEqual([
+      'refresh',
+      'close',
+      'closeOthers',
+      'closeRight',
+      'closeAll',
+    ])
+    expect(tabMenuActions(list, 'depts')).toEqual([
+      'refresh',
+      'close',
+      'closeOthers',
+      'closeLeft',
+      'closeAll',
+    ])
   })
 })

@@ -1,4 +1,6 @@
-import { TABLE_PAGE_KEYS, type TablePageKey } from './page-size'
+export const TABLE_COLUMN_KEYS = ['users', 'roles', 'links', 'audit', 'depts'] as const
+
+export type TableColumnKey = (typeof TABLE_COLUMN_KEYS)[number]
 
 export type TableColumnSpec = {
   labels: Record<string, string>
@@ -6,7 +8,7 @@ export type TableColumnSpec = {
   optional: readonly string[]
 }
 
-export const TABLE_COLUMN_SPECS: Record<TablePageKey, TableColumnSpec> = {
+export const TABLE_COLUMN_SPECS: Record<TableColumnKey, TableColumnSpec> = {
   audit: {
     labels: {
       action: '动作',
@@ -17,6 +19,17 @@ export const TABLE_COLUMN_SPECS: Record<TablePageKey, TableColumnSpec> = {
     },
     locked: 'at',
     optional: ['actor', 'target', 'action', 'summary'],
+  },
+  depts: {
+    labels: {
+      createTime: '创建时间',
+      name: '部门名称',
+      remark: '备注',
+      status: '状态',
+      userCount: '人数',
+    },
+    locked: 'name',
+    optional: ['userCount', 'status', 'remark', 'createTime'],
   },
   links: {
     labels: {
@@ -57,7 +70,7 @@ export const TABLE_COLUMN_SPECS: Record<TablePageKey, TableColumnSpec> = {
   },
 }
 
-export type TableColumns = Record<TablePageKey, string[]>
+export type TableColumns = Record<TableColumnKey, string[]>
 
 export function tableColumnOrder(spec: TableColumnSpec): string[] {
   return [spec.locked, ...spec.optional]
@@ -66,6 +79,7 @@ export function tableColumnOrder(spec: TableColumnSpec): string[] {
 export function emptyTableColumns(): TableColumns {
   return {
     audit: tableColumnOrder(TABLE_COLUMN_SPECS.audit),
+    depts: tableColumnOrder(TABLE_COLUMN_SPECS.depts),
     links: tableColumnOrder(TABLE_COLUMN_SPECS.links),
     roles: tableColumnOrder(TABLE_COLUMN_SPECS.roles),
     users: tableColumnOrder(TABLE_COLUMN_SPECS.users),
@@ -99,7 +113,7 @@ export function resolvePersistedColumns(columns: unknown, legacyUsers: unknown):
 export function normalizeTableColumns(value: unknown): TableColumns {
   const current = value && typeof value === 'object' ? (value as Record<string, unknown>) : {}
   const next = emptyTableColumns()
-  for (const key of TABLE_PAGE_KEYS) {
+  for (const key of TABLE_COLUMN_KEYS) {
     next[key] = normalizeColumns(current[key], TABLE_COLUMN_SPECS[key])
   }
   return next

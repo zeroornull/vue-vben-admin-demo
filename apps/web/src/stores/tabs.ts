@@ -4,12 +4,17 @@ import { defineStore } from 'pinia'
 
 import {
   cachedViewNames,
+  closeAllTabs,
+  closeLeftTabs,
   closeOtherTabs,
+  closeRightTabs,
   closeTab,
   ensureHome,
   HOME_TAB,
   nextPathAfterClose,
+  nextPathIfMissing,
   pruneTabs,
+  reorderTabs,
   tabFromRoute,
   upsertTab,
   type AppTab,
@@ -52,8 +57,36 @@ export const useTabsStore = defineStore(
       return path
     }
 
-    function closeOthers(keepName: string) {
-      tabs.value = ensureHome(closeOtherTabs(tabs.value, keepName))
+    function closeOthers(keepName: string, currentName: string) {
+      const next = ensureHome(closeOtherTabs(tabs.value, keepName))
+      const path = nextPathIfMissing(next, currentName, keepName)
+      tabs.value = next
+      return path
+    }
+
+    function closeLeft(name: string, currentName: string) {
+      const next = ensureHome(closeLeftTabs(tabs.value, name))
+      const path = nextPathIfMissing(next, currentName, name)
+      tabs.value = next
+      return path
+    }
+
+    function closeRight(name: string, currentName: string) {
+      const next = ensureHome(closeRightTabs(tabs.value, name))
+      const path = nextPathIfMissing(next, currentName, name)
+      tabs.value = next
+      return path
+    }
+
+    function closeAll(currentName: string) {
+      const next = ensureHome(closeAllTabs(tabs.value))
+      const path = nextPathIfMissing(next, currentName)
+      tabs.value = next
+      return path
+    }
+
+    function reorder(fromName: string, toName: string) {
+      tabs.value = ensureHome(reorderTabs(tabs.value, fromName, toName))
     }
 
     function reset() {
@@ -64,10 +97,14 @@ export const useTabsStore = defineStore(
     return {
       cachedNames,
       close,
+      closeAll,
+      closeLeft,
       closeOthers,
+      closeRight,
       openFromRoute,
       owner,
       prune,
+      reorder,
       reset,
       syncOwner,
       tabs,

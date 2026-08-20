@@ -1,11 +1,13 @@
 import { describe, expect, it } from 'vitest'
 
 import {
+  applyAuditImports,
   auditSummary,
   matchesAuditAt,
   parseAuditListQuery,
   prependAudit,
   queryAudit,
+  validateAuditImportItem,
   type AuditEntry,
 } from '../query'
 
@@ -88,5 +90,46 @@ describe('audit query', () => {
       to: '2026-08-20',
     })
     expect(queryAudit(items, parseAuditListQuery(search)).items.map((item) => item.id)).toEqual(['1', '2'])
+  })
+})
+
+describe('validateAuditImportItem / applyAuditImports', () => {
+  it('accepts exported labels and skips junk', () => {
+    expect(
+      validateAuditImportItem({
+        action: '删除',
+        actor: 'vben',
+        at: '2026-08-20 09:10:00',
+        summary: '删除用户「Ada」',
+        target: '用户',
+      }),
+    ).toEqual({
+      ok: true,
+      value: {
+        action: 'delete',
+        actor: 'vben',
+        at: '2026-08-20 09:10:00',
+        summary: '删除用户「Ada」',
+        target: 'user',
+      },
+    })
+    expect(validateAuditImportItem({ action: 'create', actor: 'vben', at: 'bad' }).ok).toBe(false)
+    const appended: string[] = []
+    expect(
+      applyAuditImports(
+        [
+          {
+            action: 'create',
+            actor: 'admin',
+            at: '2026-08-19 18:00:00',
+            summary: '新建部门「演示」',
+            target: 'dept',
+          },
+          { action: 'nope' },
+        ],
+        (item) => appended.push(item.actor),
+      ),
+    ).toEqual({ created: 1, skipped: 1 })
+    expect(appended).toEqual(['admin'])
   })
 })

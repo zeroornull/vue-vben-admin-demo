@@ -99,3 +99,82 @@ export function nextPathAfterClose(
   const fallback = remaining[Math.max(0, index - 1)] ?? remaining[0]
   return fallback?.fullPath ?? HOME_PATH
 }
+
+export function closeLeftTabs(tabs: AppTab[], name: string): AppTab[] {
+  const index = tabs.findIndex((tab) => tab.name === name)
+  if (index < 0) return tabs
+  return tabs.filter((tab, current) => tab.affix || current >= index)
+}
+
+export function closeRightTabs(tabs: AppTab[], name: string): AppTab[] {
+  const index = tabs.findIndex((tab) => tab.name === name)
+  if (index < 0) return tabs
+  return tabs.filter((tab, current) => tab.affix || current <= index)
+}
+
+export function closeAllTabs(tabs: AppTab[]): AppTab[] {
+  return tabs.filter((tab) => tab.affix)
+}
+
+export function nextPathIfMissing(
+  next: AppTab[],
+  currentName: string,
+  preferredName?: string,
+): string | null {
+  if (next.some((tab) => tab.name === currentName)) return null
+  const preferred = preferredName ? next.find((tab) => tab.name === preferredName) : undefined
+  return (preferred ?? next.at(-1) ?? HOME_TAB).fullPath
+}
+
+export function reorderTabs(tabs: AppTab[], fromName: string, toName: string): AppTab[] {
+  if (fromName === toName) return tabs
+  const from = tabs.findIndex((tab) => tab.name === fromName)
+  const to = tabs.findIndex((tab) => tab.name === toName)
+  if (from < 0 || to < 0) return tabs
+  const moving = tabs[from]
+  if (!moving || moving.affix) return tabs
+  const next = tabs.filter((_, index) => index !== from)
+  let insert = next.findIndex((tab) => tab.name === toName)
+  if (insert < 0) return tabs
+  if (next[insert]?.affix) {
+    insert = next.findIndex((tab) => !tab.affix)
+    if (insert < 0) insert = next.length
+  } else if (from < to) {
+    insert += 1
+  }
+  next.splice(insert, 0, moving)
+  return ensureHome(next)
+}
+
+export const TAB_MENU_ACTIONS = [
+  'refresh',
+  'close',
+  'closeOthers',
+  'closeLeft',
+  'closeRight',
+  'closeAll',
+] as const
+
+export type TabMenuAction = (typeof TAB_MENU_ACTIONS)[number]
+
+export const TAB_MENU_LABELS: Record<TabMenuAction, string> = {
+  close: '关闭',
+  closeAll: '关闭全部',
+  closeLeft: '关闭左侧',
+  closeOthers: '关闭其他',
+  closeRight: '关闭右侧',
+  refresh: '刷新',
+}
+
+export function tabMenuActions(tabs: AppTab[], name: string): TabMenuAction[] {
+  const index = tabs.findIndex((tab) => tab.name === name)
+  const tab = index < 0 ? undefined : tabs[index]
+  if (!tab) return []
+  const actions: TabMenuAction[] = ['refresh']
+  if (!tab.affix) actions.push('close')
+  if (tabs.some((item) => !item.affix && item.name !== name)) actions.push('closeOthers')
+  if (tabs.some((item, current) => current < index && !item.affix)) actions.push('closeLeft')
+  if (tabs.some((item, current) => current > index && !item.affix)) actions.push('closeRight')
+  if (tabs.some((item) => !item.affix)) actions.push('closeAll')
+  return actions
+}

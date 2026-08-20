@@ -1,7 +1,15 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
 
-import { getUserInfoApi, loginApi, logoutApi, updateProfileApi, type LoginParams } from '@/api'
+import {
+  changePasswordApi,
+  getUserInfoApi,
+  loginApi,
+  logoutApi,
+  updateProfileApi,
+  type ChangePasswordParams,
+  type LoginParams,
+} from '@/api'
 import {
   publishSessionClear,
   publishSessionMessage,
@@ -52,6 +60,10 @@ export const useAuthStore = defineStore(
       return userInfo.value
     }
 
+    async function changePassword(params: ChangePasswordParams) {
+      await changePasswordApi(params)
+    }
+
     async function logout() {
       try {
         await logoutApi()
@@ -74,6 +86,7 @@ export const useAuthStore = defineStore(
 
     return {
       accessToken,
+      changePassword,
       clearSession,
       fetchUserInfo,
       invalidateAccess,

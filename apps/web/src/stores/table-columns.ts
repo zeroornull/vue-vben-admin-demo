@@ -8,9 +8,9 @@ import {
   normalizeColumns,
   resolvePersistedColumns,
   toggleColumn,
+  type TableColumnKey,
   type TableColumns,
 } from '@/tables/columns'
-import type { TablePageKey } from '@/tables/page-size'
 
 export const useTableColumnsStore = defineStore(
   'table-columns',
@@ -19,11 +19,11 @@ export const useTableColumnsStore = defineStore(
     const users = ref<string[]>(emptyTableColumns().users)
     const normalized = computed(() => resolvePersistedColumns(columns.value, users.value))
 
-    function columnsOf(key: TablePageKey): string[] {
+    function columnsOf(key: TableColumnKey): string[] {
       return normalized.value[key]
     }
 
-    function isVisible(key: TablePageKey, column: string): boolean {
+    function isVisible(key: TableColumnKey, column: string): boolean {
       return isColumnVisible(columnsOf(key), column, TABLE_COLUMN_SPECS[key])
     }
 
@@ -32,14 +32,14 @@ export const useTableColumnsStore = defineStore(
       users.value = next.users
     }
 
-    function toggle(key: TablePageKey, column: string) {
+    function toggle(key: TableColumnKey, column: string) {
       write({
         ...normalized.value,
         [key]: toggleColumn(normalized.value[key], column, TABLE_COLUMN_SPECS[key]),
       })
     }
 
-    function reset(key: TablePageKey) {
+    function reset(key: TableColumnKey) {
       write({
         ...normalized.value,
         [key]: normalizeColumns(undefined, TABLE_COLUMN_SPECS[key]),

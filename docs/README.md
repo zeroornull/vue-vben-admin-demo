@@ -85,6 +85,7 @@
 | 71 | [round-65-role-link-import.md](./71-round-65-role-link-import.md) | 第 65 轮 | 角色/外链 CSV 导入 |
 | 72 | [round-66-table-columns.md](./72-round-66-table-columns.md) | 第 66 轮 | 角色/外链/日志列显隐 |
 | 73 | [round-67-expand-iframe.md](./73-round-67-expand-iframe.md) | 第 67 轮 | 部门树展开 persist；iframe 重载 |
+| 74 | [round-68-leftovers.md](./74-round-68-leftovers.md) | 第 68 轮 | 登录 Form / 页签右键拖拽 / 改密 / 日志导入 / 部门列 |
 
 后续轮次会继续加 `08-…`、`09-…`，并在本表追加一行。已拍板的结论不要默默改掉；必须修正时在原文加短注并改决策表（第 1 轮已按此修正：第 2 轮改用 `create-vue`，见 [03](./03-migration-roadmap.md)）。
 

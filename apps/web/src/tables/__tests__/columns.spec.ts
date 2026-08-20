@@ -31,6 +31,7 @@ describe('normalizeTableColumns', () => {
     expect(next.users).toEqual(['name', 'remark'])
     expect(next.audit[0]).toBe('at')
     expect(next.links[0]).toBe('title')
+    expect(next.depts[0]).toBe('name')
     expect(resolvePersistedColumns({}, ['name', 'remark']).users).toEqual(['name', 'remark'])
   })
 })

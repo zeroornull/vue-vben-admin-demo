@@ -366,7 +366,7 @@ async function onLogout() {
           <UserMenu @lock="onLock" @logout="onLogout" />
         </div>
       </header>
-      <AppTabs />
+      <AppTabs @refresh="refreshCurrentView" />
       <AppBreadcrumb />
       <section>
         <RouterView v-slot="{ Component }">

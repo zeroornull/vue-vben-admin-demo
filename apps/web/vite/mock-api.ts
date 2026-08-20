@@ -12,8 +12,8 @@ import {
 } from '../src/auth/login-lock.ts'
 import { passwordsMatch, readUnlockPassword } from '../src/auth/unlock.ts'
 import type { SystemDept } from '../src/views/depts/types.ts'
-import { auditSummary, type AuditAction, type AuditTarget } from '../src/views/audit/query.ts'
-import { validateProfileForm } from '../src/views/profile/query.ts'
+import { applyAuditImports, auditSummary, type AuditAction, type AuditTarget } from '../src/views/audit/query.ts'
+import { validatePasswordChange, validateProfileForm } from '../src/views/profile/query.ts'
 import { BATCH_DELETE_MAX, normalizeIds } from '../src/tables/batch.ts'
 import { orderDeptIdsForDelete } from '../src/views/depts/query.ts'
 import { normalizeUserIds, USER_BATCH_DELETE_MAX } from '../src/views/users/query.ts'
@@ -309,6 +309,29 @@ const mockMiddleware: Connect.NextHandleFunction = async (req, res, next) => {
       return
     }
 
+    if (req.method === 'POST' && path === '/api/auth/password') {
+      const username = requireLogin(req, res)
+      if (!username) return
+      const account = ACCOUNTS[username]
+      if (!account) {
+        sendJson(res, 401, { code: 401, data: null, message: '未登录或登录已过期' })
+        return
+      }
+      const checked = validatePasswordChange(await readJson(req))
+      if (!checked.ok) {
+        sendJson(res, 200, { code: 1, data: null, message: checked.message })
+        return
+      }
+      if (!passwordsMatch(checked.value.currentPassword, account.password)) {
+        sendJson(res, 200, { code: 1, data: null, message: '当前密码不对' })
+        return
+      }
+      account.password = checked.value.newPassword
+      recordAudit(username, 'update', 'profile', '登录密码')
+      sendJson(res, 200, { code: 0, data: null, message: 'ok' })
+      return
+    }
+
     if (req.method === 'GET' && path === '/api/user/info') {
       const username = usernameFromToken(req.headers.authorization)
       if (!username) {
@@ -355,6 +378,16 @@ const mockMiddleware: Connect.NextHandleFunction = async (req, res, next) => {
       if (!requireLogin(req, res)) return
       const search = new URL(url, 'http://local.invalid').searchParams
       sendJson(res, 200, { code: 0, data: listMockAudit(search), message: 'ok' })
+      return
+    }
+
+    if (req.method === 'POST' && path === '/api/system/audit/import') {
+      if (!requireLogin(req, res)) return
+      const body = await readJson(req)
+      const result = applyAuditImports(body.items, (entry) => {
+        appendMockAudit(entry)
+      })
+      sendJson(res, 200, { code: 0, data: result, message: 'ok' })
       return
     }
 

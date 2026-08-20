@@ -47,3 +47,54 @@ export function validateProfileForm(values: { realName?: unknown }): ProfileVali
   }
   return { ok: true, value: { realName } }
 }
+
+export const PASSWORD_MIN = 6
+export const PASSWORD_MAX = 32
+
+export type PasswordFormValues = {
+  confirmPassword: string
+  currentPassword: string
+  newPassword: string
+}
+
+export type PasswordValidation =
+  | { message: string; ok: false }
+  | { ok: true; value: PasswordFormValues }
+
+export function emptyPasswordForm(): PasswordFormValues {
+  return {
+    confirmPassword: '',
+    currentPassword: '',
+    newPassword: '',
+  }
+}
+
+export function readPasswordField(value: unknown): string {
+  return typeof value === 'string' ? value : ''
+}
+
+export function validatePasswordChange(values: {
+  confirmPassword?: unknown
+  currentPassword?: unknown
+  newPassword?: unknown
+}): PasswordValidation {
+  const currentPassword = readPasswordField(values.currentPassword)
+  const newPassword = readPasswordField(values.newPassword)
+  const confirmPassword = readPasswordField(values.confirmPassword)
+  if (!currentPassword) {
+    return { message: '请输入当前密码', ok: false }
+  }
+  if (!newPassword) {
+    return { message: '请输入新密码', ok: false }
+  }
+  if (newPassword.length < PASSWORD_MIN || newPassword.length > PASSWORD_MAX) {
+    return { message: `新密码长度 ${PASSWORD_MIN}–${PASSWORD_MAX} 位`, ok: false }
+  }
+  if (newPassword !== confirmPassword) {
+    return { message: '两次新密码不一致', ok: false }
+  }
+  if (newPassword === currentPassword) {
+    return { message: '新密码不能和当前密码一样', ok: false }
+  }
+  return { ok: true, value: { confirmPassword, currentPassword, newPassword } }
+}

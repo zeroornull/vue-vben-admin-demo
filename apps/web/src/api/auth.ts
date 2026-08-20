@@ -20,3 +20,13 @@ export function logoutApi() {
 export function unlockApi(password: string) {
   return post<null>('/auth/unlock', { password }, { skipErrorToast: true })
 }
+
+export type ChangePasswordParams = {
+  confirmPassword: string
+  currentPassword: string
+  newPassword: string
+}
+
+export function changePasswordApi(data: ChangePasswordParams) {
+  return post<null>('/auth/password', data, { skipErrorToast: true })
+}

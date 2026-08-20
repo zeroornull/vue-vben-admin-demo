@@ -2,7 +2,12 @@ import { describe, expect, it } from 'vitest'
 
 import type { UserInfo } from '@/types/user'
 
-import { formatMenuCodes, profileRows, validateProfileForm } from '../query'
+import {
+  formatMenuCodes,
+  profileRows,
+  validatePasswordChange,
+  validateProfileForm,
+} from '../query'
 
 const user: UserInfo = {
   actionCodes: ['user:create'],
@@ -38,5 +43,48 @@ describe('validateProfileForm', () => {
     })
     expect(validateProfileForm({ realName: '   ' }).ok).toBe(false)
     expect(validateProfileForm({ realName: 'x'.repeat(21) }).ok).toBe(false)
+  })
+})
+
+describe('validatePasswordChange', () => {
+  it('keeps passwords exact and rejects the usual mistakes', () => {
+    expect(
+      validatePasswordChange({
+        confirmPassword: 'abcdef',
+        currentPassword: '123456',
+        newPassword: 'abcdef',
+      }),
+    ).toEqual({
+      ok: true,
+      value: { confirmPassword: 'abcdef', currentPassword: '123456', newPassword: 'abcdef' },
+    })
+    expect(
+      validatePasswordChange({
+        confirmPassword: '123456',
+        currentPassword: '',
+        newPassword: '123456',
+      }).ok,
+    ).toBe(false)
+    expect(
+      validatePasswordChange({
+        confirmPassword: 'abc',
+        currentPassword: '123456',
+        newPassword: 'abc',
+      }).ok,
+    ).toBe(false)
+    expect(
+      validatePasswordChange({
+        confirmPassword: 'abcdefg',
+        currentPassword: '123456',
+        newPassword: 'abcdef',
+      }).ok,
+    ).toBe(false)
+    expect(
+      validatePasswordChange({
+        confirmPassword: '123456',
+        currentPassword: '123456',
+        newPassword: '123456',
+      }).ok,
+    ).toBe(false)
   })
 })

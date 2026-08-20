@@ -5,7 +5,7 @@ import type { TableColumnsType, TablePaginationConfig } from 'ant-design-vue'
 import { Button, Form, FormItem, Input, Select, Space, Table, message } from 'ant-design-vue'
 import { computed, onMounted, reactive, ref } from 'vue'
 
-import { getAuditList } from '@/api/system/audit'
+import { getAuditList, importAudit } from '@/api/system/audit'
 import AntdPage from '@/components/AntdPage.vue'
 import TableColumnPicker from '@/components/TableColumnPicker.vue'
 import { useTableColumnsStore } from '@/stores/table-columns'
@@ -15,7 +15,13 @@ import { tableColumnKey } from '@/tables/columns'
 import { csvFileName } from '@/tables/csv'
 import { TABLE_PAGE_SIZE_OPTIONS } from '@/tables/page-size'
 import { nextTableQuery, TABLE_SORT_FIELDS, tableColumnSort } from '@/tables/sort'
-import { AUDIT_CSV_MAX_ROWS, auditCsvRow, auditToCsv } from '@/views/audit/csv'
+import {
+  AUDIT_CSV_MAX_ROWS,
+  auditCsvRow,
+  auditToCsv,
+  importCsvSummary,
+  parseAuditCsv,
+} from '@/views/audit/csv'
 import {
   auditActionLabels,
   auditTargetLabels,
@@ -26,6 +32,8 @@ import {
 
 const loading = ref(false)
 const exporting = ref(false)
+const importing = ref(false)
+const fileInput = ref<HTMLInputElement | null>(null)
 const items = ref<AuditEntry[]>([])
 const total = ref(0)
 const page = ref(1)
@@ -124,6 +132,40 @@ async function onExport() {
   }
 }
 
+function pickImportFile() {
+  fileInput.value?.click()
+}
+
+async function onImportFile(event: Event) {
+  const input = event.target as HTMLInputElement
+  const file = input.files?.[0]
+  input.value = ''
+  if (!file) return
+  importing.value = true
+  try {
+    const parsed = parseAuditCsv(await file.text())
+    let created = 0
+    const failed = [...parsed.rejected]
+    if (parsed.accepted.length) {
+      const result = await importAudit(
+        parsed.accepted.map((row) => row.value),
+        { skipErrorToast: true, skipLoadingBar: true },
+      )
+      created = result.created
+      if (result.skipped) {
+        failed.push({ line: 0, message: `服务端跳过 ${result.skipped} 条` })
+      }
+    }
+    if (created) await load()
+    if (failed.length) message.warning(importCsvSummary(created, failed))
+    else message.success(importCsvSummary(created, failed))
+  } catch (error) {
+    message.error(error instanceof Error ? error.message : '导入失败')
+  } finally {
+    importing.value = false
+  }
+}
+
 function onTableChange(pagination: TablePaginationConfig, _filters: unknown, sorter: unknown) {
   const next = nextTableQuery(
     page.value,
@@ -151,7 +193,7 @@ onMounted(() => {
 <template>
   <AntdPage>
     <p class="hint">
-      只记用户 / 部门 / 角色的写操作，以及改显示名。不能删、不能改。日期按日历天筛。最多 100 条，重启 mock 会回到种子。
+      只记用户 / 部门 / 角色 / 外链的写操作，以及改显示名和改密。不能删、不能改单条。导入走导出格式，写进内存环形缓冲，不是业务新建。最多 100 条，重启 mock 会回到种子。
     </p>
     <Form layout="inline" @finish="onSearch">
       <FormItem label="操作者">
@@ -177,6 +219,7 @@ onMounted(() => {
           <Button html-type="submit" type="primary">查询</Button>
           <Button @click="onReset">重置</Button>
           <Button :loading="exporting" @click="onExport">导出</Button>
+          <Button :loading="importing" @click="pickImportFile">导入</Button>
           <TableColumnPicker table="audit" />
         </Space>
       </FormItem>
@@ -204,6 +247,13 @@ onMounted(() => {
         </template>
       </template>
     </Table>
+    <input
+      ref="fileInput"
+      accept=".csv,text/csv"
+      hidden
+      type="file"
+      @change="onImportFile"
+    />
   </AntdPage>
 </template>
 
