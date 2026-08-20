@@ -1,3 +1,5 @@
+import { isCanceledError } from './abort'
+
 export const TOAST_MS = 4000
 
 export type RequestError = Error & {
@@ -20,5 +22,6 @@ export function shouldAnnounceError(
   config: { skipErrorToast?: boolean } | undefined,
 ): boolean {
   if (config?.skipErrorToast) return false
+  if (isCanceledError(error)) return false
   return !(error instanceof Error && 'skipToast' in error && error.skipToast)
 }

@@ -2,8 +2,10 @@
 import { watch } from 'vue'
 import { RouterView, useRoute } from 'vue-router'
 
+import { useSessionSync } from '@/auth/use-session-sync'
 import AppBackTop from '@/components/AppBackTop.vue'
 import AppLoadingBar from '@/components/AppLoadingBar.vue'
+import AppOfflineBar from '@/components/AppOfflineBar.vue'
 import AppToast from '@/components/AppToast.vue'
 import AppUpdateBar from '@/components/AppUpdateBar.vue'
 import AppWatermark from '@/components/AppWatermark.vue'
@@ -16,6 +18,7 @@ import { useLinksStore } from '@/stores/links'
 import { usePreferencesStore } from '@/stores/preferences'
 
 const route = useRoute()
+useSessionSync()
 const { themeMode } = useTheme()
 const preferences = usePreferencesStore()
 const linksStore = useLinksStore()
@@ -61,6 +64,7 @@ watch(
 <template>
   <AppLoadingBar />
   <AppUpdateBar />
+  <AppOfflineBar />
   <AppToast />
   <AppWatermark />
   <AppBackTop />

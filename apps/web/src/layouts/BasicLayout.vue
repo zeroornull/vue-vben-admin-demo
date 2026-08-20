@@ -3,8 +3,8 @@ import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
 import { RouterLink, RouterView, useRoute, useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 
+import { leaveSessionView } from '@/auth/session-leave'
 import AppearanceMenu from '@/components/AppearanceMenu.vue'
-import { LOGIN_PATH } from '@/constants/auth'
 import { resolveMenuIcon } from '@/icons/menu-icons'
 import { normalizeNavLayout } from '@/preferences/nav-layout'
 import {
@@ -16,11 +16,9 @@ import {
 } from '@/preferences/sidebar-width'
 import { extraTabNames, menuItemTo, useAccessMenu } from '@/router/access-menu'
 import { staticLayoutNames } from '@/router/routes'
-import { resetAccessRoutes } from '@/router/dynamic-access'
 import { useAuthStore } from '@/stores/auth'
 import { useLinksStore } from '@/stores/links'
 import { useLockStore } from '@/stores/lock'
-import { useNoticesStore } from '@/stores/notices'
 import { usePreferencesStore } from '@/stores/preferences'
 import { useTabsStore } from '@/stores/tabs'
 
@@ -53,7 +51,6 @@ const preferences = usePreferencesStore()
 const tabsStore = useTabsStore()
 const lockStore = useLockStore()
 const linksStore = useLinksStore()
-const noticesStore = useNoticesStore()
 const { userInfo } = storeToRefs(authStore)
 const { locked } = storeToRefs(lockStore)
 const { appName, navLayout, sidebarCollapsed, sidebarWidth } = storeToRefs(preferences)
@@ -267,11 +264,7 @@ function onLock() {
 
 async function onLogout() {
   await authStore.logout()
-  tabsStore.reset()
-  noticesStore.reset()
-  linksStore.reset()
-  resetAccessRoutes(router)
-  await router.replace(LOGIN_PATH)
+  await leaveSessionView(router)
 }
 </script>
 

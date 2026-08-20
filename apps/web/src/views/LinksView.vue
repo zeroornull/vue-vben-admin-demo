@@ -11,6 +11,8 @@ import { createLink, deleteLink, getLinkList, updateLink } from '@/api/system/li
 import AntdPage from '@/components/AntdPage.vue'
 import type { UnsavedFormHandle } from '@/forms/use-unsaved'
 import { useLinksStore } from '@/stores/links'
+import { useTablePageStore } from '@/stores/table-page'
+import { nextTablePage, TABLE_PAGE_SIZE_OPTIONS } from '@/tables/page-size'
 
 import LinkFormModal from './links/LinkFormModal.vue'
 import type { EmbedLink, LinkFormValues } from './links/query'
@@ -20,7 +22,8 @@ const loading = ref(false)
 const items = ref<EmbedLink[]>([])
 const total = ref(0)
 const page = ref(1)
-const pageSize = ref(10)
+const tablePage = useTablePageStore()
+const pageSize = computed(() => tablePage.pageSizeOf('links'))
 const modalOpen = ref(false)
 const formModal = ref<UnsavedFormHandle | null>(null)
 const editing = ref<EmbedLink | null>(null)
@@ -76,8 +79,9 @@ function onReset() {
 }
 
 function onTableChange(pagination: TablePaginationConfig) {
-  page.value = pagination.current ?? 1
-  pageSize.value = pagination.pageSize ?? 10
+  const next = nextTablePage(page.value, pageSize.value, pagination.current, pagination.pageSize)
+  page.value = next.page
+  tablePage.setPageSize('links', next.pageSize)
   void load()
 }
 
@@ -169,7 +173,13 @@ onMounted(() => {
       :columns="columns"
       :data-source="items"
       :loading="loading"
-      :pagination="{ current: page, pageSize, showSizeChanger: true, total }"
+      :pagination="{
+        current: page,
+        pageSize,
+        pageSizeOptions: TABLE_PAGE_SIZE_OPTIONS,
+        showSizeChanger: true,
+        total,
+      }"
       row-key="id"
       @change="onTableChange"
     >

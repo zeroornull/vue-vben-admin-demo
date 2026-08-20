@@ -15,5 +15,6 @@ describe('shouldAnnounceError', () => {
     expect(shouldAnnounceError(new Error('挂了'), undefined)).toBe(true)
     expect(shouldAnnounceError(new Error('挂了'), { skipErrorToast: true })).toBe(false)
     expect(shouldAnnounceError(requestError('未登录或登录已过期', true), {})).toBe(false)
+    expect(shouldAnnounceError({ code: 'ERR_CANCELED', message: 'canceled' }, {})).toBe(false)
   })
 })

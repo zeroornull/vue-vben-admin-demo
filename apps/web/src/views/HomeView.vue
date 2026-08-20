@@ -13,7 +13,7 @@ const isAdmin = computed(() => userInfo.value?.roles.includes('admin'))
 <template>
   <div class="page">
     <p>
-      GET 遇到 5xx 或断网会立刻再打一次。登录和其它写操作不重试。通知、检查更新这些轮询自己关掉重试。
+      换页会取消上一页还没回来的 GET，避免旧列表盖住新页。通知和检查更新不跟着取消。写操作不挂这个信号。
     </p>
     <p v-access:role="'admin'">
       这段用 <code>v-access:role="'admin'"</code>，看的是登录角色，不是业务角色码 biz-admin。

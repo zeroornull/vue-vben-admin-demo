@@ -6,6 +6,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { useAuthStore } from '@/stores/auth'
 import { useRequestStore } from '@/stores/request'
 
+import { rotatePageAbort, withPageAbort } from '../abort'
 import { get, post, requestClient, unwrapBody } from '../request'
 
 vi.mock('@/router', () => ({
@@ -170,6 +171,15 @@ describe('requestClient', () => {
     await expect(post('/once')).rejects.toThrow('挂了')
     mock.onGet('/quiet-fail').replyOnce(500, { code: 500, data: null, message: '挂了' })
     await expect(get('/quiet-fail', { skipRetry: true })).rejects.toThrow('挂了')
+  })
+
+  it('rejects an aborted GET without a toast', async () => {
+    const store = useRequestStore()
+    const config = withPageAbort()
+    rotatePageAbort()
+    await expect(get('/user/info', { signal: config.signal })).rejects.toThrow('已取消')
+    expect(store.notice).toBe('')
+    expect(store.pending).toBe(0)
   })
 
   it('clears the session on HTTP 401', async () => {

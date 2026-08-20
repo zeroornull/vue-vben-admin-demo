@@ -4,6 +4,7 @@ import { LOGIN_PATH } from '@/constants/auth'
 import { useAuthStore } from '@/stores/auth'
 import { useRequestStore } from '@/stores/request'
 
+import { isCanceledError, withPageAbort } from './abort'
 import { shouldTrackLoading } from './pending'
 import { retryCountOf, shouldRetryRequest } from './retry'
 import { errorToastText, requestError, shouldAnnounceError } from './toast'
@@ -53,6 +54,10 @@ requestClient.interceptors.response.use(
   },
   (error: AxiosError<ApiBody<unknown>>) => {
     const config = error.config
+    if (isCanceledError(error)) {
+      finishLoading(config)
+      return Promise.reject(requestError('已取消', true))
+    }
     const status = error.response?.status
     const unauthorized = status === 401
     if (unauthorized) {
@@ -97,7 +102,8 @@ async function unwrap<T>(
 }
 
 export function get<T>(url: string, config?: AxiosRequestConfig) {
-  return unwrap(requestClient.get<ApiBody<T>>(url, config), config)
+  const next = withPageAbort(config)
+  return unwrap(requestClient.get<ApiBody<T>>(url, next), next)
 }
 
 export function post<T>(url: string, data?: unknown, config?: AxiosRequestConfig) {

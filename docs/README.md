@@ -71,6 +71,10 @@
 | 57 | [round-51-unsaved.md](./57-round-51-unsaved.md) | 第 51 轮 | 未保存离开确认；`window.confirm`；不 persist |
 | 58 | [round-52-sidebar-width.md](./58-round-52-sidebar-width.md) | 第 52 轮 | 侧栏宽度；拖条 persist；抽屉不跟 |
 | 59 | [round-53-request-retry.md](./59-round-53-request-retry.md) | 第 53 轮 | GET 失败重试一次；写操作不重试 |
+| 60 | [round-54-table-page.md](./60-round-54-table-page.md) | 第 54 轮 | 表格每页条数；四档；按表 persist |
+| 61 | [round-55-session-sync.md](./61-round-55-session-sync.md) | 第 55 轮 | 多标签清会话；BroadcastChannel |
+| 62 | [round-56-offline.md](./62-round-56-offline.md) | 第 56 轮 | 离线条；navigator.onLine；不 persist |
+| 63 | [round-57-page-abort.md](./63-round-57-page-abort.md) | 第 57 轮 | 换页取消 GET；AbortSignal；轮询跳过 |
 
 后续轮次会继续加 `08-…`、`09-…`，并在本表追加一行。已拍板的结论不要默默改掉；必须修正时在原文加短注并改决策表（第 1 轮已按此修正：第 2 轮改用 `create-vue`，见 [03](./03-migration-roadmap.md)）。
 

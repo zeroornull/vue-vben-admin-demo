@@ -28,6 +28,8 @@ import { createUser, deleteUser, getUserList, updateUser } from '@/api/system/us
 import AntdPage from '@/components/AntdPage.vue'
 import type { UnsavedFormHandle } from '@/forms/use-unsaved'
 import { useTableColumnsStore } from '@/stores/table-columns'
+import { useTablePageStore } from '@/stores/table-page'
+import { nextTablePage, TABLE_PAGE_SIZE_OPTIONS } from '@/tables/page-size'
 import { deptNameById, flattenDepts, toParentOptions } from '@/views/depts/query'
 import type { SystemDept } from '@/views/depts/types'
 import { roleNameById } from '@/views/roles/query'
@@ -60,7 +62,8 @@ const catalog = ref<SystemDept[]>([])
 const roleCatalog = ref<SystemRole[]>([])
 const total = ref(0)
 const page = ref(1)
-const pageSize = ref(10)
+const tablePage = useTablePageStore()
+const pageSize = computed(() => tablePage.pageSizeOf('users'))
 const modalOpen = ref(false)
 const formModal = ref<UnsavedFormHandle | null>(null)
 const editing = ref<SystemUser | null>(null)
@@ -216,8 +219,9 @@ function onReset() {
 }
 
 function onTableChange(pagination: TablePaginationConfig) {
-  page.value = pagination.current ?? 1
-  pageSize.value = pagination.pageSize ?? 10
+  const next = nextTablePage(page.value, pageSize.value, pagination.current, pagination.pageSize)
+  page.value = next.page
+  tablePage.setPageSize('users', next.pageSize)
   void load()
 }
 
@@ -361,6 +365,7 @@ onMounted(async () => {
       :pagination="{
         current: page,
         pageSize,
+        pageSizeOptions: TABLE_PAGE_SIZE_OPTIONS,
         showSizeChanger: true,
         showTotal: (count) => `共 ${count} 条`,
         total,

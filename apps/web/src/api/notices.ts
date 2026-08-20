@@ -2,7 +2,7 @@ import type { NoticeInbox } from '@/notices/query'
 
 import { get, post } from './request'
 
-const quiet = { skipErrorToast: true, skipLoadingBar: true, skipRetry: true }
+const quiet = { skipAbort: true, skipErrorToast: true, skipLoadingBar: true, skipRetry: true }
 
 export function getNotices() {
   return get<NoticeInbox>('/notices', quiet)

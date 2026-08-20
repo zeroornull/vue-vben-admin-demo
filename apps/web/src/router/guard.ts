@@ -1,6 +1,7 @@
 import type { LocationQuery, RouteMeta, Router } from 'vue-router'
 
 import { canAccessRoute, filterDynamicRoutes } from '@/access/resolve'
+import { rotatePageAbort, shouldRotatePageAbort } from '@/api/abort'
 import { HOME_PATH, LOGIN_PATH } from '@/constants/auth'
 import { useAuthStore } from '@/stores/auth'
 import { useLastRouteStore } from '@/stores/last-route'
@@ -111,7 +112,10 @@ export async function decideAccess(
 }
 
 export function setupAccessGuard(router: Router) {
-  router.beforeEach(async (to) => {
+  router.beforeEach(async (to, from) => {
+    if (shouldRotatePageAbort(from.path, to.path)) {
+      rotatePageAbort()
+    }
     const authStore = useAuthStore()
     return decideAccess(
       {

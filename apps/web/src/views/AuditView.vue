@@ -3,10 +3,12 @@ defineOptions({ name: 'AuditView' })
 
 import type { TableColumnsType, TablePaginationConfig } from 'ant-design-vue'
 import { Button, Form, FormItem, Input, Select, Space, Table } from 'ant-design-vue'
-import { onMounted, reactive, ref } from 'vue'
+import { computed, onMounted, reactive, ref } from 'vue'
 
 import { getAuditList } from '@/api/system/audit'
 import AntdPage from '@/components/AntdPage.vue'
+import { useTablePageStore } from '@/stores/table-page'
+import { nextTablePage, TABLE_PAGE_SIZE_OPTIONS } from '@/tables/page-size'
 import {
   auditActionLabels,
   auditTargetLabels,
@@ -19,7 +21,8 @@ const loading = ref(false)
 const items = ref<AuditEntry[]>([])
 const total = ref(0)
 const page = ref(1)
-const pageSize = ref(10)
+const tablePage = useTablePageStore()
+const pageSize = computed(() => tablePage.pageSizeOf('audit'))
 const query = reactive<{ actor: string; target: AuditTarget | undefined }>({
   actor: '',
   target: undefined,
@@ -63,8 +66,9 @@ function onReset() {
 }
 
 function onTableChange(pagination: TablePaginationConfig) {
-  page.value = pagination.current ?? 1
-  pageSize.value = pagination.pageSize ?? 10
+  const next = nextTablePage(page.value, pageSize.value, pagination.current, pagination.pageSize)
+  page.value = next.page
+  tablePage.setPageSize('audit', next.pageSize)
   void load()
 }
 
@@ -106,7 +110,13 @@ onMounted(() => {
       :columns="columns"
       :data-source="items"
       :loading="loading"
-      :pagination="{ current: page, pageSize, total, showSizeChanger: true }"
+      :pagination="{
+        current: page,
+        pageSize,
+        pageSizeOptions: TABLE_PAGE_SIZE_OPTIONS,
+        showSizeChanger: true,
+        total,
+      }"
       row-key="id"
       @change="onTableChange"
     >

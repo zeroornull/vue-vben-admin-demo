@@ -2,6 +2,7 @@ import { ref } from 'vue'
 import { defineStore } from 'pinia'
 
 import { getUserInfoApi, loginApi, logoutApi, updateProfileApi, type LoginParams } from '@/api'
+import { publishSessionClear, shouldPublishSessionClear } from '@/auth/session-broadcast'
 import { useLockStore } from '@/stores/lock'
 import type { UserInfo } from '@/types/user'
 
@@ -54,11 +55,15 @@ export const useAuthStore = defineStore(
       clearSession()
     }
 
-    function clearSession() {
+    function clearSession(options?: { broadcast?: boolean }) {
+      const hadToken = Boolean(accessToken.value)
       accessToken.value = ''
       userInfo.value = null
       invalidateAccess()
       useLockStore().reset()
+      if (shouldPublishSessionClear(hadToken, options)) {
+        publishSessionClear()
+      }
     }
 
     return {

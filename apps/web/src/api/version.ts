@@ -6,6 +6,7 @@ export type VersionInfo = {
 
 export function getVersion() {
   return get<VersionInfo>('/version', {
+    skipAbort: true,
     skipErrorToast: true,
     skipLoadingBar: true,
     skipRetry: true,

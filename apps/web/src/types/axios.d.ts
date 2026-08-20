@@ -8,6 +8,8 @@ declare module 'axios' {
     skipErrorToast?: boolean
     /** 为 true 时不重试（轮询） */
     skipRetry?: boolean
+    /** 为 true 时不挂页级 AbortSignal（轮询） */
+    skipAbort?: boolean
     /** 已经补打的次数，拦截器自己加 */
     retryCount?: number
   }
