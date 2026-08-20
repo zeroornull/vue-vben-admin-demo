@@ -5,6 +5,7 @@ import type { Connect, Plugin } from 'vite'
 import { hasAccessCode, resolveActionCodes, resolveMenuCodes } from '../src/access/resolve.ts'
 import { passwordsMatch, readUnlockPassword } from '../src/auth/unlock.ts'
 import type { SystemDept } from '../src/views/depts/types.ts'
+import { validateProfileForm } from '../src/views/profile/query.ts'
 
 import {
   createMockDept,
@@ -94,6 +95,19 @@ async function readJson(req: IncomingMessage): Promise<Record<string, unknown>> 
     return {}
   }
   return JSON.parse(raw) as Record<string, unknown>
+}
+
+function sessionPayload(username: string, account: MockUser) {
+  return {
+    actionCodes: resolveActionCodes(account.roleCodes, listMockRoleFlat()),
+    homePath: '/',
+    menuCodes: resolveMenuCodes(account.roleCodes, listMockRoleFlat()),
+    realName: account.realName,
+    roleCodes: account.roleCodes,
+    roles: account.roles,
+    userId: account.userId,
+    username,
+  }
 }
 
 function usernameFromToken(header: string | undefined): string | undefined {
@@ -187,16 +201,29 @@ const mockMiddleware: Connect.NextHandleFunction = async (req, res, next) => {
       }
       sendJson(res, 200, {
         code: 0,
-        data: {
-          actionCodes: resolveActionCodes(account.roleCodes, listMockRoleFlat()),
-          homePath: '/',
-          menuCodes: resolveMenuCodes(account.roleCodes, listMockRoleFlat()),
-          realName: account.realName,
-          roleCodes: account.roleCodes,
-          roles: account.roles,
-          userId: account.userId,
-          username,
-        },
+        data: sessionPayload(username, account),
+        message: 'ok',
+      })
+      return
+    }
+
+    if (req.method === 'PUT' && path === '/api/user/profile') {
+      const username = requireLogin(req, res)
+      if (!username) return
+      const account = ACCOUNTS[username]
+      if (!account) {
+        sendJson(res, 401, { code: 401, data: null, message: '未登录或登录已过期' })
+        return
+      }
+      const checked = validateProfileForm(await readJson(req))
+      if (!checked.ok) {
+        sendJson(res, 200, { code: 1, data: null, message: checked.message })
+        return
+      }
+      account.realName = checked.value.realName
+      sendJson(res, 200, {
+        code: 0,
+        data: sessionPayload(username, account),
         message: 'ok',
       })
       return

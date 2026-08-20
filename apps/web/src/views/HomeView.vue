@@ -13,7 +13,7 @@ const isAdmin = computed(() => userInfo.value?.roles.includes('admin'))
 <template>
   <div class="page">
     <p>
-      顶栏「个人中心」看的是登录会话，不是系统用户表。访客也能进，因为那页没有 menuCode。
+      个人中心只能改显示名。顶栏圆点和锁屏上的名字会跟着变。系统用户表里的 Alice 不会变。
     </p>
     <p v-access:role="'admin'">
       这段用 <code>v-access:role="'admin'"</code>，看的是登录角色，不是业务角色码 biz-admin。

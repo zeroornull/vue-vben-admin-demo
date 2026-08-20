@@ -6,7 +6,7 @@
 
 `/profile` 是静态 layout 子路由：登录即可，不进侧栏，不进角色勾选。入口只在用户菜单。
 
-看的是**当前会话**（`userInfo`），不是系统用户表里的 Alice / Bob。不能改显示名，不能改密码。mock 账号共用 `123456`。
+看的是**当前会话**（`userInfo`），不是系统用户表里的 Alice / Bob。当时只读。第 24 轮加了改显示名，见 [30-round-24-profile-name.md](./30-round-24-profile-name.md)。
 
 页签白名单从写死 `home` 改成 `staticLayoutNames()`。否则打开个人中心会被 `prune` 掉。
 
@@ -60,10 +60,6 @@ bun run build
 
 ## 下一轮从哪里开始
 
-还可以继续加，仍不要第二套库：
-
-1. 登录页改 antd Form（收益仍小）
-2. 页签右键 / 拖拽（旧仓有，本仓故意没搬）
-3. 个人中心改显示名（要先分清会话字段和系统用户表）
+第 24 轮加了改显示名，见 [30-round-24-profile-name.md](./30-round-24-profile-name.md)。
 
 不要把 `@core`、五套皮肤、VitePress、Turbo 或 Vue 3.6 默认栈搬进来。

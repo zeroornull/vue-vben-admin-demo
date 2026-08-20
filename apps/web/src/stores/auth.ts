@@ -1,7 +1,7 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
 
-import { getUserInfoApi, loginApi, logoutApi, type LoginParams } from '@/api'
+import { getUserInfoApi, loginApi, logoutApi, updateProfileApi, type LoginParams } from '@/api'
 import { useLockStore } from '@/stores/lock'
 import type { UserInfo } from '@/types/user'
 
@@ -40,6 +40,11 @@ export const useAuthStore = defineStore(
       return userInfo.value
     }
 
+    async function updateProfile(realName: string) {
+      userInfo.value = await updateProfileApi({ realName })
+      return userInfo.value
+    }
+
     async function logout() {
       try {
         await logoutApi()
@@ -65,6 +70,7 @@ export const useAuthStore = defineStore(
       login,
       loginLoading,
       logout,
+      updateProfile,
       markAccessGenerated,
       userInfo,
     }

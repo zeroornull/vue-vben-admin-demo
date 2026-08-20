@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 
 import type { UserInfo } from '@/types/user'
 
-import { formatMenuCodes, profileRows } from '../query'
+import { formatMenuCodes, profileRows, validateProfileForm } from '../query'
 
 const user: UserInfo = {
   actionCodes: ['user:create'],
@@ -26,5 +26,17 @@ describe('formatMenuCodes / profileRows', () => {
     expect(rows.find((row) => row.key === 'roles')?.value).toBe('user')
     expect(rows.find((row) => row.key === 'roleCodes')?.value).toBe('viewer')
     expect(rows.find((row) => row.key === 'actionCodes')?.value).toContain('新建')
+    expect(rows.find((row) => row.key === 'realName')).toBeUndefined()
+  })
+})
+
+describe('validateProfileForm', () => {
+  it('trims and rejects blanks or overlong names', () => {
+    expect(validateProfileForm({ realName: '  王伟  ' })).toEqual({
+      ok: true,
+      value: { realName: '王伟' },
+    })
+    expect(validateProfileForm({ realName: '   ' }).ok).toBe(false)
+    expect(validateProfileForm({ realName: 'x'.repeat(21) }).ok).toBe(false)
   })
 })
