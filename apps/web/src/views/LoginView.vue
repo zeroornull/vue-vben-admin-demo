@@ -53,7 +53,7 @@ async function onSubmit() {
         <h1>登录</h1>
         <AppearanceMenu />
       </div>
-      <p class="lead">账号走 Vite mock。登录角色管「关于」；业务角色管侧栏菜单。</p>
+      <p class="lead">账号走 Vite mock。连错 3 次锁 1 分钟。登录角色管「关于」；业务角色管侧栏菜单。</p>
 
       <form @submit.prevent="onSubmit">
         <label>

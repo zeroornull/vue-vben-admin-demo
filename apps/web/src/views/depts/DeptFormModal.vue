@@ -3,6 +3,8 @@ import type { FormInstance } from 'ant-design-vue'
 import { Form, FormItem, Input, Modal, Select, TreeSelect } from 'ant-design-vue'
 import { computed, reactive, ref, watch } from 'vue'
 
+import { useUnsavedForm } from '@/forms/use-unsaved'
+
 import {
   disabledParentIds,
   emptyDeptForm,
@@ -27,6 +29,7 @@ const emit = defineEmits<{
 
 const formRef = ref<FormInstance>()
 const form = reactive<DeptFormValues>(emptyDeptForm())
+const unsaved = useUnsavedForm(() => form, () => props.open)
 const rules = {
   name: [
     { required: true, message: '请输入部门名称' },
@@ -52,12 +55,16 @@ watch(
     if (!open) return
     Object.assign(form, record ? formFromDept(record) : emptyDeptForm(parentId))
     formRef.value?.clearValidate()
+    void unsaved.capture()
   },
 )
 
 function close() {
+  if (!unsaved.confirmDiscard()) return
   emit('update:open', false)
 }
+
+defineExpose({ confirmDiscard: unsaved.confirmDiscard, isDirty: unsaved.isDirty })
 
 async function onOk() {
   await formRef.value?.validate()

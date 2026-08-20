@@ -13,7 +13,7 @@ const isAdmin = computed(() => userInfo.value?.roles.includes('admin'))
 <template>
   <div class="page">
     <p>
-      顶栏「通知」是 mock 消息。已读按登录账号记在 Vite 进程里，刷新还在，重启 mock 会回到未读。没有权限的跳转不会打开。
+      表单有未保存改动时，关弹窗或换页会先确认。用的是浏览器自带 confirm。个人中心关标签页也会拦一下。登录页仍不做 Form。
     </p>
     <p v-access:role="'admin'">
       这段用 <code>v-access:role="'admin'"</code>，看的是登录角色，不是业务角色码 biz-admin。

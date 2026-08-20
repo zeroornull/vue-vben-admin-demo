@@ -84,6 +84,15 @@ describe('canSearchRoute / filterSearchItems', () => {
     expect(canSearchRoute(profile, viewer)).toBe(true)
   })
 
+  it('does not search param routes; extras are injected separately', () => {
+    const extra = {
+      path: 'embed/:code',
+      name: 'embed-link',
+      meta: { hideInMenu: true, menuCode: 'embed', title: '外链' },
+    }
+    expect(canSearchRoute(extra, { menuCodes: ['embed'], roles: ['user'] })).toBe(false)
+  })
+
   it('still hides pages the session cannot open', () => {
     const about = { path: '/about', name: 'about', meta: { menuCode: 'about', roles: ['admin'], title: '关于' } }
     expect(canSearchRoute(about, viewer)).toBe(false)

@@ -4,7 +4,7 @@ import { useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 
 import { resolveMenuIcon } from '@/icons/menu-icons'
-import { filterSearchItems, useSearchItems } from '@/router/access-menu'
+import { filterSearchItems, menuItemTo, useSearchItems, type AccessMenuItem } from '@/router/access-menu'
 import { useLockStore } from '@/stores/lock'
 
 const lockStore = useLockStore()
@@ -35,9 +35,9 @@ function toggleSearch() {
   else void openSearch()
 }
 
-async function go(name: string) {
+async function go(item: AccessMenuItem) {
   closeSearch()
-  await router.push({ name })
+  await router.push(menuItemTo(item))
 }
 
 function onDocumentKey(event: KeyboardEvent) {
@@ -54,7 +54,7 @@ function onDocumentKey(event: KeyboardEvent) {
 
 function onEnter() {
   const first = hits.value[0]
-  if (first) void go(first.name)
+  if (first) void go(first)
 }
 
 watch(locked, (isLocked) => {
@@ -87,8 +87,8 @@ onUnmounted(() => {
           />
           <p v-if="!hits.length" class="empty">没有匹配的页面</p>
           <ul v-else>
-            <li v-for="item in hits" :key="item.name">
-              <button type="button" @click="go(item.name)">
+            <li v-for="item in hits" :key="item.path || item.name">
+              <button type="button" @click="go(item)">
                 <component
                   v-if="resolveMenuIcon(item.icon)"
                   :is="resolveMenuIcon(item.icon)"

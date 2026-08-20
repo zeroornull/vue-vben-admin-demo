@@ -15,12 +15,13 @@ import {
   message,
 } from 'ant-design-vue'
 import { computed, onMounted, reactive, ref } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { onBeforeRouteLeave, useRoute, useRouter } from 'vue-router'
 
 import { formatActionCodes, menuTitleByCode } from '@/access/catalog'
 import { useAccess } from '@/access/use-access'
 import { createRole, deleteRole, getRoleList, updateRole } from '@/api/system/role'
 import AntdPage from '@/components/AntdPage.vue'
+import type { UnsavedFormHandle } from '@/forms/use-unsaved'
 import { HOME_PATH } from '@/constants/auth'
 import { syncAccessRoutes } from '@/router/dynamic-access'
 import { useAuthStore } from '@/stores/auth'
@@ -37,6 +38,7 @@ const total = ref(0)
 const page = ref(1)
 const pageSize = ref(10)
 const modalOpen = ref(false)
+const formModal = ref<UnsavedFormHandle | null>(null)
 const editing = ref<SystemRole | null>(null)
 const { hasAnyAction } = useAccess()
 const query = reactive<{ code: string; name: string; status: UserStatus | undefined }>({
@@ -163,6 +165,12 @@ function onDelete(row: SystemRole) {
   })
 }
 
+onBeforeRouteLeave(() => {
+  if (!formModal.value?.confirmDiscard()) return false
+  modalOpen.value = false
+  return true
+})
+
 onMounted(() => {
   void load()
 })
@@ -239,7 +247,7 @@ onMounted(() => {
       </template>
     </Table>
 
-    <RoleFormModal v-model:open="modalOpen" :record="editing" @submit="onSubmit" />
+    <RoleFormModal ref="formModal" v-model:open="modalOpen" :record="editing" @submit="onSubmit" />
   </AntdPage>
 </template>
 

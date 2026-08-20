@@ -16,6 +16,7 @@ export function rememberableLayoutPath(path: string): string | null {
   const clean = path.split('?')[0]?.split('#')[0] ?? ''
   const matched = matchLayoutChild(clean)
   if (!matched) return null
+  if (matched.path.includes(':')) return clean
   return matched.path === '' ? HOME_PATH : `/${matched.path}`
 }
 

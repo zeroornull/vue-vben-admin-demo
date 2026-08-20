@@ -2,10 +2,12 @@
 defineOptions({ name: 'ProfileView' })
 
 import { Button, Descriptions, DescriptionsItem, Form, FormItem, Input, message } from 'ant-design-vue'
-import { computed, reactive, ref, watch } from 'vue'
+import { computed, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue'
 import { storeToRefs } from 'pinia'
+import { onBeforeRouteLeave } from 'vue-router'
 
 import AntdPage from '@/components/AntdPage.vue'
+import { useUnsavedForm } from '@/forms/use-unsaved'
 import { useAuthStore } from '@/stores/auth'
 
 import { formFromProfile, profileRows, REAL_NAME_MAX, validateProfileForm } from './profile/query'
@@ -15,11 +17,18 @@ const { userInfo } = storeToRefs(authStore)
 const rows = computed(() => (userInfo.value ? profileRows(userInfo.value) : []))
 const form = reactive(formFromProfile({ realName: userInfo.value?.realName ?? '' }))
 const saving = ref(false)
+const unsaved = useUnsavedForm(() => form)
+
+function resetForm() {
+  form.realName = userInfo.value?.realName ?? ''
+}
 
 watch(
   () => userInfo.value?.realName,
   (name) => {
-    if (name !== undefined) form.realName = name
+    if (name === undefined) return
+    form.realName = name
+    void unsaved.capture()
   },
 )
 
@@ -33,12 +42,29 @@ async function onSave() {
   try {
     await authStore.updateProfile(checked.value.realName)
     message.success('已保存显示名')
+    await unsaved.capture()
   } catch {
     // 失败由全局错误条提示
   } finally {
     saving.value = false
   }
 }
+
+onBeforeRouteLeave(() => {
+  if (!unsaved.confirmDiscard()) return false
+  resetForm()
+  void unsaved.capture()
+  return true
+})
+
+onMounted(() => {
+  void unsaved.capture()
+  window.addEventListener('beforeunload', unsaved.onBeforeUnload)
+})
+
+onBeforeUnmount(() => {
+  window.removeEventListener('beforeunload', unsaved.onBeforeUnload)
+})
 </script>
 
 <template>

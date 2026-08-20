@@ -16,9 +16,11 @@ describe('isMenuIconName / resolveMenuIcon', () => {
     expect(Object.keys(menuIcons).sort()).toEqual([
       'about',
       'analytics',
+      'audit',
       'depts',
       'embed',
       'home',
+      'links',
       'profile',
       'roles',
       'users',

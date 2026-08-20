@@ -12,11 +12,13 @@ import { applyDensityDataset, normalizeDensity } from '@/preferences/density'
 import { applyThemeDataset } from '@/preferences/theme'
 import { useTheme } from '@/preferences/use-theme'
 import { applyDocumentTitle, documentTitle, readRouteTitle } from '@/router/document-title'
+import { useLinksStore } from '@/stores/links'
 import { usePreferencesStore } from '@/stores/preferences'
 
 const route = useRoute()
 const { themeMode } = useTheme()
 const preferences = usePreferencesStore()
+const linksStore = useLinksStore()
 
 watch(
   themeMode,
@@ -43,7 +45,12 @@ watch(
 )
 
 watch(
-  () => [readRouteTitle(route.meta), preferences.appName] as const,
+  () => {
+    const fallback = readRouteTitle(route.meta)
+    if (route.name !== 'embed-link') return [fallback, preferences.appName] as const
+    const code = typeof route.params.code === 'string' ? route.params.code : ''
+    return [linksStore.titleFor(code) || fallback, preferences.appName] as const
+  },
   ([page, appName]) => {
     applyDocumentTitle(document, documentTitle(page, appName))
   },

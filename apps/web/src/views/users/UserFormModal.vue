@@ -3,6 +3,7 @@ import type { FormInstance } from 'ant-design-vue'
 import { Form, FormItem, Input, Modal, Select, TreeSelect } from 'ant-design-vue'
 import { reactive, ref, watch } from 'vue'
 
+import { useUnsavedForm } from '@/forms/use-unsaved'
 import { toParentOptions } from '@/views/depts/query'
 import type { SystemDept } from '@/views/depts/types'
 import type { SystemRole } from '@/views/roles/types'
@@ -24,6 +25,7 @@ const emit = defineEmits<{
 
 const formRef = ref<FormInstance>()
 const form = reactive<UserFormValues>(emptyUserForm())
+const unsaved = useUnsavedForm(() => form, () => props.open)
 const rules = {
   name: [
     { required: true, message: '请输入用户名' },
@@ -37,12 +39,16 @@ watch(
     if (!open) return
     Object.assign(form, record ? formFromUser(record) : emptyUserForm())
     formRef.value?.clearValidate()
+    void unsaved.capture()
   },
 )
 
 function close() {
+  if (!unsaved.confirmDiscard()) return
   emit('update:open', false)
 }
+
+defineExpose({ confirmDiscard: unsaved.confirmDiscard, isDirty: unsaved.isDirty })
 
 async function onOk() {
   await formRef.value?.validate()

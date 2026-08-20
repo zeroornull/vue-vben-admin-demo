@@ -87,6 +87,10 @@ export function updateMockDept(id: string, input: DeptFormValues) {
   return { dept }
 }
 
+export function mockDeptName(id: string) {
+  return depts.find((item) => item.id === id)?.name
+}
+
 export function deleteMockDept(id: string, userCount = 0) {
   if (!depts.some((item) => item.id === id)) {
     return { error: '部门不存在' }

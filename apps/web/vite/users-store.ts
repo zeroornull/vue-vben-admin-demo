@@ -108,6 +108,10 @@ export function updateMockUser(id: string, input: UserFormValues) {
   return { user }
 }
 
+export function mockUserName(id: string) {
+  return users.find((item) => item.id === id)?.name
+}
+
 export function deleteMockUser(id: string) {
   if (!users.some((item) => item.id === id)) {
     return { error: '用户不存在' }

@@ -18,6 +18,7 @@ import {
   message,
 } from 'ant-design-vue'
 import { computed, onMounted, reactive, ref } from 'vue'
+import { onBeforeRouteLeave } from 'vue-router'
 import { storeToRefs } from 'pinia'
 
 import { getDeptList } from '@/api/system/dept'
@@ -25,6 +26,7 @@ import { getRoleList } from '@/api/system/role'
 import { useAccess } from '@/access/use-access'
 import { createUser, deleteUser, getUserList, updateUser } from '@/api/system/user'
 import AntdPage from '@/components/AntdPage.vue'
+import type { UnsavedFormHandle } from '@/forms/use-unsaved'
 import { useTableColumnsStore } from '@/stores/table-columns'
 import { deptNameById, flattenDepts, toParentOptions } from '@/views/depts/query'
 import type { SystemDept } from '@/views/depts/types'
@@ -60,6 +62,7 @@ const total = ref(0)
 const page = ref(1)
 const pageSize = ref(10)
 const modalOpen = ref(false)
+const formModal = ref<UnsavedFormHandle | null>(null)
 const editing = ref<SystemUser | null>(null)
 const query = reactive<{
   deptId: string | undefined
@@ -271,6 +274,12 @@ function onDelete(row: SystemUser) {
   })
 }
 
+onBeforeRouteLeave(() => {
+  if (!formModal.value?.confirmDiscard()) return false
+  modalOpen.value = false
+  return true
+})
+
 onMounted(async () => {
   try {
     await loadCatalogs()
@@ -389,6 +398,7 @@ onMounted(async () => {
     />
 
     <UserFormModal
+      ref="formModal"
       v-model:open="modalOpen"
       :record="editing"
       :roles="roleCatalog"

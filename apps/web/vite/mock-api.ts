@@ -3,14 +3,24 @@ import type { IncomingMessage, ServerResponse } from 'node:http'
 import type { Connect, Plugin } from 'vite'
 
 import { hasAccessCode, resolveActionCodes, resolveMenuCodes } from '../src/access/resolve.ts'
+import {
+  isLoginLocked,
+  loginLockMessage,
+  onLoginFailure,
+  onLoginSuccess,
+  wrongPasswordMessage,
+} from '../src/auth/login-lock.ts'
 import { passwordsMatch, readUnlockPassword } from '../src/auth/unlock.ts'
 import type { SystemDept } from '../src/views/depts/types.ts'
+import { auditSummary, type AuditAction, type AuditTarget } from '../src/views/audit/query.ts'
 import { validateProfileForm } from '../src/views/profile/query.ts'
 
+import { appendMockAudit, listMockAudit } from './audit-store.ts'
 import {
   createMockDept,
   deleteMockDept,
   listMockDepts,
+  mockDeptName,
   updateMockDept,
 } from './depts-store.ts'
 import {
@@ -18,6 +28,7 @@ import {
   deleteMockRole,
   listMockRoleFlat,
   listMockRoles,
+  mockRoleName,
   updateMockRole,
 } from './roles-store.ts'
 import {
@@ -26,8 +37,17 @@ import {
   createMockUser,
   deleteMockUser,
   listMockUsers,
+  mockUserName,
   updateMockUser,
 } from './users-store.ts'
+import {
+  createMockLink,
+  deleteMockLink,
+  listMockLinks,
+  mockLinkName,
+  updateMockLink,
+} from './links-store.ts'
+import { readLoginGuard, writeLoginGuard } from './login-guard-store.ts'
 import { listMockNotices, markMockNoticeRead } from './notices-store.ts'
 import { bumpMockBuildId, readMockBuildId } from './version-store.ts'
 
@@ -145,6 +165,20 @@ function requireAction(req: IncomingMessage, res: ServerResponse, action: string
   return true
 }
 
+function actorName(req: IncomingMessage) {
+  return usernameFromToken(req.headers.authorization) ?? ''
+}
+
+function recordAudit(actor: string, action: AuditAction, target: AuditTarget, name: string) {
+  if (!actor) return
+  appendMockAudit({
+    action,
+    actor,
+    summary: auditSummary(action, target, name),
+    target,
+  })
+}
+
 const mockMiddleware: Connect.NextHandleFunction = async (req, res, next) => {
   const url = req.url ?? ''
   if (!url.startsWith('/api/')) {
@@ -159,11 +193,24 @@ const mockMiddleware: Connect.NextHandleFunction = async (req, res, next) => {
       const body = await readJson(req)
       const username = String(body.username ?? '')
       const password = readUnlockPassword(body.password)
-      const account = ACCOUNTS[username]
-      if (!account || !passwordsMatch(password, account.password)) {
-        sendJson(res, 200, { code: 1, data: null, message: '账号或密码错误' })
+      const now = Date.now()
+      const guard = readLoginGuard(username)
+      if (isLoginLocked(guard, now)) {
+        sendJson(res, 200, { code: 1, data: null, message: loginLockMessage(guard, now) })
         return
       }
+      const account = ACCOUNTS[username]
+      if (!account || !passwordsMatch(password, account.password)) {
+        const next = onLoginFailure(guard, now)
+        writeLoginGuard(username, next)
+        sendJson(res, 200, {
+          code: 1,
+          data: null,
+          message: isLoginLocked(next, now) ? loginLockMessage(next, now) : wrongPasswordMessage(next),
+        })
+        return
+      }
+      writeLoginGuard(username, onLoginSuccess())
       sendJson(res, 200, {
         code: 0,
         data: { accessToken: `mock.${username}` },
@@ -253,11 +300,19 @@ const mockMiddleware: Connect.NextHandleFunction = async (req, res, next) => {
         return
       }
       account.realName = checked.value.realName
+      recordAudit(username, 'update', 'profile', checked.value.realName)
       sendJson(res, 200, {
         code: 0,
         data: sessionPayload(username, account),
         message: 'ok',
       })
+      return
+    }
+
+    if (req.method === 'GET' && path === '/api/system/audit/list') {
+      if (!requireLogin(req, res)) return
+      const search = new URL(url, 'http://local.invalid').searchParams
+      sendJson(res, 200, { code: 0, data: listMockAudit(search), message: 'ok' })
       return
     }
 
@@ -284,6 +339,7 @@ const mockMiddleware: Connect.NextHandleFunction = async (req, res, next) => {
           sendJson(res, 200, { code: 1, data: null, message: result.error })
           return
         }
+        recordAudit(actorName(req), 'create', 'user', result.user.name)
         sendJson(res, 200, { code: 0, data: result.user, message: 'ok' })
         return
       }
@@ -304,17 +360,20 @@ const mockMiddleware: Connect.NextHandleFunction = async (req, res, next) => {
           sendJson(res, 200, { code: 1, data: null, message: result.error })
           return
         }
+        recordAudit(actorName(req), 'update', 'user', result.user.name)
         sendJson(res, 200, { code: 0, data: result.user, message: 'ok' })
         return
       }
 
       if (userId && req.method === 'DELETE') {
         if (!requireAction(req, res, 'user:delete')) return
+        const name = mockUserName(userId) ?? userId
         const result = deleteMockUser(userId)
         if ('error' in result) {
           sendJson(res, 200, { code: 1, data: null, message: result.error })
           return
         }
+        recordAudit(actorName(req), 'delete', 'user', name)
         sendJson(res, 200, { code: 0, data: null, message: 'ok' })
         return
       }
@@ -346,6 +405,7 @@ const mockMiddleware: Connect.NextHandleFunction = async (req, res, next) => {
           sendJson(res, 200, { code: 1, data: null, message: result.error })
           return
         }
+        recordAudit(actorName(req), 'create', 'dept', result.dept.name)
         sendJson(res, 200, { code: 0, data: result.dept, message: 'ok' })
         return
       }
@@ -365,17 +425,20 @@ const mockMiddleware: Connect.NextHandleFunction = async (req, res, next) => {
           sendJson(res, 200, { code: 1, data: null, message: result.error })
           return
         }
+        recordAudit(actorName(req), 'update', 'dept', result.dept.name)
         sendJson(res, 200, { code: 0, data: result.dept, message: 'ok' })
         return
       }
 
       if (deptId && req.method === 'DELETE') {
         if (!requireAction(req, res, 'dept:delete')) return
+        const name = mockDeptName(deptId) ?? deptId
         const result = deleteMockDept(deptId, countMockUsersInDept(deptId))
         if ('error' in result) {
           sendJson(res, 200, { code: 1, data: null, message: result.error })
           return
         }
+        recordAudit(actorName(req), 'delete', 'dept', name)
         sendJson(res, 200, { code: 0, data: null, message: 'ok' })
         return
       }
@@ -416,6 +479,7 @@ const mockMiddleware: Connect.NextHandleFunction = async (req, res, next) => {
           sendJson(res, 200, { code: 1, data: null, message: created.error })
           return
         }
+        recordAudit(actorName(req), 'create', 'role', created.role.name)
         sendJson(res, 200, { code: 0, data: created.role, message: 'ok' })
         return
       }
@@ -437,17 +501,80 @@ const mockMiddleware: Connect.NextHandleFunction = async (req, res, next) => {
           sendJson(res, 200, { code: 1, data: null, message: updated.error })
           return
         }
+        recordAudit(actorName(req), 'update', 'role', updated.role.name)
         sendJson(res, 200, { code: 0, data: updated.role, message: 'ok' })
         return
       }
 
       if (roleId && req.method === 'DELETE') {
         if (!requireAction(req, res, 'role:delete')) return
+        const name = mockRoleName(roleId) ?? roleId
         const removed = deleteMockRole(roleId, countMockUsersInRole(roleId))
         if ('error' in removed) {
           sendJson(res, 200, { code: 1, data: null, message: removed.error })
           return
         }
+        recordAudit(actorName(req), 'delete', 'role', name)
+        sendJson(res, 200, { code: 0, data: null, message: 'ok' })
+        return
+      }
+    }
+
+    if (path.startsWith('/api/system/link')) {
+      if (req.method === 'GET' && path === '/api/system/link/list') {
+        if (!requireLogin(req, res)) return
+        const search = new URL(url, 'http://local.invalid').searchParams
+        sendJson(res, 200, { code: 0, data: listMockLinks(search), message: 'ok' })
+        return
+      }
+
+      if (req.method === 'POST' && path === '/api/system/link') {
+        if (!requireAction(req, res, 'link:create')) return
+        const body = await readJson(req)
+        const created = createMockLink({
+          code: String(body.code ?? ''),
+          iframeSrc: String(body.iframeSrc ?? ''),
+          status: body.status === 0 ? 0 : 1,
+          title: String(body.title ?? ''),
+        })
+        if ('error' in created) {
+          sendJson(res, 200, { code: 1, data: null, message: created.error })
+          return
+        }
+        recordAudit(actorName(req), 'create', 'link', created.link.title)
+        sendJson(res, 200, { code: 0, data: created.link, message: 'ok' })
+        return
+      }
+
+      const linkMatch = path.match(/^\/api\/system\/link\/([^/]+)$/)
+      const linkId = linkMatch?.[1]
+      if (linkId && req.method === 'PUT') {
+        if (!requireAction(req, res, 'link:update')) return
+        const body = await readJson(req)
+        const updated = updateMockLink(linkId, {
+          code: String(body.code ?? ''),
+          iframeSrc: String(body.iframeSrc ?? ''),
+          status: body.status === 0 ? 0 : 1,
+          title: String(body.title ?? ''),
+        })
+        if ('error' in updated) {
+          sendJson(res, 200, { code: 1, data: null, message: updated.error })
+          return
+        }
+        recordAudit(actorName(req), 'update', 'link', updated.link.title)
+        sendJson(res, 200, { code: 0, data: updated.link, message: 'ok' })
+        return
+      }
+
+      if (linkId && req.method === 'DELETE') {
+        if (!requireAction(req, res, 'link:delete')) return
+        const name = mockLinkName(linkId) ?? linkId
+        const removed = deleteMockLink(linkId)
+        if ('error' in removed) {
+          sendJson(res, 200, { code: 1, data: null, message: removed.error })
+          return
+        }
+        recordAudit(actorName(req), 'delete', 'link', name)
         sendJson(res, 200, { code: 0, data: null, message: 'ok' })
         return
       }

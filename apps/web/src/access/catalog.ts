@@ -4,6 +4,8 @@ export type MenuCode =
   | 'users'
   | 'depts'
   | 'roles'
+  | 'audit'
+  | 'links'
   | 'about'
   | 'embed'
 
@@ -17,6 +19,9 @@ export type ActionCode =
   | 'role:create'
   | 'role:update'
   | 'role:delete'
+  | 'link:create'
+  | 'link:update'
+  | 'link:delete'
 
 export type MenuNode = {
   code: MenuCode
@@ -36,6 +41,8 @@ export const menuCatalog: MenuNode[] = [
   { code: 'users', group: '系统', title: '用户' },
   { code: 'depts', group: '系统', title: '部门' },
   { code: 'roles', group: '系统', title: '角色' },
+  { code: 'audit', group: '系统', title: '操作日志' },
+  { code: 'links', group: '系统', title: '外链' },
   { code: 'about', title: '关于' },
   { code: 'embed', title: '内嵌页' },
 ]
@@ -50,6 +57,9 @@ export const actionCatalog: ActionNode[] = [
   { code: 'role:create', menuCode: 'roles', title: '新建' },
   { code: 'role:update', menuCode: 'roles', title: '编辑' },
   { code: 'role:delete', menuCode: 'roles', title: '删除' },
+  { code: 'link:create', menuCode: 'links', title: '新建' },
+  { code: 'link:update', menuCode: 'links', title: '编辑' },
+  { code: 'link:delete', menuCode: 'links', title: '删除' },
 ]
 
 export const allMenuCodes: MenuCode[] = menuCatalog.map((item) => item.code)

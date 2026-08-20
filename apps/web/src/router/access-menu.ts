@@ -3,6 +3,8 @@ import { computed } from 'vue'
 
 import { canAccessRoute, type AccessViewer } from '@/access/resolve'
 import { useAuthStore } from '@/stores/auth'
+import { useLinksStore } from '@/stores/links'
+import { extraLinkMenuItems } from '@/views/links/query'
 
 import { layoutChildren } from './routes'
 
@@ -11,6 +13,7 @@ export type AccessMenuItem = {
   icon?: string
   name: string
   order: number
+  path?: string
   title: string
 }
 
@@ -29,10 +32,20 @@ export function canSeeRoute(route: RouteRecordRaw, viewer: AccessViewer) {
 
 /** 搜索可以找到 hideInMenu 的页（个人中心），仍要过权限 */
 export function canSearchRoute(route: RouteRecordRaw, viewer: AccessViewer) {
-  if (!route.meta?.title) {
+  if (!route.meta?.title || route.path.includes(':')) {
     return false
   }
   return canAccessRoute(route, viewer)
+}
+
+export function menuItemTo(item: AccessMenuItem) {
+  return item.path || { name: item.name }
+}
+
+export function extraTabNames(items: AccessMenuItem[]): string[] {
+  return items.some((item) => item.name === 'embed' || item.name === 'embed-link')
+    ? ['embed-link']
+    : []
 }
 
 function toItem(route: RouteRecordRaw): AccessMenuItem {
@@ -94,10 +107,24 @@ function currentViewer(): AccessViewer {
   }
 }
 
+function withExtraLinks(items: AccessMenuItem[], viewer: AccessViewer) {
+  const extras = extraLinkMenuItems(
+    useLinksStore().enabled,
+    viewer.menuCodes.includes('embed'),
+  )
+  return [...items, ...extras].sort((a, b) => a.order - b.order)
+}
+
 export function useAccessMenu() {
-  return computed(() => groupMenuItems(toMenuItems(layoutChildren, currentViewer())))
+  return computed(() => {
+    const viewer = currentViewer()
+    return groupMenuItems(withExtraLinks(toMenuItems(layoutChildren, viewer), viewer))
+  })
 }
 
 export function useSearchItems() {
-  return computed(() => toSearchItems(layoutChildren, currentViewer()))
+  return computed(() => {
+    const viewer = currentViewer()
+    return withExtraLinks(toSearchItems(layoutChildren, viewer), viewer)
+  })
 }

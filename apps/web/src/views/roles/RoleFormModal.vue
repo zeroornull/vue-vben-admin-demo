@@ -6,6 +6,8 @@ import { reactive, ref, watch } from 'vue'
 import { actionsForMenu, groupMenuCatalog } from '@/access/catalog'
 import { dropActionsForMenu, grantParentMenus, uniqueCodes } from '@/access/resolve'
 
+import { useUnsavedForm } from '@/forms/use-unsaved'
+
 import { emptyRoleForm, formFromRole, validateRoleForm } from './query'
 import type { SystemRole, RoleFormValues } from './types'
 
@@ -21,6 +23,7 @@ const emit = defineEmits<{
 
 const formRef = ref<FormInstance>()
 const form = reactive<RoleFormValues>(emptyRoleForm())
+const unsaved = useUnsavedForm(() => form, () => props.open)
 const menuGroups = groupMenuCatalog()
 const rules = {
   name: [
@@ -36,12 +39,16 @@ watch(
     if (!open) return
     Object.assign(form, record ? formFromRole(record) : emptyRoleForm())
     formRef.value?.clearValidate()
+    void unsaved.capture()
   },
 )
 
 function close() {
+  if (!unsaved.confirmDiscard()) return
   emit('update:open', false)
 }
+
+defineExpose({ confirmDiscard: unsaved.confirmDiscard, isDirty: unsaved.isDirty })
 
 function onMenuChange(code: string, event: { target: { checked?: boolean } }) {
   const checked = Boolean(event.target.checked)

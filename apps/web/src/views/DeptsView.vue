@@ -4,10 +4,12 @@ defineOptions({ name: 'DeptsView' })
 import type { TableColumnsType } from 'ant-design-vue'
 import { Button, Form, FormItem, Input, Modal, Select, Space, Table, Tag, message } from 'ant-design-vue'
 import { computed, onMounted, reactive, ref } from 'vue'
+import { onBeforeRouteLeave } from 'vue-router'
 
 import { useAccess } from '@/access/use-access'
 import { createDept, deleteDept, getDeptList, updateDept } from '@/api/system/dept'
 import AntdPage from '@/components/AntdPage.vue'
+import type { UnsavedFormHandle } from '@/forms/use-unsaved'
 
 import DeptFormModal from './depts/DeptFormModal.vue'
 import { filterDeptTree, flattenDepts } from './depts/query'
@@ -16,6 +18,7 @@ import type { DeptFormValues, SystemDept, UserStatus } from './depts/types'
 const loading = ref(false)
 const catalog = ref<SystemDept[]>([])
 const modalOpen = ref(false)
+const formModal = ref<UnsavedFormHandle | null>(null)
 const editing = ref<SystemDept | null>(null)
 const createParentId = ref<string | null>(null)
 const query = reactive<{ name: string; status: UserStatus | undefined }>({
@@ -118,6 +121,12 @@ function onDelete(row: SystemDept) {
   })
 }
 
+onBeforeRouteLeave(() => {
+  if (!formModal.value?.confirmDiscard()) return false
+  modalOpen.value = false
+  return true
+})
+
 onMounted(() => {
   void load()
 })
@@ -178,6 +187,7 @@ onMounted(() => {
     </Table>
 
     <DeptFormModal
+      ref="formModal"
       v-model:open="modalOpen"
       :parent-id="createParentId"
       :record="editing"

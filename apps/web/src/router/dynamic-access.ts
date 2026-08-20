@@ -39,8 +39,17 @@ export function syncAccessRoutes(router: Router) {
   authStore.markAccessGenerated()
 }
 
+export function matchRoutePath(pattern: string, childPath: string): boolean {
+  if (pattern === childPath) return true
+  if (!pattern.includes(':')) return false
+  const expected = pattern.split('/')
+  const actual = childPath.split('/')
+  if (expected.length !== actual.length) return false
+  return expected.every((part, index) => part.startsWith(':') || part === actual[index])
+}
+
 export function matchLayoutChild(path: string): RouteRecordRaw | undefined {
   const clean = path.split('?')[0]?.replace(/\/+$/, '') || '/'
   const childPath = clean === '/' ? '' : clean.slice(1)
-  return layoutChildren.find((route) => route.path === childPath)
+  return layoutChildren.find((route) => matchRoutePath(route.path, childPath))
 }

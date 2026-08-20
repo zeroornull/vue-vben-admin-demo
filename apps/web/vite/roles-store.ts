@@ -101,6 +101,10 @@ export function updateMockRole(id: string, input: RoleFormValues) {
   return { role }
 }
 
+export function mockRoleName(id: string) {
+  return roles.find((item) => item.id === id)?.name
+}
+
 export function deleteMockRole(id: string, userCount = 0) {
   if (!roles.some((item) => item.id === id)) {
     return { error: '角色不存在' }

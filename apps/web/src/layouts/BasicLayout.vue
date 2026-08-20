@@ -7,10 +7,11 @@ import AppearanceMenu from '@/components/AppearanceMenu.vue'
 import { LOGIN_PATH } from '@/constants/auth'
 import { resolveMenuIcon } from '@/icons/menu-icons'
 import { normalizeNavLayout } from '@/preferences/nav-layout'
-import { useAccessMenu } from '@/router/access-menu'
+import { extraTabNames, menuItemTo, useAccessMenu } from '@/router/access-menu'
 import { staticLayoutNames } from '@/router/routes'
 import { resetAccessRoutes } from '@/router/dynamic-access'
 import { useAuthStore } from '@/stores/auth'
+import { useLinksStore } from '@/stores/links'
 import { useLockStore } from '@/stores/lock'
 import { useNoticesStore } from '@/stores/notices'
 import { usePreferencesStore } from '@/stores/preferences'
@@ -43,6 +44,7 @@ const authStore = useAuthStore()
 const preferences = usePreferencesStore()
 const tabsStore = useTabsStore()
 const lockStore = useLockStore()
+const linksStore = useLinksStore()
 const noticesStore = useNoticesStore()
 const { userInfo } = storeToRefs(authStore)
 const { locked } = storeToRefs(lockStore)
@@ -74,7 +76,13 @@ const iconOnly = computed(() => isIconOnlySidebar(chrome.value))
 const showTitles = computed(() => isSidebarExpanded(chrome.value))
 const toggleLabel = computed(() => sidebarToggleLabel(chrome.value))
 
-const pageTitle = computed(() => route.meta.title ?? appName.value)
+const pageTitle = computed(() => {
+  if (route.name === 'embed-link') {
+    const code = typeof route.params.code === 'string' ? route.params.code : ''
+    return linksStore.titleFor(code) || route.meta.title || appName.value
+  }
+  return route.meta.title ?? appName.value
+})
 const keepAliveInclude = computed(() =>
   excludeCachedName(cachedNames.value, evictedViewName.value),
 )
@@ -87,17 +95,31 @@ const allowedTabNames = computed(() => {
       names.add(item.name)
     }
   }
+  for (const name of extraTabNames(menuGroups.value.flatMap((group) => group.items))) {
+    names.add(name)
+  }
   return [...names]
 })
 
 watch(
-  () => [route.fullPath, route.name, userInfo.value?.username, allowedTabNames.value.join(',')] as const,
+  () =>
+    [
+      route.fullPath,
+      route.name,
+      userInfo.value?.username,
+      allowedTabNames.value.join(','),
+      pageTitle.value,
+    ] as const,
   () => {
     if (userInfo.value?.username) {
       tabsStore.syncOwner(userInfo.value.username)
     }
     tabsStore.prune(allowedTabNames.value)
-    tabsStore.openFromRoute(route)
+    tabsStore.openFromRoute({
+      fullPath: route.fullPath,
+      meta: { ...route.meta, title: pageTitle.value },
+      name: route.name,
+    })
   },
   { immediate: true },
 )
@@ -123,7 +145,12 @@ watch(
 watch(
   () => userInfo.value?.username,
   (name) => {
-    if (name) lockStore.syncOwner(name)
+    if (name) {
+      lockStore.syncOwner(name)
+      void linksStore.pull()
+    } else {
+      linksStore.reset()
+    }
   },
   { immediate: true },
 )
@@ -181,6 +208,7 @@ async function onLogout() {
   await authStore.logout()
   tabsStore.reset()
   noticesStore.reset()
+  linksStore.reset()
   resetAccessRoutes(router)
   await router.replace(LOGIN_PATH)
 }
@@ -204,8 +232,8 @@ async function onLogout() {
           <p v-if="group.title && showTitles">{{ group.title }}</p>
           <RouterLink
             v-for="item in group.items"
-            :key="item.name"
-            :to="{ name: item.name }"
+            :key="item.path || item.name"
+            :to="menuItemTo(item)"
             :title="item.title"
           >
             <component
@@ -237,8 +265,8 @@ async function onLogout() {
             <p v-if="group.title">{{ group.title }}</p>
             <RouterLink
               v-for="item in group.items"
-              :key="item.name"
-              :to="{ name: item.name }"
+              :key="item.path || item.name"
+              :to="menuItemTo(item)"
               :title="item.title"
             >
               <component

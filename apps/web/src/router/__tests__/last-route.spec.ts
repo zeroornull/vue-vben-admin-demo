@@ -25,6 +25,7 @@ describe('rememberableLayoutPath', () => {
     expect(rememberableLayoutPath('/profile?tab=1#top')).toBe('/profile')
     expect(rememberableLayoutPath('/users')).toBe('/users')
     expect(rememberableLayoutPath('/embed')).toBe('/embed')
+    expect(rememberableLayoutPath('/embed/docs')).toBe('/embed/docs')
     expect(rememberableLayoutPath('/login')).toBeNull()
     expect(rememberableLayoutPath('/403')).toBeNull()
     expect(rememberableLayoutPath('/missing')).toBeNull()
