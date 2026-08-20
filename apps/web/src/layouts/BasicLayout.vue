@@ -15,6 +15,7 @@ import { usePreferencesStore } from '@/stores/preferences'
 import { useTabsStore } from '@/stores/tabs'
 
 import AppBreadcrumb from './AppBreadcrumb.vue'
+import AppFooter from './AppFooter.vue'
 import AppSearch from './AppSearch.vue'
 import AppShortcutHelp from './AppShortcutHelp.vue'
 import AppTabs from './AppTabs.vue'
@@ -230,6 +231,7 @@ async function onLogout() {
           </KeepAlive>
         </RouterView>
       </section>
+      <AppFooter />
     </div>
   </div>
   <div v-if="contentFullscreen && !locked" class="full-actions">
@@ -266,7 +268,7 @@ aside {
   gap: 1rem;
   border-right: 1px solid var(--color-border);
   background: var(--color-background-soft);
-  padding: 1rem 0.75rem;
+  padding: var(--chrome-aside-pad);
 }
 
 .brand {
@@ -297,7 +299,7 @@ nav a {
   align-items: center;
   gap: 0.5rem;
   border-radius: 0.4rem;
-  padding: 0.45rem 0.6rem;
+  padding: var(--chrome-nav-pad);
   color: var(--color-text);
 }
 
@@ -343,7 +345,7 @@ nav a.router-link-exact-active {
 
 .main {
   display: grid;
-  grid-template-rows: 3.5rem auto auto 1fr;
+  grid-template-rows: var(--chrome-header-height) auto auto 1fr auto;
   min-width: 0;
 }
 
@@ -374,14 +376,14 @@ button {
   border-radius: 0.4rem;
   background: var(--color-background);
   color: var(--color-text);
-  padding: 0.3rem 0.65rem;
+  padding: var(--chrome-btn-pad);
   font: inherit;
   cursor: pointer;
 }
 
 section {
   min-width: 0;
-  padding: 1.25rem 1.5rem 2rem;
+  padding: var(--chrome-section-pad);
 }
 
 .shell.content-full {
@@ -392,7 +394,8 @@ section {
 .shell.content-full .backdrop,
 .shell.content-full header,
 .shell.content-full :deep(.tabs),
-.shell.content-full :deep(.crumbs) {
+.shell.content-full :deep(.crumbs),
+.shell.content-full :deep(.footer) {
   display: none;
 }
 
@@ -414,7 +417,7 @@ section {
   border-radius: 0.4rem;
   background: var(--color-background);
   color: var(--color-text);
-  padding: 0.3rem 0.65rem;
+  padding: var(--chrome-btn-pad);
   font: inherit;
   cursor: pointer;
 }

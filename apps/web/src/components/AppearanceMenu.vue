@@ -2,6 +2,7 @@
 import { onMounted, onUnmounted, ref } from 'vue'
 
 import ColorFilterToggle from '@/components/ColorFilterToggle.vue'
+import DensityToggle from '@/components/DensityToggle.vue'
 import ThemeToggle from '@/components/ThemeToggle.vue'
 import WatermarkToggle from '@/components/WatermarkToggle.vue'
 import { shouldClosePopover } from '@/layouts/popover'
@@ -45,7 +46,7 @@ onUnmounted(() => {
       class="trigger"
       :aria-expanded="open"
       aria-haspopup="menu"
-      title="水印、色弱、深浅"
+      title="水印、色弱、深浅、疏密"
       @click="toggle"
     >
       外观
@@ -54,6 +55,7 @@ onUnmounted(() => {
       <WatermarkToggle />
       <ColorFilterToggle />
       <ThemeToggle />
+      <DensityToggle />
     </div>
   </div>
 </template>

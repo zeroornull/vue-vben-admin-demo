@@ -3,10 +3,12 @@ import { reactive, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
 import AppearanceMenu from '@/components/AppearanceMenu.vue'
-import { HOME_PATH } from '@/constants/auth'
+import { resolveLoginLanding } from '@/router/last-route'
 import { useAuthStore } from '@/stores/auth'
+import { useLastRouteStore } from '@/stores/last-route'
 
 const authStore = useAuthStore()
+const lastRouteStore = useLastRouteStore()
 const route = useRoute()
 const router = useRouter()
 
@@ -31,12 +33,13 @@ function useAccount(username: string) {
 async function onSubmit() {
   errorMessage.value = ''
   try {
-    await authStore.login({
+    const user = await authStore.login({
       username: form.username,
       password: form.password,
     })
-    const redirect = route.query.redirect
-    await router.replace(typeof redirect === 'string' ? redirect : HOME_PATH)
+    await router.replace(
+      resolveLoginLanding(route.query.redirect, lastRouteStore.pathFor(user.username), user),
+    )
   } catch (error) {
     errorMessage.value = error instanceof Error ? error.message : '登录失败'
   }

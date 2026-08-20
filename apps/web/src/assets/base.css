@@ -34,6 +34,26 @@
   --color-text: var(--vt-c-text-light-1);
 
   --section-gap: 160px;
+
+  --page-gap: 1rem;
+  --chrome-header-height: 3.5rem;
+  --chrome-section-pad: 1.25rem 1.5rem 2rem;
+  --chrome-nav-pad: 0.45rem 0.6rem;
+  --chrome-btn-pad: 0.3rem 0.65rem;
+  --chrome-aside-pad: 1rem 0.75rem;
+  --chrome-footer-pad: 0.65rem 1.5rem;
+  --chrome-font: 15px;
+}
+
+html[data-density='compact'] {
+  --page-gap: 0.65rem;
+  --chrome-header-height: 2.75rem;
+  --chrome-section-pad: 0.75rem 1rem 1.25rem;
+  --chrome-nav-pad: 0.28rem 0.45rem;
+  --chrome-btn-pad: 0.2rem 0.5rem;
+  --chrome-aside-pad: 0.65rem 0.5rem;
+  --chrome-footer-pad: 0.4rem 1rem;
+  --chrome-font: 13px;
 }
 
 html[data-theme='dark'] {
@@ -99,7 +119,7 @@ body {
     'Droid Sans',
     'Helvetica Neue',
     sans-serif;
-  font-size: 15px;
+  font-size: var(--chrome-font);
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;

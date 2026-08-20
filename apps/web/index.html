@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN" data-theme="system" data-filter="none">
+<html lang="zh-CN" data-theme="system" data-filter="none" data-density="comfortable">
   <head>
     <meta charset="UTF-8">
     <link rel="icon" href="/favicon.ico">
@@ -15,9 +15,13 @@
           var filter = stored.colorFilter
           if (filter !== 'weak' && filter !== 'gray') filter = 'none'
           document.documentElement.dataset.filter = filter
+          var density = stored.density
+          if (density !== 'compact') density = 'comfortable'
+          document.documentElement.dataset.density = density
         } catch (error) {
           document.documentElement.dataset.theme = 'system'
           document.documentElement.dataset.filter = 'none'
+          document.documentElement.dataset.density = 'comfortable'
         }
       })()
     </script>

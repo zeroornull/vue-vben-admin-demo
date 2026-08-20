@@ -45,6 +45,7 @@ function ctx(overrides?: Partial<Parameters<typeof decideAccess>[1]>) {
     fetchUserInfo: vi.fn().mockResolvedValue(user),
     invalidateAccess: vi.fn(),
     isAccessGenerated: true,
+    lastPathFor: vi.fn().mockReturnValue(null),
     markAccessGenerated: vi.fn(),
     resetAccessRoutes: vi.fn(),
     userInfo: null,
@@ -110,6 +111,19 @@ describe('decideAccess', () => {
         ctx({ accessToken: 'mock.user' }),
       ),
     ).resolves.toBe(HOME_PATH)
+  })
+
+  it('returns a signed-in user to the last page when login has no redirect', async () => {
+    await expect(
+      decideAccess(
+        { fullPath: LOGIN_PATH, meta: { public: true }, path: LOGIN_PATH, query: {} },
+        ctx({
+          accessToken: 'mock.user',
+          lastPathFor: () => '/analytics',
+          userInfo: user,
+        }),
+      ),
+    ).resolves.toBe('/analytics')
   })
 
   it('honors login redirect query', async () => {

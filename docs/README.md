@@ -55,6 +55,10 @@
 | 41 | [round-35-user-csv.md](./41-round-35-user-csv.md) | 第 35 轮 | 用户 CSV 导出；筛选结果；公式转义 |
 | 42 | [round-36-user-csv-import.md](./42-round-36-user-csv-import.md) | 第 36 轮 | 用户 CSV 导入；同一校验；user:create |
 | 43 | [round-37-shortcut-help.md](./43-round-37-shortcut-help.md) | 第 37 轮 | 快捷键说明；? / Ctrl+/；Esc 分层 |
+| 44 | [round-38-footer.md](./44-round-38-footer.md) | 第 38 轮 | 页脚版权；开工年–今年；全屏隐藏 |
+| 45 | [round-39-density.md](./45-round-39-density.md) | 第 39 轮 | 紧凑密度；CSS token + antd size |
+| 46 | [round-40-last-route.md](./46-round-40-last-route.md) | 第 40 轮 | 记住上次页面；redirect 优先；按账号 |
+| 47 | [round-41-check-updates.md](./47-round-41-check-updates.md) | 第 41 轮 | 检查更新；版本号轮询；skipLoadingBar |
 
 后续轮次会继续加 `08-…`、`09-…`，并在本表追加一行。已拍板的结论不要默默改掉；必须修正时在原文加短注并改决策表（第 1 轮已按此修正：第 2 轮改用 `create-vue`，见 [03](./03-migration-roadmap.md)）。
 

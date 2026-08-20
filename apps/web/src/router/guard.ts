@@ -3,9 +3,11 @@ import type { LocationQuery, RouteMeta, Router } from 'vue-router'
 import { canAccessRoute, filterDynamicRoutes } from '@/access/resolve'
 import { HOME_PATH, LOGIN_PATH } from '@/constants/auth'
 import { useAuthStore } from '@/stores/auth'
+import { useLastRouteStore } from '@/stores/last-route'
 import type { UserInfo } from '@/types/user'
 
 import { applyAccessRoutes, matchLayoutChild, resetAccessRoutes } from './dynamic-access'
+import { resolveLoginLanding } from './last-route'
 import { dynamicLayoutChildren } from './routes'
 
 export function redirectQuery(fullPath: string) {
@@ -26,6 +28,7 @@ export type AccessContext = {
   fetchUserInfo: () => Promise<UserInfo>
   invalidateAccess: () => void
   isAccessGenerated: boolean
+  lastPathFor: (username: string) => string | null
   markAccessGenerated: () => void
   resetAccessRoutes: () => void
   userInfo: UserInfo | null
@@ -47,8 +50,16 @@ export async function decideAccess(
 
   if (target.meta.public) {
     if (target.path === LOGIN_PATH && ctx.accessToken) {
-      const redirect = target.query.redirect
-      return typeof redirect === 'string' ? redirect : HOME_PATH
+      let userInfo = ctx.userInfo
+      if (!userInfo) {
+        try {
+          userInfo = await ctx.fetchUserInfo()
+        } catch {
+          ctx.clearSession()
+          return true
+        }
+      }
+      return resolveLoginLanding(target.query.redirect, ctx.lastPathFor(userInfo.username), userInfo)
     }
     return true
   }
@@ -122,6 +133,7 @@ export function setupAccessGuard(router: Router) {
           authStore.invalidateAccess()
         },
         isAccessGenerated: authStore.isAccessGenerated,
+        lastPathFor: (username) => useLastRouteStore().pathFor(username),
         markAccessGenerated: () => {
           authStore.markAccessGenerated()
         },
@@ -131,5 +143,10 @@ export function setupAccessGuard(router: Router) {
         userInfo: authStore.userInfo,
       },
     )
+  })
+
+  router.afterEach((to) => {
+    const username = useAuthStore().userInfo?.username
+    if (username) useLastRouteStore().remember(to.path, username)
   })
 }

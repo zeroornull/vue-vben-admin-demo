@@ -28,6 +28,7 @@ import {
   listMockUsers,
   updateMockUser,
 } from './users-store.ts'
+import { bumpMockBuildId, readMockBuildId } from './version-store.ts'
 
 function readRoleIds(value: unknown): string[] {
   if (!Array.isArray(value)) return []
@@ -167,6 +168,17 @@ const mockMiddleware: Connect.NextHandleFunction = async (req, res, next) => {
         data: { accessToken: `mock.${username}` },
         message: 'ok',
       })
+      return
+    }
+
+    if (req.method === 'GET' && path === '/api/version') {
+      sendJson(res, 200, { code: 0, data: { buildId: readMockBuildId() }, message: 'ok' })
+      return
+    }
+
+    if (req.method === 'POST' && path === '/api/version/bump') {
+      if (!requireLogin(req, res)) return
+      sendJson(res, 200, { code: 0, data: { buildId: bumpMockBuildId() }, message: 'ok' })
       return
     }
 

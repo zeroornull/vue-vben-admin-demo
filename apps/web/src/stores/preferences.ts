@@ -2,6 +2,7 @@ import { ref } from 'vue'
 import { defineStore } from 'pinia'
 
 import { normalizeColorFilter, type ColorFilter } from '@/preferences/color-filter'
+import { normalizeDensity, type Density } from '@/preferences/density'
 import { normalizeThemeMode, type ThemeMode } from '@/preferences/theme'
 
 export const usePreferencesStore = defineStore(
@@ -12,6 +13,7 @@ export const usePreferencesStore = defineStore(
     const themeMode = ref<ThemeMode>('system')
     const watermarkEnabled = ref(true)
     const colorFilter = ref<ColorFilter>('none')
+    const density = ref<Density>('comfortable')
 
     function toggleSidebar() {
       sidebarCollapsed.value = !sidebarCollapsed.value
@@ -29,10 +31,16 @@ export const usePreferencesStore = defineStore(
       colorFilter.value = normalizeColorFilter(filter)
     }
 
+    function setDensity(value: Density) {
+      density.value = normalizeDensity(value)
+    }
+
     return {
       appName,
       colorFilter,
+      density,
       setColorFilter,
+      setDensity,
       setThemeMode,
       sidebarCollapsed,
       themeMode,
@@ -43,7 +51,7 @@ export const usePreferencesStore = defineStore(
   },
   {
     persist: {
-      pick: ['colorFilter', 'sidebarCollapsed', 'themeMode', 'watermarkEnabled'],
+      pick: ['colorFilter', 'density', 'sidebarCollapsed', 'themeMode', 'watermarkEnabled'],
     },
   },
 )

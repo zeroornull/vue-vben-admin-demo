@@ -13,7 +13,7 @@ const isAdmin = computed(() => userInfo.value?.roles.includes('admin'))
 <template>
   <div class="page">
     <p>
-      按 ? 或 Ctrl+/ 看已有快捷键。输入框里打问号不会打开。Esc 先关最上面一层。
+      关于页可以「模拟发版」。顶上会出更新条，刷新才是新代码，不是当前页重挂。轮询不走进度条。
     </p>
     <p v-access:role="'admin'">
       这段用 <code>v-access:role="'admin'"</code>，看的是登录角色，不是业务角色码 biz-admin。
