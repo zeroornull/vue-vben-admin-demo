@@ -145,6 +145,33 @@ describe('requestClient', () => {
     expect(useRequestStore().notice).toBe('')
   })
 
+  it('retries a GET 500 once and keeps one pending count', async () => {
+    const store = useRequestStore()
+    const pending: number[] = []
+    mock
+      .onGet('/flaky')
+      .replyOnce(() => {
+        pending.push(store.pending)
+        return [500, { code: 500, data: null, message: '挂了' }]
+      })
+      .onGet('/flaky')
+      .reply(() => {
+        pending.push(store.pending)
+        return [200, { code: 0, data: { ok: true }, message: 'ok' }]
+      })
+    await expect(get('/flaky')).resolves.toEqual({ ok: true })
+    expect(pending).toEqual([1, 1])
+    expect(store.pending).toBe(0)
+    expect(store.notice).toBe('')
+  })
+
+  it('does not retry POST or skipped GETs', async () => {
+    mock.onPost('/once').replyOnce(500, { code: 500, data: null, message: '挂了' })
+    await expect(post('/once')).rejects.toThrow('挂了')
+    mock.onGet('/quiet-fail').replyOnce(500, { code: 500, data: null, message: '挂了' })
+    await expect(get('/quiet-fail', { skipRetry: true })).rejects.toThrow('挂了')
+  })
+
   it('clears the session on HTTP 401', async () => {
     const store = useAuthStore()
     store.accessToken = 'expired'

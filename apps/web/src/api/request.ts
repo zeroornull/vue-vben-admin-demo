@@ -5,6 +5,7 @@ import { useAuthStore } from '@/stores/auth'
 import { useRequestStore } from '@/stores/request'
 
 import { shouldTrackLoading } from './pending'
+import { retryCountOf, shouldRetryRequest } from './retry'
 import { errorToastText, requestError, shouldAnnounceError } from './toast'
 
 export type ApiBody<T> = {
@@ -35,7 +36,7 @@ requestClient.interceptors.request.use((config) => {
   if (token) {
     config.headers.Authorization = `Bearer ${token}`
   }
-  if (shouldTrackLoading(config)) {
+  if (shouldTrackLoading(config) && retryCountOf(config) === 0) {
     useRequestStore().begin()
   }
   return config
@@ -51,11 +52,26 @@ requestClient.interceptors.response.use(
     return response
   },
   (error: AxiosError<ApiBody<unknown>>) => {
-    finishLoading(error.config)
-    const unauthorized = error.response?.status === 401
+    const config = error.config
+    const status = error.response?.status
+    const unauthorized = status === 401
     if (unauthorized) {
       void handleUnauthorized()
     }
+    if (
+      config &&
+      shouldRetryRequest({
+        code: error.code,
+        method: config.method,
+        retryCount: config.retryCount,
+        skipRetry: config.skipRetry,
+        status,
+      })
+    ) {
+      config.retryCount = retryCountOf(config) + 1
+      return requestClient.request(config)
+    }
+    finishLoading(config)
     const message =
       error.response?.data?.message || error.message || '网络错误'
     return Promise.reject(requestError(message, unauthorized))

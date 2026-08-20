@@ -13,7 +13,7 @@ const isAdmin = computed(() => userInfo.value?.roles.includes('admin'))
 <template>
   <div class="page">
     <p>
-      宽屏展开侧栏时，右边可以拖宽度，写进偏好。收起、顶栏、窄屏抽屉都不吃这个数。外观里能重置回 220。
+      GET 遇到 5xx 或断网会立刻再打一次。登录和其它写操作不重试。通知、检查更新这些轮询自己关掉重试。
     </p>
     <p v-access:role="'admin'">
       这段用 <code>v-access:role="'admin'"</code>，看的是登录角色，不是业务角色码 biz-admin。

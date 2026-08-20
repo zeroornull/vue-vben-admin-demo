@@ -5,7 +5,11 @@ export type VersionInfo = {
 }
 
 export function getVersion() {
-  return get<VersionInfo>('/version', { skipErrorToast: true, skipLoadingBar: true })
+  return get<VersionInfo>('/version', {
+    skipErrorToast: true,
+    skipLoadingBar: true,
+    skipRetry: true,
+  })
 }
 
 export function bumpVersion() {
