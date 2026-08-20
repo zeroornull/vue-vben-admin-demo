@@ -42,6 +42,7 @@
 | 28 | [round-22-lock-screen.md](./28-round-22-lock-screen.md) | 第 22 轮 | 锁屏；解锁走当前账号密码；不清会话 |
 | 29 | [round-23-profile.md](./29-round-23-profile.md) | 第 23 轮 | 个人中心；静态路由；看会话不是系统用户 |
 | 30 | [round-24-profile-name.md](./30-round-24-profile-name.md) | 第 24 轮 | 改显示名；只写登录会话，不写系统用户表 |
+| 31 | [round-25-menu-search.md](./31-round-25-menu-search.md) | 第 25 轮 | 菜单搜索；Ctrl+K；hideInMenu 能搜到 |
 
 后续轮次会继续加 `08-…`、`09-…`，并在本表追加一行。已拍板的结论不要默默改掉；必须修正时在原文加短注并改决策表（第 1 轮已按此修正：第 2 轮改用 `create-vue`，见 [03](./03-migration-roadmap.md)）。
 

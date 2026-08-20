@@ -27,17 +27,49 @@ export function canSeeRoute(route: RouteRecordRaw, viewer: AccessViewer) {
   return canAccessRoute(route, viewer)
 }
 
+/** 搜索可以找到 hideInMenu 的页（个人中心），仍要过权限 */
+export function canSearchRoute(route: RouteRecordRaw, viewer: AccessViewer) {
+  if (!route.meta?.title) {
+    return false
+  }
+  return canAccessRoute(route, viewer)
+}
+
+function toItem(route: RouteRecordRaw): AccessMenuItem {
+  return {
+    group: route.meta?.group,
+    icon: route.meta?.icon,
+    name: String(route.name),
+    order: route.meta?.order ?? 0,
+    title: route.meta?.title ?? String(route.name),
+  }
+}
+
 export function toMenuItems(routes: RouteRecordRaw[], viewer: AccessViewer): AccessMenuItem[] {
   return routes
     .filter((route) => canSeeRoute(route, viewer))
-    .map((route) => ({
-      group: route.meta?.group,
-      icon: route.meta?.icon,
-      name: String(route.name),
-      order: route.meta?.order ?? 0,
-      title: route.meta?.title ?? String(route.name),
-    }))
+    .map(toItem)
     .sort((a, b) => a.order - b.order)
+}
+
+export function toSearchItems(routes: RouteRecordRaw[], viewer: AccessViewer): AccessMenuItem[] {
+  return routes
+    .filter((route) => canSearchRoute(route, viewer))
+    .map(toItem)
+    .sort((a, b) => a.order - b.order)
+}
+
+export function filterSearchItems(items: AccessMenuItem[], keyword: string): AccessMenuItem[] {
+  const query = keyword.trim().toLowerCase()
+  if (!query) return items
+  return items.filter((item) => {
+    const group = item.group?.toLowerCase() ?? ''
+    return (
+      item.title.toLowerCase().includes(query) ||
+      item.name.toLowerCase().includes(query) ||
+      group.includes(query)
+    )
+  })
 }
 
 export function groupMenuItems(items: AccessMenuItem[]): AccessMenuGroup[] {
@@ -54,14 +86,18 @@ export function groupMenuItems(items: AccessMenuItem[]): AccessMenuGroup[] {
   return groups
 }
 
-export function useAccessMenu() {
+function currentViewer(): AccessViewer {
   const authStore = useAuthStore()
+  return {
+    menuCodes: authStore.userInfo?.menuCodes ?? [],
+    roles: authStore.userInfo?.roles ?? [],
+  }
+}
 
-  return computed(() => {
-    const viewer: AccessViewer = {
-      menuCodes: authStore.userInfo?.menuCodes ?? [],
-      roles: authStore.userInfo?.roles ?? [],
-    }
-    return groupMenuItems(toMenuItems(layoutChildren, viewer))
-  })
+export function useAccessMenu() {
+  return computed(() => groupMenuItems(toMenuItems(layoutChildren, currentViewer())))
+}
+
+export function useSearchItems() {
+  return computed(() => toSearchItems(layoutChildren, currentViewer()))
 }

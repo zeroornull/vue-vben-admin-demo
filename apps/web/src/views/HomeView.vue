@@ -13,7 +13,7 @@ const isAdmin = computed(() => userInfo.value?.roles.includes('admin'))
 <template>
   <div class="page">
     <p>
-      个人中心只能改显示名。顶栏圆点和锁屏上的名字会跟着变。系统用户表里的 Alice 不会变。
+      顶栏「搜索」或 Ctrl+K 可跳页。个人中心不在侧栏里，但能搜到。没有权限的页不会出现。
     </p>
     <p v-access:role="'admin'">
       这段用 <code>v-access:role="'admin'"</code>，看的是登录角色，不是业务角色码 biz-admin。

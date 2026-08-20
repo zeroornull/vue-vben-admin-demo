@@ -1,6 +1,13 @@
 import { describe, expect, it } from 'vitest'
 
-import { canSeeRoute, groupMenuItems, toMenuItems } from '../access-menu'
+import {
+  canSearchRoute,
+  canSeeRoute,
+  filterSearchItems,
+  groupMenuItems,
+  toMenuItems,
+  toSearchItems,
+} from '../access-menu'
 import { staticLayoutNames } from '../routes'
 
 const viewer = { menuCodes: ['users', 'depts', 'roles', 'about'], roles: ['user'] }
@@ -67,5 +74,33 @@ describe('groupMenuItems', () => {
       viewer,
     )
     expect(item?.icon).toBe('users')
+  })
+})
+
+describe('canSearchRoute / filterSearchItems', () => {
+  it('includes hideInMenu pages that still have a title', () => {
+    const profile = { path: '/profile', name: 'profile', meta: { hideInMenu: true, title: '个人中心' } }
+    expect(canSeeRoute(profile, viewer)).toBe(false)
+    expect(canSearchRoute(profile, viewer)).toBe(true)
+  })
+
+  it('still hides pages the session cannot open', () => {
+    const about = { path: '/about', name: 'about', meta: { menuCode: 'about', roles: ['admin'], title: '关于' } }
+    expect(canSearchRoute(about, viewer)).toBe(false)
+    expect(canSearchRoute(about, admin)).toBe(true)
+  })
+
+  it('matches title, route name, or group', () => {
+    const items = toSearchItems(
+      [
+        { path: '/profile', name: 'profile', meta: { hideInMenu: true, order: 1, title: '个人中心' } },
+        { path: '/users', name: 'users', meta: { group: '系统', menuCode: 'users', order: 2, title: '用户' } },
+      ],
+      viewer,
+    )
+    expect(filterSearchItems(items, '个人').map((item) => item.name)).toEqual(['profile'])
+    expect(filterSearchItems(items, 'users').map((item) => item.name)).toEqual(['users'])
+    expect(filterSearchItems(items, '系统').map((item) => item.name)).toEqual(['users'])
+    expect(filterSearchItems(items, '没有').map((item) => item.name)).toEqual([])
   })
 })

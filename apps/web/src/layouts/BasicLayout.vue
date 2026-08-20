@@ -15,6 +15,7 @@ import { usePreferencesStore } from '@/stores/preferences'
 import { useTabsStore } from '@/stores/tabs'
 
 import AppBreadcrumb from './AppBreadcrumb.vue'
+import AppSearch from './AppSearch.vue'
 import AppTabs from './AppTabs.vue'
 import LockScreen from './LockScreen.vue'
 import UserMenu from './UserMenu.vue'
@@ -171,6 +172,7 @@ async function onLogout() {
         </button>
         <h1>{{ pageTitle }}</h1>
         <div class="user">
+          <AppSearch />
           <ThemeToggle />
           <UserMenu @lock="onLock" @logout="onLogout" />
         </div>
