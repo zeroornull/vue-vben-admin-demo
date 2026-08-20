@@ -1,6 +1,8 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
 
+import { publishSessionMessage, SESSION_LOCK_TYPE, SESSION_UNLOCK_TYPE } from '@/auth/session-broadcast'
+
 export const useLockStore = defineStore(
   'lock',
   () => {
@@ -15,12 +17,18 @@ export const useLockStore = defineStore(
       owner.value = username
     }
 
-    function lock() {
+    function lock(options?: { broadcast?: boolean }) {
       locked.value = true
+      if (options?.broadcast !== false) {
+        publishSessionMessage({ type: SESSION_LOCK_TYPE })
+      }
     }
 
-    function unlock() {
+    function unlock(options?: { broadcast?: boolean }) {
       locked.value = false
+      if (options?.broadcast !== false) {
+        publishSessionMessage({ type: SESSION_UNLOCK_TYPE })
+      }
     }
 
     function reset() {

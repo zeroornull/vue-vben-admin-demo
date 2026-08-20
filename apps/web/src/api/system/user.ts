@@ -18,3 +18,7 @@ export function updateUser(id: string, data: UserFormValues) {
 export function deleteUser(id: string) {
   return del<null>(`/system/user/${id}`)
 }
+
+export function deleteUsers(ids: string[]) {
+  return post<{ deleted: number }>('/system/user/batch-delete', { ids })
+}

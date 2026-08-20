@@ -2,7 +2,12 @@ import { ref } from 'vue'
 import { defineStore } from 'pinia'
 
 import { getUserInfoApi, loginApi, logoutApi, updateProfileApi, type LoginParams } from '@/api'
-import { publishSessionClear, shouldPublishSessionClear } from '@/auth/session-broadcast'
+import {
+  publishSessionClear,
+  publishSessionMessage,
+  SESSION_ADOPT_TYPE,
+  shouldPublishSessionClear,
+} from '@/auth/session-broadcast'
 import { useLockStore } from '@/stores/lock'
 import type { UserInfo } from '@/types/user'
 
@@ -30,6 +35,7 @@ export const useAuthStore = defineStore(
         userInfo.value = await getUserInfoApi()
         invalidateAccess()
         useLockStore().reset()
+        publishSessionMessage({ type: SESSION_ADOPT_TYPE })
         return userInfo.value
       } finally {
         loginLoading.value = false

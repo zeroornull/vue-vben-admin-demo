@@ -134,3 +134,20 @@ export function isUserNameTaken(
 ): boolean {
   return list.some((item) => item.name === name && item.id !== exceptId)
 }
+
+export const USER_BATCH_DELETE_MAX = 20
+
+export function normalizeUserIds(ids: unknown): string[] {
+  if (!Array.isArray(ids)) return []
+  return [...new Set(ids.map((id) => String(id).trim()).filter(Boolean))]
+}
+
+export function batchDeleteConfirmText(count: number): string {
+  return `确定删除选中的 ${count} 人？内存 mock，刷新后种子会回来。`
+}
+
+export function nextPageAfterDeletes(page: number, itemsOnPage: number, deletedOnPage: number): number {
+  if (page <= 1) return 1
+  if (itemsOnPage - deletedOnPage > 0) return page
+  return page - 1
+}

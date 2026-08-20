@@ -13,7 +13,7 @@ const isAdmin = computed(() => userInfo.value?.roles.includes('admin'))
 <template>
   <div class="page">
     <p>
-      换页会取消上一页还没回来的 GET，避免旧列表盖住新页。通知和检查更新不跟着取消。写操作不挂这个信号。
+      用户表能勾一批删。另一个标签锁屏或换账号登录，这个标签会跟上。核心迁移已经齐了，后面是边角。
     </p>
     <p v-access:role="'admin'">
       这段用 <code>v-access:role="'admin'"</code>，看的是登录角色，不是业务角色码 biz-admin。

@@ -1,12 +1,15 @@
 import { describe, expect, it } from 'vitest'
 
 import {
+  batchDeleteConfirmText,
   countUsersInDept,
   countUsersInRole,
   filterUsers,
   isUserNameTaken,
   matchesDeptScope,
   matchesRole,
+  nextPageAfterDeletes,
+  normalizeUserIds,
   paginateList,
   parseUserListQuery,
   queryUsers,
@@ -127,5 +130,15 @@ describe('isUserNameTaken', () => {
   it('ignores the current row when editing', () => {
     expect(isUserNameTaken(users, 'Alice')).toBe(true)
     expect(isUserNameTaken(users, 'Alice', '1')).toBe(false)
+  })
+})
+
+describe('normalizeUserIds / nextPageAfterDeletes', () => {
+  it('dedupes ids and steps back when the page is emptied', () => {
+    expect(normalizeUserIds(['u-1', ' u-1 ', '', 'u-2'])).toEqual(['u-1', 'u-2'])
+    expect(batchDeleteConfirmText(3)).toContain('3')
+    expect(nextPageAfterDeletes(2, 1, 1)).toBe(1)
+    expect(nextPageAfterDeletes(2, 3, 1)).toBe(2)
+    expect(nextPageAfterDeletes(1, 1, 1)).toBe(1)
   })
 })

@@ -14,6 +14,7 @@ import { passwordsMatch, readUnlockPassword } from '../src/auth/unlock.ts'
 import type { SystemDept } from '../src/views/depts/types.ts'
 import { auditSummary, type AuditAction, type AuditTarget } from '../src/views/audit/query.ts'
 import { validateProfileForm } from '../src/views/profile/query.ts'
+import { normalizeUserIds, USER_BATCH_DELETE_MAX } from '../src/views/users/query.ts'
 
 import { appendMockAudit, listMockAudit } from './audit-store.ts'
 import {
@@ -322,6 +323,34 @@ const mockMiddleware: Connect.NextHandleFunction = async (req, res, next) => {
 
         const search = new URL(url, 'http://local.invalid').searchParams
         sendJson(res, 200, { code: 0, data: listMockUsers(search), message: 'ok' })
+        return
+      }
+
+      if (req.method === 'POST' && path === '/api/system/user/batch-delete') {
+        if (!requireAction(req, res, 'user:delete')) return
+        const body = await readJson(req)
+        const ids = normalizeUserIds(body.ids)
+        if (!ids.length) {
+          sendJson(res, 200, { code: 1, data: null, message: '请选择要删除的用户' })
+          return
+        }
+        if (ids.length > USER_BATCH_DELETE_MAX) {
+          sendJson(res, 200, {
+            code: 1,
+            data: null,
+            message: `一次最多删 ${USER_BATCH_DELETE_MAX} 人`,
+          })
+          return
+        }
+        let deleted = 0
+        for (const id of ids) {
+          const name = mockUserName(id) ?? id
+          const result = deleteMockUser(id)
+          if ('error' in result) continue
+          recordAudit(actorName(req), 'delete', 'user', name)
+          deleted += 1
+        }
+        sendJson(res, 200, { code: 0, data: { deleted }, message: 'ok' })
         return
       }
 

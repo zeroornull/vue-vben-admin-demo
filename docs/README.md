@@ -75,6 +75,7 @@
 | 61 | [round-55-session-sync.md](./61-round-55-session-sync.md) | 第 55 轮 | 多标签清会话；BroadcastChannel |
 | 62 | [round-56-offline.md](./62-round-56-offline.md) | 第 56 轮 | 离线条；navigator.onLine；不 persist |
 | 63 | [round-57-page-abort.md](./63-round-57-page-abort.md) | 第 57 轮 | 换页取消 GET；AbortSignal；轮询跳过 |
+| 64 | [round-58-batch-session.md](./64-round-58-batch-session.md) | 第 58 轮 | 用户批量删除；多标签锁屏 / 接会话 |
 
 后续轮次会继续加 `08-…`、`09-…`，并在本表追加一行。已拍板的结论不要默默改掉；必须修正时在原文加短注并改决策表（第 1 轮已按此修正：第 2 轮改用 `create-vue`，见 [03](./03-migration-roadmap.md)）。
 

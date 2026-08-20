@@ -24,7 +24,7 @@ import { storeToRefs } from 'pinia'
 import { getDeptList } from '@/api/system/dept'
 import { getRoleList } from '@/api/system/role'
 import { useAccess } from '@/access/use-access'
-import { createUser, deleteUser, getUserList, updateUser } from '@/api/system/user'
+import { createUser, deleteUser, deleteUsers, getUserList, updateUser } from '@/api/system/user'
 import AntdPage from '@/components/AntdPage.vue'
 import type { UnsavedFormHandle } from '@/forms/use-unsaved'
 import { useTableColumnsStore } from '@/stores/table-columns'
@@ -51,6 +51,12 @@ import {
   userCsvRow,
   usersToCsv,
 } from './users/csv'
+import {
+  batchDeleteConfirmText,
+  nextPageAfterDeletes,
+  normalizeUserIds,
+  USER_BATCH_DELETE_MAX,
+} from './users/query'
 import type { SystemUser, UserFormValues, UserStatus } from './users/types'
 
 const loading = ref(false)
@@ -67,6 +73,7 @@ const pageSize = computed(() => tablePage.pageSizeOf('users'))
 const modalOpen = ref(false)
 const formModal = ref<UnsavedFormHandle | null>(null)
 const editing = ref<SystemUser | null>(null)
+const selectedKeys = ref<string[]>([])
 const query = reactive<{
   deptId: string | undefined
   name: string
@@ -80,6 +87,15 @@ const query = reactive<{
 })
 
 const { hasAnyAction } = useAccess()
+const rowSelection = computed(() => {
+  if (!hasAnyAction('user:delete')) return undefined
+  return {
+    selectedRowKeys: selectedKeys.value,
+    onChange(keys: (string | number)[]) {
+      selectedKeys.value = normalizeUserIds(keys).slice(0, USER_BATCH_DELETE_MAX)
+    },
+  }
+})
 const tableColumns = useTableColumnsStore()
 const { userColumns } = storeToRefs(tableColumns)
 const names = computed(() => deptNameById(flattenDepts(catalog.value)))
@@ -261,6 +277,25 @@ function roleLabel(roleIds: string[]) {
   return roleIds.map((id) => roleNames.value.get(id) ?? id).join('、')
 }
 
+function onBatchDelete() {
+  const ids = normalizeUserIds(selectedKeys.value)
+  if (!ids.length) return
+  Modal.confirm({
+    content: batchDeleteConfirmText(ids.length),
+    okText: '删除',
+    okType: 'danger',
+    title: '批量删除',
+    async onOk() {
+      const result = await deleteUsers(ids)
+      message.success(`已删除 ${result.deleted} 人`)
+      const deletedOnPage = items.value.filter((item) => ids.includes(item.id)).length
+      page.value = nextPageAfterDeletes(page.value, items.value.length, deletedOnPage)
+      selectedKeys.value = []
+      await load()
+    },
+  })
+}
+
 function onDelete(row: SystemUser) {
   Modal.confirm({
     content: `确定删除 ${row.name}？内存 mock，刷新页面后种子数据会回来。`,
@@ -270,9 +305,8 @@ function onDelete(row: SystemUser) {
     async onOk() {
       await deleteUser(row.id)
       message.success('已删除')
-      if (items.value.length === 1 && page.value > 1) {
-        page.value -= 1
-      }
+      selectedKeys.value = selectedKeys.value.filter((id) => id !== row.id)
+      page.value = nextPageAfterDeletes(page.value, items.value.length, 1)
       await load()
     },
   })
@@ -352,6 +386,14 @@ onMounted(async () => {
             </template>
             <Button>列</Button>
           </Popover>
+          <Button
+            v-access="'user:delete'"
+            :disabled="!selectedKeys.length"
+            danger
+            @click="onBatchDelete"
+          >
+            删除选中{{ selectedKeys.length ? ` (${selectedKeys.length})` : '' }}
+          </Button>
           <Button v-access="'user:create'" :loading="importing" @click="pickImportFile">导入</Button>
           <Button v-access="'user:create'" type="primary" @click="onCreate">新建</Button>
         </Space>
@@ -370,6 +412,7 @@ onMounted(async () => {
         showTotal: (count) => `共 ${count} 条`,
         total,
       }"
+      :row-selection="rowSelection"
       row-key="id"
       @change="onTableChange"
     >
