@@ -1,5 +1,7 @@
 import { isActionCode, isMenuCode } from '../../access/catalog'
 import { grantParentMenus, sanitizeActionCodes, uniqueCodes } from '../../access/resolve'
+import { BATCH_DELETE_MAX, batchDeleteConfirmText } from '../../tables/batch'
+import { parseSortParams, sortListByQuery, TABLE_SORT_FIELDS } from '../../tables/sort'
 
 import type {
   FormValidation,
@@ -41,7 +43,7 @@ export function parseRoleListQuery(search: URLSearchParams): RoleListQuery {
   const statusRaw = search.get('status')
   const status: UserStatus | '' =
     statusRaw === '0' || statusRaw === '1' ? (Number(statusRaw) as UserStatus) : ''
-  return { code, name, page, pageSize, status }
+  return { code, name, page, pageSize, status, ...parseSortParams(search, TABLE_SORT_FIELDS.roles) }
 }
 
 export function filterRoles(
@@ -76,7 +78,8 @@ export function paginateList<T>(
 
 export function queryRoles(list: SystemRole[], query: RoleListQuery): RoleListResult {
   const filtered = filterRoles(list, query)
-  const page = paginateList(filtered, query.page, query.pageSize)
+  const sorted = sortListByQuery(filtered, query, TABLE_SORT_FIELDS.roles)
+  const page = paginateList(sorted, query.page, query.pageSize)
   return { items: page.items, total: page.total }
 }
 
@@ -87,6 +90,12 @@ export function roleNameById(roles: SystemRole[]): Map<string, string> {
 export function roleDeleteBlocker(userCount: number): string | null {
   if (userCount > 0) return '请先移走拥有该角色的用户'
   return null
+}
+
+export const ROLE_BATCH_DELETE_MAX = BATCH_DELETE_MAX
+
+export function batchDeleteRolesConfirmText(count: number): string {
+  return batchDeleteConfirmText(count, '个角色')
 }
 
 export function isRoleNameTaken(

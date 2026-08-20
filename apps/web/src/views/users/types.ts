@@ -24,6 +24,8 @@ export type UserListQuery = {
   page: number
   pageSize: number
   roleId: string
+  sortField?: string
+  sortOrder?: string
   status: UserStatus | ''
 }
 

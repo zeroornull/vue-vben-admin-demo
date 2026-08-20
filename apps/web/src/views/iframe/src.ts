@@ -1,5 +1,15 @@
 export const IFRAME_SANDBOX = 'allow-scripts allow-popups allow-forms'
 
+export function iframeReloadKey(src: string, epoch: number): string {
+  return `${src}#${epoch}`
+}
+
+export function canOpenIframeExternally(src: string | null): boolean {
+  if (!src) return false
+  if (src.startsWith('/') && !src.startsWith('//')) return true
+  return src.startsWith('https://') || src.startsWith('http://')
+}
+
 export function safeIframeSrc(value: unknown): string | null {
   if (typeof value !== 'string') return null
   const trimmed = value.trim()

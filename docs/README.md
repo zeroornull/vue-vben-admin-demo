@@ -76,6 +76,15 @@
 | 62 | [round-56-offline.md](./62-round-56-offline.md) | 第 56 轮 | 离线条；navigator.onLine；不 persist |
 | 63 | [round-57-page-abort.md](./63-round-57-page-abort.md) | 第 57 轮 | 换页取消 GET；AbortSignal；轮询跳过 |
 | 64 | [round-58-batch-session.md](./64-round-58-batch-session.md) | 第 58 轮 | 用户批量删除；多标签锁屏 / 接会话 |
+| 65 | [round-59-table-sort.md](./65-round-59-table-sort.md) | 第 59 轮 | 表格排序 persist；操作日志日期范围 |
+| 66 | [round-60-batch-recents.md](./66-round-60-batch-recents.md) | 第 60 轮 | 角色/部门/外链批量删除；搜索最近项 |
+| 67 | [round-61-search-csv.md](./67-round-61-search-csv.md) | 第 61 轮 | 搜索 ↑↓ 选择；角色 CSV 导出 |
+| 68 | [round-62-csv-home.md](./68-round-62-csv-home.md) | 第 62 轮 | 外链/日志 CSV；搜索 Home/End |
+| 69 | [round-63-dept-digits.md](./69-round-63-dept-digits.md) | 第 63 轮 | 部门拍扁 CSV；搜索 1-9 |
+| 70 | [round-64-dept-import.md](./70-round-64-dept-import.md) | 第 64 轮 | 部门 CSV 导入；搜索 0 |
+| 71 | [round-65-role-link-import.md](./71-round-65-role-link-import.md) | 第 65 轮 | 角色/外链 CSV 导入 |
+| 72 | [round-66-table-columns.md](./72-round-66-table-columns.md) | 第 66 轮 | 角色/外链/日志列显隐 |
+| 73 | [round-67-expand-iframe.md](./73-round-67-expand-iframe.md) | 第 67 轮 | 部门树展开 persist；iframe 重载 |
 
 后续轮次会继续加 `08-…`、`09-…`，并在本表追加一行。已拍板的结论不要默默改掉；必须修正时在原文加短注并改决策表（第 1 轮已按此修正：第 2 轮改用 `create-vue`，见 [03](./03-migration-roadmap.md)）。
 

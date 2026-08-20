@@ -9,7 +9,7 @@ export const SHORTCUTS: readonly ShortcutItem[] = [
   {
     combo: 'Ctrl+K',
     id: 'search',
-    note: 'Mac 用 ⌘K。全屏后也能开。',
+    note: 'Mac 用 ⌘K。↑↓ / Home/End 选，空着时 1-9 跳第几条，0 跳第 10 条。',
     title: '搜索菜单',
   },
   {

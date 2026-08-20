@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { safeIframeSrc } from '../src'
+import { canOpenIframeExternally, iframeReloadKey, safeIframeSrc } from '../src'
 
 describe('safeIframeSrc', () => {
   it('keeps same-origin paths and http(s) urls', () => {
@@ -15,5 +15,9 @@ describe('safeIframeSrc', () => {
     expect(safeIframeSrc('//evil.com')).toBeNull()
     expect(safeIframeSrc('https://user:pass@evil.com')).toBeNull()
     expect(safeIframeSrc('')).toBeNull()
+    expect(canOpenIframeExternally('/embed-demo.html')).toBe(true)
+    expect(canOpenIframeExternally('//evil.com')).toBe(false)
+    expect(canOpenIframeExternally('javascript:alert(1)')).toBe(false)
+    expect(iframeReloadKey('/x', 2)).toBe('/x#2')
   })
 })

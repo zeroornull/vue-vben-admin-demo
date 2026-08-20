@@ -4,12 +4,10 @@ defineOptions({ name: 'UsersView' })
 import type { TableColumnsType, TablePaginationConfig } from 'ant-design-vue'
 import {
   Button,
-  Checkbox,
   Form,
   FormItem,
   Input,
   Modal,
-  Popover,
   Select,
   Space,
   Table,
@@ -19,28 +17,26 @@ import {
 } from 'ant-design-vue'
 import { computed, onMounted, reactive, ref } from 'vue'
 import { onBeforeRouteLeave } from 'vue-router'
-import { storeToRefs } from 'pinia'
 
 import { getDeptList } from '@/api/system/dept'
 import { getRoleList } from '@/api/system/role'
 import { useAccess } from '@/access/use-access'
 import { createUser, deleteUser, deleteUsers, getUserList, updateUser } from '@/api/system/user'
 import AntdPage from '@/components/AntdPage.vue'
+import TableColumnPicker from '@/components/TableColumnPicker.vue'
 import type { UnsavedFormHandle } from '@/forms/use-unsaved'
 import { useTableColumnsStore } from '@/stores/table-columns'
 import { useTablePageStore } from '@/stores/table-page'
-import { nextTablePage, TABLE_PAGE_SIZE_OPTIONS } from '@/tables/page-size'
+import { useTableSortStore } from '@/stores/table-sort'
+import { TABLE_PAGE_SIZE_OPTIONS } from '@/tables/page-size'
+import { nextTableQuery, TABLE_SORT_FIELDS, tableColumnSort } from '@/tables/sort'
 import { deptNameById, flattenDepts, toParentOptions } from '@/views/depts/query'
 import type { SystemDept } from '@/views/depts/types'
 import { roleNameById } from '@/views/roles/query'
 import type { SystemRole } from '@/views/roles/types'
 
-import {
-  USER_COLUMN_LABELS,
-  USER_OPTIONAL_COLUMNS,
-  isUserColumnVisible,
-  userColumnKey,
-} from './users/columns'
+import { tableColumnKey } from '@/tables/columns'
+
 import UserFormModal from './users/UserFormModal.vue'
 import {
   csvFileName,
@@ -69,7 +65,9 @@ const roleCatalog = ref<SystemRole[]>([])
 const total = ref(0)
 const page = ref(1)
 const tablePage = useTablePageStore()
+const tableSort = useTableSortStore()
 const pageSize = computed(() => tablePage.pageSizeOf('users'))
+const sort = computed(() => tableSort.sortOf('users'))
 const modalOpen = ref(false)
 const formModal = ref<UnsavedFormHandle | null>(null)
 const editing = ref<SystemUser | null>(null)
@@ -97,22 +95,21 @@ const rowSelection = computed(() => {
   }
 })
 const tableColumns = useTableColumnsStore()
-const { userColumns } = storeToRefs(tableColumns)
 const names = computed(() => deptNameById(flattenDepts(catalog.value)))
 const roleNames = computed(() => roleNameById(roleCatalog.value))
 
 const columns = computed<TableColumnsType<SystemUser>>(() => {
+  const allowed = TABLE_SORT_FIELDS.users
+  const current = sort.value
   const base: TableColumnsType<SystemUser> = [
-    { dataIndex: 'name', title: '用户名' },
+    { dataIndex: 'name', title: '用户名', ...tableColumnSort('name', allowed, current) },
     { dataIndex: 'deptId', title: '部门', width: 140 },
     { dataIndex: 'roleIds', title: '业务角色', width: 180 },
-    { dataIndex: 'status', title: '状态', width: 100 },
+    { dataIndex: 'status', title: '状态', width: 100, ...tableColumnSort('status', allowed, current) },
     { dataIndex: 'remark', title: '备注' },
-    { dataIndex: 'createTime', title: '创建时间', width: 180 },
+    { dataIndex: 'createTime', title: '创建时间', width: 180, ...tableColumnSort('createTime', allowed, current) },
   ]
-  const visible = base.filter((column) =>
-    isUserColumnVisible(userColumns.value, userColumnKey(column)),
-  )
+  const visible = base.filter((column) => tableColumns.isVisible('users', tableColumnKey(column)))
   if (!hasAnyAction('user:update', 'user:delete')) return visible
   return [...visible, { key: 'actions', title: '操作', width: 160 }]
 })
@@ -135,6 +132,8 @@ async function load() {
       page: page.value,
       pageSize: pageSize.value,
       roleId: query.roleId ?? '',
+      sortField: sort.value?.field ?? '',
+      sortOrder: sort.value?.order ?? '',
       status: query.status === 0 || query.status === 1 ? query.status : '',
     })
     items.value = result.items
@@ -165,6 +164,8 @@ async function onExport() {
       page: 1,
       pageSize: USER_CSV_MAX_ROWS,
       roleId: query.roleId ?? '',
+      sortField: sort.value?.field ?? '',
+      sortOrder: sort.value?.order ?? '',
       status: query.status === 0 || query.status === 1 ? query.status : '',
     })
     const csv = usersToCsv(
@@ -234,10 +235,18 @@ function onReset() {
   onSearch()
 }
 
-function onTableChange(pagination: TablePaginationConfig) {
-  const next = nextTablePage(page.value, pageSize.value, pagination.current, pagination.pageSize)
+function onTableChange(pagination: TablePaginationConfig, _filters: unknown, sorter: unknown) {
+  const next = nextTableQuery(
+    page.value,
+    pageSize.value,
+    sort.value,
+    pagination,
+    sorter,
+    TABLE_SORT_FIELDS.users,
+  )
   page.value = next.page
   tablePage.setPageSize('users', next.pageSize)
+  tableSort.setSort('users', next.sort)
   void load()
 }
 
@@ -370,22 +379,7 @@ onMounted(async () => {
           <Button html-type="submit" type="primary">查询</Button>
           <Button @click="onReset">重置</Button>
           <Button :loading="exporting" @click="onExport">导出</Button>
-          <Popover placement="bottomLeft" trigger="click">
-            <template #content>
-              <div class="col-panel">
-                <Checkbox
-                  v-for="key in USER_OPTIONAL_COLUMNS"
-                  :key="key"
-                  :checked="isUserColumnVisible(userColumns, key)"
-                  @change="tableColumns.toggleUser(key)"
-                >
-                  {{ USER_COLUMN_LABELS[key] }}
-                </Checkbox>
-                <Button type="link" @click="tableColumns.resetUsers">恢复默认</Button>
-              </div>
-            </template>
-            <Button>列</Button>
-          </Popover>
+          <TableColumnPicker table="users" />
           <Button
             v-access="'user:delete'"
             :disabled="!selectedKeys.length"
@@ -456,10 +450,3 @@ onMounted(async () => {
   </AntdPage>
 </template>
 
-<style scoped>
-.col-panel {
-  display: grid;
-  gap: 0.35rem;
-  min-width: 8rem;
-}
-</style>

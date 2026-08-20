@@ -6,6 +6,7 @@ import {
   collectDescendantIds,
   deptDeleteBlocker,
   deptNameById,
+  orderDeptIdsForDelete,
   disabledParentIds,
   filterDeptTree,
   flattenDepts,
@@ -90,6 +91,10 @@ describe('deptDeleteBlocker / deptNameById', () => {
 
   it('maps id to name', () => {
     expect(deptNameById(flat).get('b')).toBe('研发')
+  })
+
+  it('deletes deeper nodes first so a parent can follow its children', () => {
+    expect(orderDeptIdsForDelete(['a', 'c', 'b'], flat)).toEqual(['c', 'b', 'a'])
   })
 })
 

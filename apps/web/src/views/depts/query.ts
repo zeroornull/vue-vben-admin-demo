@@ -1,3 +1,5 @@
+import { BATCH_DELETE_MAX, batchDeleteConfirmText, normalizeIds } from '../../tables/batch'
+
 import type {
   DeptFormValues,
   DeptListQuery,
@@ -146,6 +148,42 @@ export function deptDeleteBlocker(hasChildren: boolean, userCount: number): stri
   if (hasChildren) return '请先删除下级部门'
   if (userCount > 0) return '请先移走该部门下的用户'
   return null
+}
+
+export const DEPT_BATCH_DELETE_MAX = BATCH_DELETE_MAX
+
+export function batchDeleteDeptsConfirmText(count: number): string {
+  return batchDeleteConfirmText(count, '个部门')
+}
+
+export function deptDepthMap(flat: { id: string; parentId: string | null }[]): Map<string, number> {
+  const parentById = new Map(flat.map((item) => [item.id, item.parentId]))
+  const depths = new Map<string, number>()
+  const depthOf = (id: string, stack: Set<string>): number => {
+    const cached = depths.get(id)
+    if (cached != null) return cached
+    if (stack.has(id)) return 0
+    const parent = parentById.get(id)
+    if (!parent || !parentById.has(parent)) {
+      depths.set(id, 0)
+      return 0
+    }
+    stack.add(id)
+    const next = depthOf(parent, stack) + 1
+    stack.delete(id)
+    depths.set(id, next)
+    return next
+  }
+  for (const item of flat) depthOf(item.id, new Set())
+  return depths
+}
+
+export function orderDeptIdsForDelete(
+  ids: unknown,
+  flat: { id: string; parentId: string | null }[],
+): string[] {
+  const depths = deptDepthMap(flat)
+  return normalizeIds(ids).sort((left, right) => (depths.get(right) ?? 0) - (depths.get(left) ?? 0))
 }
 
 export function validateDeptForm(values: DeptFormValues): FormValidation {

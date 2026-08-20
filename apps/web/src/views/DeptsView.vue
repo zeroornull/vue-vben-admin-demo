@@ -7,15 +7,39 @@ import { computed, onMounted, reactive, ref } from 'vue'
 import { onBeforeRouteLeave } from 'vue-router'
 
 import { useAccess } from '@/access/use-access'
-import { createDept, deleteDept, getDeptList, updateDept } from '@/api/system/dept'
+import { createDept, deleteDept, deleteDepts, getDeptList, updateDept } from '@/api/system/dept'
 import AntdPage from '@/components/AntdPage.vue'
 import type { UnsavedFormHandle } from '@/forms/use-unsaved'
 
+import { useTableExpandStore } from '@/stores/table-expand'
+import { batchDeleteDoneText, normalizeIds } from '@/tables/batch'
+import { csvFileName } from '@/tables/csv'
+
+import {
+  addDeptToLookup,
+  DEPT_CSV_MAX_ROWS,
+  deptLookupFromCatalog,
+  deptsForCsv,
+  deptsToCsv,
+  importCsvSummary,
+  orderDeptDraftsForImport,
+  parseDeptCsv,
+  resolveDeptDraft,
+} from './depts/csv'
 import DeptFormModal from './depts/DeptFormModal.vue'
-import { filterDeptTree, flattenDepts } from './depts/query'
+import {
+  batchDeleteDeptsConfirmText,
+  DEPT_BATCH_DELETE_MAX,
+  filterDeptTree,
+  flattenDepts,
+  orderDeptIdsForDelete,
+} from './depts/query'
 import type { DeptFormValues, SystemDept, UserStatus } from './depts/types'
 
 const loading = ref(false)
+const exporting = ref(false)
+const importing = ref(false)
+const fileInput = ref<HTMLInputElement | null>(null)
 const catalog = ref<SystemDept[]>([])
 const modalOpen = ref(false)
 const formModal = ref<UnsavedFormHandle | null>(null)
@@ -27,6 +51,18 @@ const query = reactive<{ name: string; status: UserStatus | undefined }>({
 })
 
 const { hasAnyAction } = useAccess()
+const tableExpand = useTableExpandStore()
+const selectedKeys = ref<string[]>([])
+const rowSelection = computed(() => {
+  if (!hasAnyAction('dept:delete')) return undefined
+  return {
+    checkStrictly: true,
+    selectedRowKeys: selectedKeys.value,
+    onChange(keys: (string | number)[]) {
+      selectedKeys.value = normalizeIds(keys).slice(0, DEPT_BATCH_DELETE_MAX)
+    },
+  }
+})
 
 const tree = computed(() =>
   filterDeptTree(catalog.value, {
@@ -48,6 +84,13 @@ const columns = computed<TableColumnsType<SystemDept>>(() => {
 })
 
 const flat = computed(() => flattenDepts(catalog.value))
+const allIds = computed(() => flat.value.map((item) => item.id))
+const visibleIds = computed(() => flattenDepts(tree.value).map((item) => item.id))
+const expandedKeys = computed(() => tableExpand.keysOf('depts', allIds.value))
+
+function onExpandedRowsChange(keys: (string | number)[]) {
+  tableExpand.setKeys('depts', keys, visibleIds.value, allIds.value)
+}
 
 async function load() {
   loading.value = true
@@ -63,6 +106,76 @@ async function load() {
 function onReset() {
   query.name = ''
   query.status = undefined
+}
+
+function downloadCsv(csv: string, filename: string) {
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' })
+  const url = URL.createObjectURL(blob)
+  const link = document.createElement('a')
+  link.href = url
+  link.download = filename
+  link.click()
+  URL.revokeObjectURL(url)
+}
+
+function onExport() {
+  exporting.value = true
+  try {
+    const result = deptsForCsv(tree.value, catalog.value, DEPT_CSV_MAX_ROWS)
+    downloadCsv(deptsToCsv(result.rows), csvFileName('depts', new Date()))
+    if (result.total > result.rows.length) {
+      message.warning(`只导出了前 ${result.rows.length} 条，筛选共 ${result.total} 条`)
+    } else {
+      message.success(`已导出 ${result.rows.length} 条`)
+    }
+  } finally {
+    exporting.value = false
+  }
+}
+
+function pickImportFile() {
+  fileInput.value?.click()
+}
+
+async function onImportFile(event: Event) {
+  const input = event.target as HTMLInputElement
+  const file = input.files?.[0]
+  input.value = ''
+  if (!file || !hasAnyAction('dept:create')) return
+  importing.value = true
+  try {
+    const parsed = parseDeptCsv(await file.text())
+    const lookup = deptLookupFromCatalog(catalog.value)
+    let created = 0
+    const failed = [...parsed.rejected]
+    for (const draft of orderDeptDraftsForImport(parsed.drafts)) {
+      const resolved = resolveDeptDraft(draft, lookup)
+      if (!resolved.ok) {
+        failed.push({ line: draft.line, message: resolved.message })
+        continue
+      }
+      try {
+        const dept = await createDept(resolved.value, {
+          skipErrorToast: true,
+          skipLoadingBar: true,
+        })
+        created += 1
+        addDeptToLookup(lookup, dept)
+      } catch (error) {
+        failed.push({
+          line: draft.line,
+          message: error instanceof Error ? error.message : '创建失败',
+        })
+      }
+    }
+    if (created) await load()
+    if (failed.length) message.warning(importCsvSummary(created, failed))
+    else message.success(importCsvSummary(created, failed))
+  } catch {
+    // 读文件失败少见；接口失败已记进 failed
+  } finally {
+    importing.value = false
+  }
 }
 
 function onCreate() {
@@ -99,6 +212,23 @@ function toDept(record: object): SystemDept {
   return record as SystemDept
 }
 
+function onBatchDelete() {
+  const ids = orderDeptIdsForDelete(selectedKeys.value, flat.value)
+  if (!ids.length) return
+  Modal.confirm({
+    content: batchDeleteDeptsConfirmText(ids.length),
+    okText: '删除',
+    okType: 'danger',
+    title: '批量删除',
+    async onOk() {
+      const result = await deleteDepts(ids)
+      message.success(batchDeleteDoneText(result.deleted, '个部门', result.skipped))
+      selectedKeys.value = []
+      await load()
+    },
+  })
+}
+
 function onDelete(row: SystemDept) {
   if (flat.value.some((item) => item.parentId === row.id)) {
     message.warning('请先删除下级部门')
@@ -116,6 +246,7 @@ function onDelete(row: SystemDept) {
     async onOk() {
       await deleteDept(row.id)
       message.success('已删除')
+      selectedKeys.value = selectedKeys.value.filter((id) => id !== row.id)
       await load()
     },
   })
@@ -153,6 +284,16 @@ onMounted(() => {
       <FormItem>
         <Space>
           <Button @click="onReset">重置</Button>
+          <Button :loading="exporting" @click="onExport">导出</Button>
+          <Button v-access="'dept:create'" :loading="importing" @click="pickImportFile">导入</Button>
+          <Button
+            v-access="'dept:delete'"
+            :disabled="!selectedKeys.length"
+            danger
+            @click="onBatchDelete"
+          >
+            删除选中{{ selectedKeys.length ? ` (${selectedKeys.length})` : '' }}
+          </Button>
           <Button v-access="'dept:create'" type="primary" @click="onCreate">新建</Button>
         </Space>
       </FormItem>
@@ -164,8 +305,10 @@ onMounted(() => {
       :data-source="tree"
       :loading="loading"
       :pagination="false"
-      default-expand-all-rows
+      :expanded-row-keys="expandedKeys"
       row-key="id"
+      @expandedRowsChange="onExpandedRowsChange"
+      :row-selection="rowSelection"
     >
       <template #bodyCell="{ column, record }">
         <template v-if="column.dataIndex === 'userCount'">
@@ -185,6 +328,14 @@ onMounted(() => {
         </template>
       </template>
     </Table>
+
+    <input
+      ref="fileInput"
+      accept=".csv,text/csv"
+      hidden
+      type="file"
+      @change="onImportFile"
+    />
 
     <DeptFormModal
       ref="formModal"

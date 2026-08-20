@@ -1,4 +1,6 @@
 import { allMenuCodes } from '../../access/catalog'
+import { BATCH_DELETE_MAX, batchDeleteConfirmText } from '../../tables/batch'
+import { parseSortParams, sortListByQuery, TABLE_SORT_FIELDS } from '../../tables/sort'
 import { safeIframeSrc } from '../iframe/src'
 
 export type EmbedLink = {
@@ -22,6 +24,8 @@ export type LinkListQuery = {
   name: string
   page: number
   pageSize: number
+  sortField?: string
+  sortOrder?: string
   status: 0 | 1 | ''
 }
 
@@ -102,7 +106,7 @@ export function parseLinkListQuery(search: URLSearchParams): LinkListQuery {
   const code = (search.get('code') ?? '').trim()
   const statusRaw = search.get('status')
   const status = statusRaw === '0' || statusRaw === '1' ? (Number(statusRaw) as 0 | 1) : ''
-  return { code, name, page, pageSize, status }
+  return { code, name, page, pageSize, status, ...parseSortParams(search, TABLE_SORT_FIELDS.links) }
 }
 
 export function queryLinks(items: EmbedLink[], query: LinkListQuery): LinkListResult {
@@ -114,10 +118,11 @@ export function queryLinks(items: EmbedLink[], query: LinkListQuery): LinkListRe
     if (query.status !== '' && item.status !== query.status) return false
     return true
   })
+  const sorted = sortListByQuery(filtered, query, TABLE_SORT_FIELDS.links)
   const start = (query.page - 1) * query.pageSize
   return {
-    items: filtered.slice(start, start + query.pageSize),
-    total: filtered.length,
+    items: sorted.slice(start, start + query.pageSize),
+    total: sorted.length,
   }
 }
 
@@ -139,6 +144,12 @@ export function extraLinkMenuItems(
 
 export function linkTitleFor(links: EmbedLink[], code: string): string {
   return links.find((item) => item.code === code && item.status === 1)?.title ?? ''
+}
+
+export const LINK_BATCH_DELETE_MAX = BATCH_DELETE_MAX
+
+export function batchDeleteLinksConfirmText(count: number): string {
+  return batchDeleteConfirmText(count, '条外链')
 }
 
 export function linkSrcFor(links: EmbedLink[], code: string): string | null {

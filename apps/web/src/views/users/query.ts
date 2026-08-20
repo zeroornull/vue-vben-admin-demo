@@ -1,3 +1,6 @@
+import { BATCH_DELETE_MAX, nextPageAfterDeletes, normalizeIds } from '../../tables/batch'
+import { parseSortParams, sortListByQuery, TABLE_SORT_FIELDS } from '../../tables/sort'
+
 import type {
   FormValidation,
   SystemUser,
@@ -46,7 +49,7 @@ export function parseUserListQuery(search: URLSearchParams): UserListQuery {
   const roleId = (search.get('roleId') ?? '').trim()
   const statusRaw = search.get('status')
   const status: UserStatus | '' = statusRaw === '0' || statusRaw === '1' ? Number(statusRaw) as UserStatus : ''
-  return { deptId, name, page, pageSize, roleId, status }
+  return { deptId, name, page, pageSize, roleId, status, ...parseSortParams(search, TABLE_SORT_FIELDS.users) }
 }
 
 export function matchesDeptScope(
@@ -103,7 +106,8 @@ export function queryUsers(
   descendantIds: readonly string[] = [],
 ): UserListResult {
   const filtered = filterUsers(list, query, descendantIds)
-  const page = paginateList(filtered, query.page, query.pageSize)
+  const sorted = sortListByQuery(filtered, query, TABLE_SORT_FIELDS.users)
+  const page = paginateList(sorted, query.page, query.pageSize)
   return { items: page.items, total: page.total }
 }
 
@@ -135,19 +139,10 @@ export function isUserNameTaken(
   return list.some((item) => item.name === name && item.id !== exceptId)
 }
 
-export const USER_BATCH_DELETE_MAX = 20
-
-export function normalizeUserIds(ids: unknown): string[] {
-  if (!Array.isArray(ids)) return []
-  return [...new Set(ids.map((id) => String(id).trim()).filter(Boolean))]
-}
+export const USER_BATCH_DELETE_MAX = BATCH_DELETE_MAX
+export const normalizeUserIds = normalizeIds
+export { nextPageAfterDeletes }
 
 export function batchDeleteConfirmText(count: number): string {
   return `确定删除选中的 ${count} 人？内存 mock，刷新后种子会回来。`
-}
-
-export function nextPageAfterDeletes(page: number, itemsOnPage: number, deletedOnPage: number): number {
-  if (page <= 1) return 1
-  if (itemsOnPage - deletedOnPage > 0) return page
-  return page - 1
 }

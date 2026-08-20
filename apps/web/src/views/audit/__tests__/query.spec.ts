@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 
 import {
   auditSummary,
+  matchesAuditAt,
   parseAuditListQuery,
   prependAudit,
   queryAudit,
@@ -57,10 +58,35 @@ describe('audit query', () => {
     const search = new URLSearchParams('actor=vb&target=user&page=1&pageSize=10')
     expect(parseAuditListQuery(search)).toEqual({
       actor: 'vb',
+      from: '',
       page: 1,
       pageSize: 10,
+      sortField: '',
+      sortOrder: '',
       target: 'user',
+      to: '',
     })
     expect(queryAudit(items, parseAuditListQuery(search)).items.map((item) => item.id)).toEqual(['1'])
+  })
+
+  it('filters by calendar day and sorts the remaining rows', () => {
+    expect(matchesAuditAt('2026-08-19 18:00:00', '2026-08-20', '')).toBe(false)
+    expect(matchesAuditAt('2026-08-20 09:10:00', '2026-08-20', '2026-08-20')).toBe(true)
+    expect(matchesAuditAt('2026-08-20 09:10:00', '2026-08-21', '2026-08-19')).toBe(true)
+    const items = [
+      row('1', { at: '2026-08-19 18:00:00', actor: 'admin' }),
+      row('2', { at: '2026-08-20 09:10:00', actor: 'vben' }),
+      row('3', { at: '2026-08-21 08:00:00', actor: 'ada' }),
+    ]
+    const search = new URLSearchParams(
+      'from=2026-08-19&to=2026-08-20&sortField=actor&sortOrder=ascend&page=1&pageSize=10',
+    )
+    expect(parseAuditListQuery(search)).toMatchObject({
+      from: '2026-08-19',
+      sortField: 'actor',
+      sortOrder: 'ascend',
+      to: '2026-08-20',
+    })
+    expect(queryAudit(items, parseAuditListQuery(search)).items.map((item) => item.id)).toEqual(['1', '2'])
   })
 })

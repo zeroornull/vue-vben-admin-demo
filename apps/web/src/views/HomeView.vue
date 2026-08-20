@@ -13,7 +13,7 @@ const isAdmin = computed(() => userInfo.value?.roles.includes('admin'))
 <template>
   <div class="page">
     <p>
-      用户表能勾一批删。另一个标签锁屏或换账号登录，这个标签会跟上。核心迁移已经齐了，后面是边角。
+      部门树能记住展开。内嵌页能重载、能新窗口打开。核心迁移已经齐了，后面是边角。
     </p>
     <p v-access:role="'admin'">
       这段用 <code>v-access:role="'admin'"</code>，看的是登录角色，不是业务角色码 biz-admin。

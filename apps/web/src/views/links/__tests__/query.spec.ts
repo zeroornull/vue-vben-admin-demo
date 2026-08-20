@@ -1,9 +1,12 @@
 import { describe, expect, it } from 'vitest'
 
 import {
+  batchDeleteLinksConfirmText,
   extraLinkMenuItems,
   isReservedLinkCode,
   linkSrcFor,
+  parseLinkListQuery,
+  queryLinks,
   validateLinkForm,
 } from '../query'
 
@@ -43,5 +46,21 @@ describe('validateLinkForm / extraLinkMenuItems', () => {
     expect(extraLinkMenuItems(links, true).map((item) => item.path)).toEqual(['/embed/docs'])
     expect(linkSrcFor(links, 'off')).toBeNull()
     expect(linkSrcFor(links, 'docs')).toBe('/embed-demo.html')
+    expect(
+      queryLinks(links, {
+        code: '',
+        name: '',
+        page: 1,
+        pageSize: 10,
+        sortField: 'createTime',
+        sortOrder: 'descend',
+        status: '',
+      }).items.map((item) => item.id),
+    ).toEqual(['l-2', 'l-1'])
+    expect(parseLinkListQuery(new URLSearchParams('sortField=title&sortOrder=ascend'))).toMatchObject({
+      sortField: 'title',
+      sortOrder: 'ascend',
+    })
+    expect(batchDeleteLinksConfirmText(2)).toContain('2')
   })
 })

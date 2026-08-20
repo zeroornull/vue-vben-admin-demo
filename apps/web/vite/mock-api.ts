@@ -14,12 +14,15 @@ import { passwordsMatch, readUnlockPassword } from '../src/auth/unlock.ts'
 import type { SystemDept } from '../src/views/depts/types.ts'
 import { auditSummary, type AuditAction, type AuditTarget } from '../src/views/audit/query.ts'
 import { validateProfileForm } from '../src/views/profile/query.ts'
+import { BATCH_DELETE_MAX, normalizeIds } from '../src/tables/batch.ts'
+import { orderDeptIdsForDelete } from '../src/views/depts/query.ts'
 import { normalizeUserIds, USER_BATCH_DELETE_MAX } from '../src/views/users/query.ts'
 
 import { appendMockAudit, listMockAudit } from './audit-store.ts'
 import {
   createMockDept,
   deleteMockDept,
+  listMockDeptFlat,
   listMockDepts,
   mockDeptName,
   updateMockDept,
@@ -164,6 +167,44 @@ function requireAction(req: IncomingMessage, res: ServerResponse, action: string
     return false
   }
   return true
+}
+
+function handleBatchDelete(
+  req: IncomingMessage,
+  res: ServerResponse,
+  action: string,
+  ids: string[],
+  emptyMessage: string,
+  peek: (id: string) => string | undefined,
+  remove: (id: string) => { error: string } | { ok: true },
+  target: AuditTarget,
+) {
+  if (!requireAction(req, res, action)) return
+  if (!ids.length) {
+    sendJson(res, 200, { code: 1, data: null, message: emptyMessage })
+    return
+  }
+  if (ids.length > BATCH_DELETE_MAX) {
+    sendJson(res, 200, {
+      code: 1,
+      data: null,
+      message: `一次最多删 ${BATCH_DELETE_MAX} 条`,
+    })
+    return
+  }
+  let deleted = 0
+  let skipped = 0
+  for (const id of ids) {
+    const name = peek(id) ?? id
+    const result = remove(id)
+    if ('error' in result) {
+      skipped += 1
+      continue
+    }
+    recordAudit(actorName(req), 'delete', target, name)
+    deleted += 1
+  }
+  sendJson(res, 200, { code: 0, data: { deleted, skipped }, message: 'ok' })
 }
 
 function actorName(req: IncomingMessage) {
@@ -421,6 +462,21 @@ const mockMiddleware: Connect.NextHandleFunction = async (req, res, next) => {
         return
       }
 
+      if (req.method === 'POST' && path === '/api/system/dept/batch-delete') {
+        const body = await readJson(req)
+        handleBatchDelete(
+          req,
+          res,
+          'dept:delete',
+          orderDeptIdsForDelete(body.ids, listMockDeptFlat()),
+          '请选择要删除的部门',
+          mockDeptName,
+          (id) => deleteMockDept(id, countMockUsersInDept(id)),
+          'dept',
+        )
+        return
+      }
+
       if (req.method === 'POST' && path === '/api/system/dept') {
         if (!requireAction(req, res, 'dept:create')) return
         const body = await readJson(req)
@@ -493,6 +549,21 @@ const mockMiddleware: Connect.NextHandleFunction = async (req, res, next) => {
         return
       }
 
+      if (req.method === 'POST' && path === '/api/system/role/batch-delete') {
+        const body = await readJson(req)
+        handleBatchDelete(
+          req,
+          res,
+          'role:delete',
+          normalizeIds(body.ids),
+          '请选择要删除的角色',
+          mockRoleName,
+          (id) => deleteMockRole(id, countMockUsersInRole(id)),
+          'role',
+        )
+        return
+      }
+
       if (req.method === 'POST' && path === '/api/system/role') {
         if (!requireAction(req, res, 'role:create')) return
         const body = await readJson(req)
@@ -554,6 +625,21 @@ const mockMiddleware: Connect.NextHandleFunction = async (req, res, next) => {
         if (!requireLogin(req, res)) return
         const search = new URL(url, 'http://local.invalid').searchParams
         sendJson(res, 200, { code: 0, data: listMockLinks(search), message: 'ok' })
+        return
+      }
+
+      if (req.method === 'POST' && path === '/api/system/link/batch-delete') {
+        const body = await readJson(req)
+        handleBatchDelete(
+          req,
+          res,
+          'link:delete',
+          normalizeIds(body.ids),
+          '请选择要删除的外链',
+          mockLinkName,
+          deleteMockLink,
+          'link',
+        )
         return
       }
 

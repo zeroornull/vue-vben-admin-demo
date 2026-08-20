@@ -31,18 +31,24 @@ describe('parseUserListQuery', () => {
       page: 1,
       pageSize: 10,
       roleId: '',
+      sortField: '',
+      sortOrder: '',
       status: '',
     })
   })
 
   it('clamps page size and reads status', () => {
-    const search = new URLSearchParams('page=0&pageSize=500&name=%20Bob%20&status=0&deptId=d-4')
+    const search = new URLSearchParams(
+      'page=0&pageSize=500&name=%20Bob%20&status=0&deptId=d-4&sortField=createTime&sortOrder=descend',
+    )
     expect(parseUserListQuery(search)).toEqual({
       deptId: 'd-4',
       name: 'Bob',
       page: 1,
       pageSize: 100,
       roleId: '',
+      sortField: 'createTime',
+      sortOrder: 'descend',
       status: 0,
     })
   })
@@ -104,6 +110,21 @@ describe('paginateList / queryUsers', () => {
       items: [users[0]],
       total: 2,
     })
+  })
+
+  it('sorts the filtered list before paging', () => {
+    expect(
+      queryUsers(users, {
+        deptId: '',
+        name: '',
+        page: 1,
+        pageSize: 2,
+        roleId: '',
+        sortField: 'createTime',
+        sortOrder: 'descend',
+        status: '',
+      }).items.map((item) => item.id),
+    ).toEqual(['3', '2'])
   })
 })
 

@@ -8,6 +8,7 @@ import {
   reservedRoleCodes,
   roleDeleteBlocker,
   validateRoleForm,
+  batchDeleteRolesConfirmText,
 } from '../query'
 import type { SystemRole } from '../types'
 
@@ -24,6 +25,8 @@ describe('parseRoleListQuery', () => {
       name: '编',
       page: 1,
       pageSize: 10,
+      sortField: '',
+      sortOrder: '',
       status: 1,
     })
   })
@@ -41,6 +44,20 @@ describe('filterRoles / queryRoles', () => {
       items: [roles[2]],
       total: 3,
     })
+  })
+
+  it('sorts then pages', () => {
+    expect(
+      queryRoles(roles, {
+        code: '',
+        name: '',
+        page: 1,
+        pageSize: 2,
+        sortField: 'createTime',
+        sortOrder: 'descend',
+        status: '',
+      }).items.map((item) => item.id),
+    ).toEqual(['r-3', 'r-2'])
   })
 })
 
@@ -118,5 +135,6 @@ describe('isRoleCodeTaken / roleDeleteBlocker', () => {
   it('blocks delete when users still hold the role', () => {
     expect(roleDeleteBlocker(2)).toBe('请先移走拥有该角色的用户')
     expect(roleDeleteBlocker(0)).toBeNull()
+    expect(batchDeleteRolesConfirmText(2)).toContain('2')
   })
 })

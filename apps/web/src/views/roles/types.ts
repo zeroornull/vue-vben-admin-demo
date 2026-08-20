@@ -26,6 +26,8 @@ export type RoleListQuery = {
   name: string
   page: number
   pageSize: number
+  sortField?: string
+  sortOrder?: string
   status: UserStatus | ''
 }
 
