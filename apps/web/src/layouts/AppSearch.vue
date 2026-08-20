@@ -75,31 +75,33 @@ onUnmounted(() => {
     <button type="button" class="trigger" title="搜索菜单 Ctrl+K" @click="toggleSearch">
       搜索
     </button>
-    <div v-if="open" class="overlay" @click.self="closeSearch">
-      <div class="panel" role="dialog" aria-label="搜索菜单">
-        <input
-          ref="input"
-          v-model="keyword"
-          type="search"
-          placeholder="搜标题、路由名或分组"
-          @keydown.enter.prevent="onEnter"
-        />
-        <p v-if="!hits.length" class="empty">没有匹配的页面</p>
-        <ul v-else>
-          <li v-for="item in hits" :key="item.name">
-            <button type="button" @click="go(item.name)">
-              <component
-                v-if="resolveMenuIcon(item.icon)"
-                :is="resolveMenuIcon(item.icon)"
-                class="icon"
-              />
-              <span>{{ item.title }}</span>
-              <small v-if="item.group">{{ item.group }}</small>
-            </button>
-          </li>
-        </ul>
+    <Teleport to="body">
+      <div v-if="open" class="overlay" @click.self="closeSearch">
+        <div class="panel" role="dialog" aria-label="搜索菜单">
+          <input
+            ref="input"
+            v-model="keyword"
+            type="search"
+            placeholder="搜标题、路由名或分组"
+            @keydown.enter.prevent="onEnter"
+          />
+          <p v-if="!hits.length" class="empty">没有匹配的页面</p>
+          <ul v-else>
+            <li v-for="item in hits" :key="item.name">
+              <button type="button" @click="go(item.name)">
+                <component
+                  v-if="resolveMenuIcon(item.icon)"
+                  :is="resolveMenuIcon(item.icon)"
+                  class="icon"
+                />
+                <span>{{ item.title }}</span>
+                <small v-if="item.group">{{ item.group }}</small>
+              </button>
+            </li>
+          </ul>
+        </div>
       </div>
-    </div>
+    </Teleport>
   </div>
 </template>
 

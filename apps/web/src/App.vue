@@ -2,6 +2,8 @@
 import { watch } from 'vue'
 import { RouterView } from 'vue-router'
 
+import AppLoadingBar from '@/components/AppLoadingBar.vue'
+import AppWatermark from '@/components/AppWatermark.vue'
 import { applyThemeDataset } from '@/preferences/theme'
 import { useTheme } from '@/preferences/use-theme'
 
@@ -17,5 +19,7 @@ watch(
 </script>
 
 <template>
+  <AppLoadingBar />
+  <AppWatermark />
   <RouterView />
 </template>

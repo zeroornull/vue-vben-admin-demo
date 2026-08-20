@@ -2,6 +2,9 @@ import axios, { type AxiosError, type AxiosRequestConfig } from 'axios'
 
 import { LOGIN_PATH } from '@/constants/auth'
 import { useAuthStore } from '@/stores/auth'
+import { useRequestStore } from '@/stores/request'
+
+import { shouldTrackLoading } from './pending'
 
 export type ApiBody<T> = {
   code: number
@@ -21,16 +24,25 @@ export const requestClient = axios.create({
   timeout: 10_000,
 })
 
+function finishLoading(config: AxiosRequestConfig | undefined) {
+  if (!config || !shouldTrackLoading(config)) return
+  useRequestStore().end()
+}
+
 requestClient.interceptors.request.use((config) => {
   const token = useAuthStore().accessToken
   if (token) {
     config.headers.Authorization = `Bearer ${token}`
+  }
+  if (shouldTrackLoading(config)) {
+    useRequestStore().begin()
   }
   return config
 })
 
 requestClient.interceptors.response.use(
   (response) => {
+    finishLoading(response.config)
     const body = response.data as ApiBody<unknown>
     if (body.code === 401) {
       void handleUnauthorized()
@@ -38,6 +50,7 @@ requestClient.interceptors.response.use(
     return response
   },
   (error: AxiosError<ApiBody<unknown>>) => {
+    finishLoading(error.config)
     if (error.response?.status === 401) {
       void handleUnauthorized()
     }

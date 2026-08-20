@@ -13,7 +13,7 @@ const isAdmin = computed(() => userInfo.value?.roles.includes('admin'))
 <template>
   <div class="page">
     <p>
-      顶栏「搜索」或 Ctrl+K 可跳页。个人中心不在侧栏里，但能搜到。没有权限的页不会出现。
+      顶栏「全屏」只藏侧栏、顶栏、页签和面包屑，不是浏览器的 F11。Escape 或右上角「退出全屏」可退。刷新后壳会回来。
     </p>
     <p v-access:role="'admin'">
       这段用 <code>v-access:role="'admin'"</code>，看的是登录角色，不是业务角色码 biz-admin。

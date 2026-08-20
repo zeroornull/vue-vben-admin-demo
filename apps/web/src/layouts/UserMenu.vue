@@ -32,7 +32,9 @@ function onDocumentPointer(event: PointerEvent) {
 }
 
 function onKey(event: KeyboardEvent) {
-  if (event.key === 'Escape') close()
+  if (event.key !== 'Escape' || !open.value) return
+  event.preventDefault()
+  close()
 }
 
 function onLock() {

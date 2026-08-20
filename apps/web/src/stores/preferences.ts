@@ -9,9 +9,14 @@ export const usePreferencesStore = defineStore(
     const appName = ref('Vue Admin')
     const sidebarCollapsed = ref(false)
     const themeMode = ref<ThemeMode>('system')
+    const watermarkEnabled = ref(true)
 
     function toggleSidebar() {
       sidebarCollapsed.value = !sidebarCollapsed.value
+    }
+
+    function toggleWatermark() {
+      watermarkEnabled.value = !watermarkEnabled.value
     }
 
     function setThemeMode(mode: ThemeMode) {
@@ -24,11 +29,13 @@ export const usePreferencesStore = defineStore(
       sidebarCollapsed,
       themeMode,
       toggleSidebar,
+      toggleWatermark,
+      watermarkEnabled,
     }
   },
   {
     persist: {
-      pick: ['sidebarCollapsed', 'themeMode'],
+      pick: ['sidebarCollapsed', 'themeMode', 'watermarkEnabled'],
     },
   },
 )

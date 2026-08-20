@@ -43,6 +43,9 @@
 | 29 | [round-23-profile.md](./29-round-23-profile.md) | 第 23 轮 | 个人中心；静态路由；看会话不是系统用户 |
 | 30 | [round-24-profile-name.md](./30-round-24-profile-name.md) | 第 24 轮 | 改显示名；只写登录会话，不写系统用户表 |
 | 31 | [round-25-menu-search.md](./31-round-25-menu-search.md) | 第 25 轮 | 菜单搜索；Ctrl+K；hideInMenu 能搜到 |
+| 32 | [round-26-loading-bar.md](./32-round-26-loading-bar.md) | 第 26 轮 | 请求进度条；pending 计数；不上 nprogress |
+| 33 | [round-27-watermark.md](./33-round-27-watermark.md) | 第 27 轮 | 页面水印；显示名 · 账号；偏好可关 |
+| 34 | [round-28-content-fullscreen.md](./34-round-28-content-fullscreen.md) | 第 28 轮 | 布局全屏；藏壳不调 Fullscreen API |
 
 后续轮次会继续加 `08-…`、`09-…`，并在本表追加一行。已拍板的结论不要默默改掉；必须修正时在原文加短注并改决策表（第 1 轮已按此修正：第 2 轮改用 `create-vue`，见 [03](./03-migration-roadmap.md)）。
 

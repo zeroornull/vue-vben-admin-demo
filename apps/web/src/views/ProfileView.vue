@@ -44,7 +44,7 @@ async function onSave() {
 <template>
   <AntdPage>
     <p class="lead">
-      只能改显示名。账号、角色、密码都不在这里改。这不是系统用户表里的 Alice / Bob。
+      只能改显示名。账号、角色、密码都不在这里改。这不是系统用户表里的 Alice / Bob。水印上的名字会跟着变。
     </p>
     <Form layout="inline" @submit.prevent="onSave">
       <FormItem label="显示名">

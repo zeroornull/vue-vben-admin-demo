@@ -4,6 +4,7 @@ import { RouterLink, RouterView, useRoute, useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 
 import ThemeToggle from '@/components/ThemeToggle.vue'
+import WatermarkToggle from '@/components/WatermarkToggle.vue'
 import { LOGIN_PATH } from '@/constants/auth'
 import { resolveMenuIcon } from '@/icons/menu-icons'
 import { useAccessMenu } from '@/router/access-menu'
@@ -19,6 +20,7 @@ import AppSearch from './AppSearch.vue'
 import AppTabs from './AppTabs.vue'
 import LockScreen from './LockScreen.vue'
 import UserMenu from './UserMenu.vue'
+import { contentFullscreenLabel, shouldClearLayoutOverlays } from './content-fullscreen'
 import {
   isIconOnlySidebar,
   isSidebarExpanded,
@@ -40,6 +42,7 @@ const { cachedNames } = storeToRefs(tabsStore)
 const menuGroups = useAccessMenu()
 const narrow = useNarrowViewport()
 const drawerOpen = ref(false)
+const contentFullscreen = ref(false)
 
 const chrome = computed(() =>
   sidebarChrome(narrow.value, sidebarCollapsed.value, drawerOpen.value),
@@ -99,10 +102,19 @@ function onToggleSidebar() {
   preferences.toggleSidebar()
 }
 
+function enterContentFullscreen() {
+  drawerOpen.value = false
+  contentFullscreen.value = true
+}
+
+function exitContentFullscreen() {
+  contentFullscreen.value = false
+}
+
 function onEscape(event: KeyboardEvent) {
-  if (event.key === 'Escape') {
-    drawerOpen.value = false
-  }
+  if (!shouldClearLayoutOverlays(event, locked.value)) return
+  drawerOpen.value = false
+  contentFullscreen.value = false
 }
 
 onMounted(() => {
@@ -127,7 +139,11 @@ async function onLogout() {
 </script>
 
 <template>
-  <div class="shell" :class="chrome" :inert="locked">
+  <div
+    class="shell"
+    :class="[chrome, { 'content-full': contentFullscreen }]"
+    :inert="locked"
+  >
     <div
       v-if="chrome === 'drawer-open'"
       class="backdrop"
@@ -135,8 +151,8 @@ async function onLogout() {
     />
     <aside
       id="app-sidebar"
-      :aria-hidden="chrome === 'drawer-closed'"
-      :inert="chrome === 'drawer-closed'"
+      :aria-hidden="contentFullscreen || chrome === 'drawer-closed'"
+      :inert="contentFullscreen || chrome === 'drawer-closed'"
     >
       <div class="brand">{{ iconOnly ? appName.charAt(0) : appName }}</div>
       <nav>
@@ -173,6 +189,10 @@ async function onLogout() {
         <h1>{{ pageTitle }}</h1>
         <div class="user">
           <AppSearch />
+          <button type="button" :title="contentFullscreenLabel(false)" @click="enterContentFullscreen">
+            {{ contentFullscreenLabel(false) }}
+          </button>
+          <WatermarkToggle />
           <ThemeToggle />
           <UserMenu @lock="onLock" @logout="onLogout" />
         </div>
@@ -188,6 +208,14 @@ async function onLogout() {
       </section>
     </div>
   </div>
+  <button
+    v-if="contentFullscreen && !locked"
+    class="exit-full"
+    type="button"
+    @click="exitContentFullscreen"
+  >
+    {{ contentFullscreenLabel(true) }}
+  </button>
   <LockScreen v-if="locked" @logout="onLogout" />
 </template>
 
@@ -330,5 +358,35 @@ button {
 section {
   min-width: 0;
   padding: 1.25rem 1.5rem 2rem;
+}
+
+.shell.content-full {
+  grid-template-columns: 1fr;
+}
+
+.shell.content-full aside,
+.shell.content-full .backdrop,
+.shell.content-full header,
+.shell.content-full :deep(.tabs),
+.shell.content-full :deep(.crumbs) {
+  display: none;
+}
+
+.shell.content-full .main {
+  grid-template-rows: 1fr;
+}
+
+.exit-full {
+  position: fixed;
+  top: 0.75rem;
+  right: 0.75rem;
+  z-index: 10;
+  border: 1px solid var(--color-border);
+  border-radius: 0.4rem;
+  background: var(--color-background);
+  color: var(--color-text);
+  padding: 0.3rem 0.65rem;
+  font: inherit;
+  cursor: pointer;
 }
 </style>

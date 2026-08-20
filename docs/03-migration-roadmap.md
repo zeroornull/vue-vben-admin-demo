@@ -29,7 +29,10 @@
 第 22 轮 锁屏
 第 23 轮 个人中心
 第 24 轮 改显示名
-第 25 轮 菜单搜索  ← 当前
+第 25 轮 菜单搜索
+第 26 轮 请求进度条
+第 27 轮 页面水印
+第 28 轮 布局全屏  ← 当前
 ```
 
 轮次可以按实际卡点拆开（例如第 3 轮只做登录、第 3b 轮再做动态路由），但不要跳过「可运行」去堆包。
@@ -262,6 +265,24 @@
 > 已完成，执行记录见 [31-round-25-menu-search.md](./31-round-25-menu-search.md)。
 
 Ctrl+K 搜能去的页。个人中心能搜到。无权限的页不出现。不上 Fuse。
+
+## 第 26 轮 · 请求进度条
+
+> 已完成，执行记录见 [32-round-26-loading-bar.md](./32-round-26-loading-bar.md)。
+
+顶栏绿条数进行中的请求。不上 nprogress。mock 很快，条至少停 240ms。
+
+## 第 27 轮 · 页面水印
+
+> 已完成，执行记录见 [33-round-27-watermark.md](./33-round-27-watermark.md)。
+
+登录后铺「显示名 · 账号」。偏好可关。不是防泄密。不上 canvas 库。
+
+## 第 28 轮 · 布局全屏
+
+> 已完成，执行记录见 [34-round-28-content-fullscreen.md](./34-round-28-content-fullscreen.md)。
+
+藏壳，不调 Fullscreen API。不 persist。Escape 分层退出。
 
 ## 决策记录（第 1 轮已拍板）
 
