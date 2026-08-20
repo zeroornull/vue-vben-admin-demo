@@ -13,8 +13,7 @@ const isAdmin = computed(() => userInfo.value?.roles.includes('admin'))
 <template>
   <div class="page">
     <p>
-      工作台页签不能关。侧栏看菜单码，按钮看操作码。
-      打开过的页会进 <code>KeepAlive</code>，刷新会丢缓存但页签还在。
+      顶栏「跟随系统 / 浅色 / 深色」写在 preferences 里。antd 表和 ECharts 跟着 resolved 主题走。
     </p>
     <p v-if="!isAdmin">
       当前是 user，默认绑访客：只有工作区和分析。直接打开 /users 或 /about 会到 403。

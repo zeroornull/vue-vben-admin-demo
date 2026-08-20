@@ -2,6 +2,7 @@
 import { reactive, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
+import ThemeToggle from '@/components/ThemeToggle.vue'
 import { HOME_PATH } from '@/constants/auth'
 import { useAuthStore } from '@/stores/auth'
 
@@ -45,7 +46,10 @@ async function onSubmit() {
 <template>
   <main class="login">
     <section class="card">
-      <h1>登录</h1>
+      <div class="title-row">
+        <h1>登录</h1>
+        <ThemeToggle />
+      </div>
       <p class="lead">账号走 Vite mock。登录角色管「关于」；业务角色管侧栏菜单。</p>
 
       <form @submit.prevent="onSubmit">
@@ -100,6 +104,13 @@ async function onSubmit() {
 
 .card {
   width: min(100%, 22rem);
+}
+
+.title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
 }
 
 h1 {

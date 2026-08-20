@@ -72,11 +72,6 @@ bun run build
 
 ## 下一轮从哪里开始
 
-还可以继续加，仍不要第二套库：
-
-1. 暗色开关（`base.css` 已有 dark 变量，现在跟系统走）
-2. 面包屑
-3. `v-access`（码再多时）
-4. 登录页改 antd Form（收益仍小）
+第 15 轮做了暗色开关，见 [21-round-15-theme.md](./21-round-15-theme.md)。
 
 不要把 `@core`、五套皮肤、VitePress、Turbo 或 Vue 3.6 默认栈搬进来。

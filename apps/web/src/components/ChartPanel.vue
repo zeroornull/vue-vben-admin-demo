@@ -4,6 +4,7 @@ import type { EChartsType } from 'echarts/core'
 import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
 
 import { echarts } from '@/lib/echarts'
+import { useTheme } from '@/preferences/use-theme'
 
 const props = withDefaults(
   defineProps<{
@@ -13,20 +14,27 @@ const props = withDefaults(
   { height: '18rem' },
 )
 
+const { resolved } = useTheme()
 const el = ref<HTMLDivElement>()
 let chart: EChartsType | null = null
 let observer: ResizeObserver | null = null
 
-function theme(): string | undefined {
-  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : undefined
+function chartTheme(): string | undefined {
+  return resolved.value === 'dark' ? 'dark' : undefined
 }
 
 function render() {
   if (!el.value) return
   if (!chart) {
-    chart = echarts.init(el.value, theme())
+    chart = echarts.init(el.value, chartTheme())
   }
   chart.setOption(props.options, true)
+}
+
+function remount() {
+  chart?.dispose()
+  chart = null
+  render()
 }
 
 function resize() {
@@ -49,6 +57,7 @@ onBeforeUnmount(() => {
 })
 
 watch(() => props.options, render, { deep: true })
+watch(resolved, remount)
 </script>
 
 <template>

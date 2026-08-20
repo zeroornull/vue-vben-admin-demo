@@ -1,10 +1,22 @@
 <!DOCTYPE html>
-<html lang="">
+<html lang="zh-CN" data-theme="system">
   <head>
     <meta charset="UTF-8">
     <link rel="icon" href="/favicon.ico">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vite App</title>
+    <title>Vue Admin</title>
+    <script>
+      (function () {
+        try {
+          var stored = JSON.parse(localStorage.getItem('preferences') || '{}')
+          var mode = stored.themeMode
+          if (mode !== 'light' && mode !== 'dark' && mode !== 'system') mode = 'system'
+          document.documentElement.dataset.theme = mode
+        } catch (error) {
+          document.documentElement.dataset.theme = 'system'
+        }
+      })()
+    </script>
   </head>
   <body>
     <div id="app"></div>

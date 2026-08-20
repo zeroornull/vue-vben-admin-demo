@@ -3,6 +3,7 @@ import { computed, watch } from 'vue'
 import { RouterLink, RouterView, useRoute, useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 
+import ThemeToggle from '@/components/ThemeToggle.vue'
 import { LOGIN_PATH } from '@/constants/auth'
 import { useAccessMenu } from '@/router/access-menu'
 import { resetAccessRoutes } from '@/router/dynamic-access'
@@ -85,6 +86,7 @@ async function onLogout() {
         </button>
         <h1>{{ pageTitle }}</h1>
         <div class="user">
+          <ThemeToggle />
           <span>{{ userInfo?.realName }}</span>
           <button type="button" @click="onLogout">退出</button>
         </div>
