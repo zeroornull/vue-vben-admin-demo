@@ -59,6 +59,7 @@
 | 45 | [round-39-density.md](./45-round-39-density.md) | 第 39 轮 | 紧凑密度；CSS token + antd size |
 | 46 | [round-40-last-route.md](./46-round-40-last-route.md) | 第 40 轮 | 记住上次页面；redirect 优先；按账号 |
 | 47 | [round-41-check-updates.md](./47-round-41-check-updates.md) | 第 41 轮 | 检查更新；版本号轮询；skipLoadingBar |
+| 48 | [round-42-copy-path.md](./48-round-42-copy-path.md) | 第 42 轮 | 复制当前路径；相对地址；不带 hash |
 
 后续轮次会继续加 `08-…`、`09-…`，并在本表追加一行。已拍板的结论不要默默改掉；必须修正时在原文加短注并改决策表（第 1 轮已按此修正：第 2 轮改用 `create-vue`，见 [03](./03-migration-roadmap.md)）。
 

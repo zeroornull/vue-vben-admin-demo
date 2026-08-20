@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, ref } from 'vue'
-import { RouterLink } from 'vue-router'
+import { RouterLink, useRoute } from 'vue-router'
 import { storeToRefs } from 'pinia'
 
 import { useAuthStore } from '@/stores/auth'
 
+import { COPY_FEEDBACK_MS, copyPathLabel, copyableFullPath, writeClipboardText } from './copy-path'
 import { shouldClosePopover } from './popover'
 import { userMenuMeta } from './user-menu'
 
@@ -13,13 +14,19 @@ const emit = defineEmits<{
   logout: []
 }>()
 
+const route = useRoute()
 const { userInfo } = storeToRefs(useAuthStore())
 const meta = computed(() => userMenuMeta(userInfo.value))
 const open = ref(false)
+const copied = ref(false)
 const root = ref<HTMLElement | null>(null)
+let copiedTimer = 0
+
+const copyLabel = computed(() => copyPathLabel(copied.value))
 
 function close() {
   open.value = false
+  copied.value = false
 }
 
 function toggle() {
@@ -46,6 +53,18 @@ function onLogout() {
   emit('logout')
 }
 
+async function onCopyPath() {
+  const text = copyableFullPath(route.fullPath)
+  if (!text || !navigator.clipboard) return
+  const ok = await writeClipboardText(text, navigator.clipboard)
+  if (!ok) return
+  copied.value = true
+  window.clearTimeout(copiedTimer)
+  copiedTimer = window.setTimeout(() => {
+    copied.value = false
+  }, COPY_FEEDBACK_MS)
+}
+
 onMounted(() => {
   document.addEventListener('pointerdown', onDocumentPointer)
   window.addEventListener('keydown', onKey)
@@ -54,6 +73,7 @@ onMounted(() => {
 onUnmounted(() => {
   document.removeEventListener('pointerdown', onDocumentPointer)
   window.removeEventListener('keydown', onKey)
+  window.clearTimeout(copiedTimer)
 })
 </script>
 
@@ -77,6 +97,9 @@ onUnmounted(() => {
       <p>登录角色 {{ meta.loginRoles }}</p>
       <p>业务角色 {{ meta.bizRoles }}</p>
       <div class="actions">
+        <button type="button" role="menuitem" :title="route.fullPath" @click="onCopyPath">
+          {{ copyLabel }}
+        </button>
         <RouterLink :to="{ name: 'profile' }" role="menuitem" @click="close">个人中心</RouterLink>
         <button type="button" role="menuitem" @click="onLock">锁定屏幕</button>
         <button type="button" role="menuitem" @click="onLogout">退出</button>
