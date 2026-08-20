@@ -1,4 +1,11 @@
-export type MenuCode = 'workspace' | 'analytics' | 'users' | 'depts' | 'roles' | 'about'
+export type MenuCode =
+  | 'workspace'
+  | 'analytics'
+  | 'users'
+  | 'depts'
+  | 'roles'
+  | 'about'
+  | 'embed'
 
 export type ActionCode =
   | 'user:create'
@@ -30,6 +37,7 @@ export const menuCatalog: MenuNode[] = [
   { code: 'depts', group: '系统', title: '部门' },
   { code: 'roles', group: '系统', title: '角色' },
   { code: 'about', title: '关于' },
+  { code: 'embed', title: '内嵌页' },
 ]
 
 export const actionCatalog: ActionNode[] = [
@@ -107,8 +115,8 @@ export function formatActionCodes(codes: string[]): string {
 /** 种子角色的默认菜单；新建角色从空勾选开始 */
 export function seedMenuCodes(roleCode: string): MenuCode[] {
   if (roleCode === 'biz-admin') return [...allMenuCodes]
-  if (roleCode === 'editor') return ['workspace', 'analytics', 'users', 'depts']
-  if (roleCode === 'viewer') return ['workspace', 'analytics']
+  if (roleCode === 'editor') return ['workspace', 'analytics', 'users', 'depts', 'embed']
+  if (roleCode === 'viewer') return ['workspace', 'analytics', 'embed']
   return []
 }
 

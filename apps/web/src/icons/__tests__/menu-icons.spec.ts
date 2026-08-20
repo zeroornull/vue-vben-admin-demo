@@ -17,6 +17,7 @@ describe('isMenuIconName / resolveMenuIcon', () => {
       'about',
       'analytics',
       'depts',
+      'embed',
       'home',
       'profile',
       'roles',

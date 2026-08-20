@@ -1,8 +1,15 @@
+import type { NavLayout } from '@/preferences/nav-layout'
+
 export const NARROW_MAX_WIDTH = 768
 
 export const NARROW_MEDIA_QUERY = `(max-width: ${NARROW_MAX_WIDTH}px)`
 
-export type SidebarChrome = 'docked-open' | 'docked-collapsed' | 'drawer-open' | 'drawer-closed'
+export type SidebarChrome =
+  | 'docked-open'
+  | 'docked-collapsed'
+  | 'drawer-open'
+  | 'drawer-closed'
+  | 'top'
 
 export function isNarrowWidth(width: number, max = NARROW_MAX_WIDTH): boolean {
   return width <= max
@@ -12,9 +19,19 @@ export function sidebarChrome(
   narrow: boolean,
   collapsed: boolean,
   drawerOpen: boolean,
+  navLayout: NavLayout = 'sidebar',
 ): SidebarChrome {
   if (narrow) return drawerOpen ? 'drawer-open' : 'drawer-closed'
+  if (navLayout === 'top') return 'top'
   return collapsed ? 'docked-collapsed' : 'docked-open'
+}
+
+export function showsHeaderNav(chrome: SidebarChrome): boolean {
+  return chrome === 'top'
+}
+
+export function showsSidebarToggle(chrome: SidebarChrome): boolean {
+  return chrome !== 'top'
 }
 
 export function isSidebarExpanded(chrome: SidebarChrome): boolean {

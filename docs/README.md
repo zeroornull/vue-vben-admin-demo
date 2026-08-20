@@ -60,6 +60,11 @@
 | 46 | [round-40-last-route.md](./46-round-40-last-route.md) | 第 40 轮 | 记住上次页面；redirect 优先；按账号 |
 | 47 | [round-41-check-updates.md](./47-round-41-check-updates.md) | 第 41 轮 | 检查更新；版本号轮询；skipLoadingBar |
 | 48 | [round-42-copy-path.md](./48-round-42-copy-path.md) | 第 42 轮 | 复制当前路径；相对地址；不带 hash |
+| 49 | [round-43-user-columns.md](./49-round-43-user-columns.md) | 第 43 轮 | 用户表列显隐；锁定用户名；persist |
+| 50 | [round-44-iframe.md](./50-round-44-iframe.md) | 第 44 轮 | 内嵌页；同源 iframe；过滤 src |
+| 51 | [round-45-nav-layout.md](./51-round-45-nav-layout.md) | 第 45 轮 | 顶栏导航；侧栏 / 顶栏；窄屏仍抽屉 |
+| 52 | [round-46-idle-lock.md](./52-round-46-idle-lock.md) | 第 46 轮 | 闲置锁屏；1 / 15 分钟；只锁不清会话 |
+| 53 | [round-47-notices.md](./53-round-47-notices.md) | 第 47 轮 | 通知中心；mock 消息；已读按账号 |
 
 后续轮次会继续加 `08-…`、`09-…`，并在本表追加一行。已拍板的结论不要默默改掉；必须修正时在原文加短注并改决策表（第 1 轮已按此修正：第 2 轮改用 `create-vue`，见 [03](./03-migration-roadmap.md)）。
 

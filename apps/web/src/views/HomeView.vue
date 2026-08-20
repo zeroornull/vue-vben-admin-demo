@@ -13,7 +13,7 @@ const isAdmin = computed(() => userInfo.value?.roles.includes('admin'))
 <template>
   <div class="page">
     <p>
-      用户菜单里可以复制当前路径。只复制 /users 这种相对地址，不带域名和 hash。
+      顶栏「通知」是 mock 消息。已读按登录账号记在 Vite 进程里，刷新还在，重启 mock 会回到未读。没有权限的跳转不会打开。
     </p>
     <p v-access:role="'admin'">
       这段用 <code>v-access:role="'admin'"</code>，看的是登录角色，不是业务角色码 biz-admin。

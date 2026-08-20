@@ -3,6 +3,8 @@ import { onMounted, onUnmounted, ref } from 'vue'
 
 import ColorFilterToggle from '@/components/ColorFilterToggle.vue'
 import DensityToggle from '@/components/DensityToggle.vue'
+import IdleLockToggle from '@/components/IdleLockToggle.vue'
+import NavLayoutToggle from '@/components/NavLayoutToggle.vue'
 import ThemeToggle from '@/components/ThemeToggle.vue'
 import WatermarkToggle from '@/components/WatermarkToggle.vue'
 import { shouldClosePopover } from '@/layouts/popover'
@@ -46,7 +48,7 @@ onUnmounted(() => {
       class="trigger"
       :aria-expanded="open"
       aria-haspopup="menu"
-      title="水印、色弱、深浅、疏密"
+      title="水印、色弱、深浅、疏密、布局、闲置锁屏"
       @click="toggle"
     >
       外观
@@ -56,6 +58,8 @@ onUnmounted(() => {
       <ColorFilterToggle />
       <ThemeToggle />
       <DensityToggle />
+      <NavLayoutToggle />
+      <IdleLockToggle />
     </div>
   </div>
 </template>
@@ -83,7 +87,7 @@ onUnmounted(() => {
   z-index: 8;
   display: grid;
   gap: 0.4rem;
-  min-width: 7.5rem;
+  min-width: 8.5rem;
   border: 1px solid var(--color-border);
   border-radius: 0.45rem;
   background: var(--color-background);

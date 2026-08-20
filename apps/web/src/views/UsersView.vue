@@ -4,10 +4,12 @@ defineOptions({ name: 'UsersView' })
 import type { TableColumnsType, TablePaginationConfig } from 'ant-design-vue'
 import {
   Button,
+  Checkbox,
   Form,
   FormItem,
   Input,
   Modal,
+  Popover,
   Select,
   Space,
   Table,
@@ -16,17 +18,25 @@ import {
   message,
 } from 'ant-design-vue'
 import { computed, onMounted, reactive, ref } from 'vue'
+import { storeToRefs } from 'pinia'
 
 import { getDeptList } from '@/api/system/dept'
 import { getRoleList } from '@/api/system/role'
 import { useAccess } from '@/access/use-access'
 import { createUser, deleteUser, getUserList, updateUser } from '@/api/system/user'
 import AntdPage from '@/components/AntdPage.vue'
+import { useTableColumnsStore } from '@/stores/table-columns'
 import { deptNameById, flattenDepts, toParentOptions } from '@/views/depts/query'
 import type { SystemDept } from '@/views/depts/types'
 import { roleNameById } from '@/views/roles/query'
 import type { SystemRole } from '@/views/roles/types'
 
+import {
+  USER_COLUMN_LABELS,
+  USER_OPTIONAL_COLUMNS,
+  isUserColumnVisible,
+  userColumnKey,
+} from './users/columns'
 import UserFormModal from './users/UserFormModal.vue'
 import {
   csvFileName,
@@ -64,6 +74,8 @@ const query = reactive<{
 })
 
 const { hasAnyAction } = useAccess()
+const tableColumns = useTableColumnsStore()
+const { userColumns } = storeToRefs(tableColumns)
 const names = computed(() => deptNameById(flattenDepts(catalog.value)))
 const roleNames = computed(() => roleNameById(roleCatalog.value))
 
@@ -76,8 +88,11 @@ const columns = computed<TableColumnsType<SystemUser>>(() => {
     { dataIndex: 'remark', title: '备注' },
     { dataIndex: 'createTime', title: '创建时间', width: 180 },
   ]
-  if (!hasAnyAction('user:update', 'user:delete')) return base
-  return [...base, { key: 'actions', title: '操作', width: 160 }]
+  const visible = base.filter((column) =>
+    isUserColumnVisible(userColumns.value, userColumnKey(column)),
+  )
+  if (!hasAnyAction('user:update', 'user:delete')) return visible
+  return [...visible, { key: 'actions', title: '操作', width: 160 }]
 })
 
 async function loadCatalogs() {
@@ -308,6 +323,22 @@ onMounted(async () => {
           <Button html-type="submit" type="primary">查询</Button>
           <Button @click="onReset">重置</Button>
           <Button :loading="exporting" @click="onExport">导出</Button>
+          <Popover placement="bottomLeft" trigger="click">
+            <template #content>
+              <div class="col-panel">
+                <Checkbox
+                  v-for="key in USER_OPTIONAL_COLUMNS"
+                  :key="key"
+                  :checked="isUserColumnVisible(userColumns, key)"
+                  @change="tableColumns.toggleUser(key)"
+                >
+                  {{ USER_COLUMN_LABELS[key] }}
+                </Checkbox>
+                <Button type="link" @click="tableColumns.resetUsers">恢复默认</Button>
+              </div>
+            </template>
+            <Button>列</Button>
+          </Popover>
           <Button v-access="'user:create'" :loading="importing" @click="pickImportFile">导入</Button>
           <Button v-access="'user:create'" type="primary" @click="onCreate">新建</Button>
         </Space>
@@ -366,3 +397,11 @@ onMounted(async () => {
     />
   </AntdPage>
 </template>
+
+<style scoped>
+.col-panel {
+  display: grid;
+  gap: 0.35rem;
+  min-width: 8rem;
+}
+</style>

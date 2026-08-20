@@ -49,6 +49,7 @@ describe('resolveMenuCodes', () => {
       'analytics',
       'users',
       'depts',
+      'embed',
     ])
   })
 

@@ -7,6 +7,8 @@ import {
   NARROW_MAX_WIDTH,
   sidebarChrome,
   sidebarToggleLabel,
+  showsHeaderNav,
+  showsSidebarToggle,
 } from '../sidebar-chrome'
 
 describe('isNarrowWidth', () => {
@@ -23,6 +25,17 @@ describe('sidebarChrome', () => {
     expect(sidebarChrome(false, true, true)).toBe('docked-collapsed')
     expect(sidebarChrome(true, false, false)).toBe('drawer-closed')
     expect(sidebarChrome(true, true, true)).toBe('drawer-open')
+  })
+
+  it('uses top nav on wide screens and keeps the drawer on narrow ones', () => {
+    expect(sidebarChrome(false, true, false, 'top')).toBe('top')
+    expect(sidebarChrome(true, false, false, 'top')).toBe('drawer-closed')
+    expect(sidebarChrome(true, true, true, 'top')).toBe('drawer-open')
+    expect(showsHeaderNav('top')).toBe(true)
+    expect(showsSidebarToggle('top')).toBe(false)
+    expect(showsHeaderNav('docked-open')).toBe(false)
+    expect(isSidebarExpanded('top')).toBe(false)
+    expect(isIconOnlySidebar('top')).toBe(false)
   })
 
   it('labels the toggle from chrome, not from the persist flag', () => {

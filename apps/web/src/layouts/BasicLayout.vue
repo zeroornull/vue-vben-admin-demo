@@ -6,16 +6,19 @@ import { storeToRefs } from 'pinia'
 import AppearanceMenu from '@/components/AppearanceMenu.vue'
 import { LOGIN_PATH } from '@/constants/auth'
 import { resolveMenuIcon } from '@/icons/menu-icons'
+import { normalizeNavLayout } from '@/preferences/nav-layout'
 import { useAccessMenu } from '@/router/access-menu'
 import { staticLayoutNames } from '@/router/routes'
 import { resetAccessRoutes } from '@/router/dynamic-access'
 import { useAuthStore } from '@/stores/auth'
 import { useLockStore } from '@/stores/lock'
+import { useNoticesStore } from '@/stores/notices'
 import { usePreferencesStore } from '@/stores/preferences'
 import { useTabsStore } from '@/stores/tabs'
 
 import AppBreadcrumb from './AppBreadcrumb.vue'
 import AppFooter from './AppFooter.vue'
+import AppNoticeBell from './AppNoticeBell.vue'
 import AppSearch from './AppSearch.vue'
 import AppShortcutHelp from './AppShortcutHelp.vue'
 import AppTabs from './AppTabs.vue'
@@ -28,7 +31,10 @@ import {
   isSidebarExpanded,
   sidebarChrome,
   sidebarToggleLabel,
+  showsHeaderNav,
+  showsSidebarToggle,
 } from './sidebar-chrome'
+import { useIdleLock } from './use-idle-lock'
 import { useNarrowViewport } from './use-narrow'
 
 const route = useRoute()
@@ -37,9 +43,10 @@ const authStore = useAuthStore()
 const preferences = usePreferencesStore()
 const tabsStore = useTabsStore()
 const lockStore = useLockStore()
+const noticesStore = useNoticesStore()
 const { userInfo } = storeToRefs(authStore)
 const { locked } = storeToRefs(lockStore)
-const { appName, sidebarCollapsed } = storeToRefs(preferences)
+const { appName, navLayout, sidebarCollapsed } = storeToRefs(preferences)
 const { cachedNames } = storeToRefs(tabsStore)
 const menuGroups = useAccessMenu()
 const narrow = useNarrowViewport()
@@ -48,8 +55,20 @@ const contentFullscreen = ref(false)
 const evictedViewName = ref('')
 const viewEpoch = ref(0)
 
+useIdleLock()
+
 const chrome = computed(() =>
-  sidebarChrome(narrow.value, sidebarCollapsed.value, drawerOpen.value),
+  sidebarChrome(
+    narrow.value,
+    sidebarCollapsed.value,
+    drawerOpen.value,
+    normalizeNavLayout(navLayout.value),
+  ),
+)
+const headerNav = computed(() => showsHeaderNav(chrome.value))
+const sidebarToggle = computed(() => showsSidebarToggle(chrome.value))
+const asideHidden = computed(
+  () => contentFullscreen.value || chrome.value === 'drawer-closed' || chrome.value === 'top',
 )
 const iconOnly = computed(() => isIconOnlySidebar(chrome.value))
 const showTitles = computed(() => isSidebarExpanded(chrome.value))
@@ -109,6 +128,12 @@ watch(
   { immediate: true },
 )
 
+watch(locked, (isLocked) => {
+  if (!isLocked) return
+  drawerOpen.value = false
+  contentFullscreen.value = false
+})
+
 function onToggleSidebar() {
   if (narrow.value) {
     drawerOpen.value = !drawerOpen.value
@@ -155,6 +180,7 @@ function onLock() {
 async function onLogout() {
   await authStore.logout()
   tabsStore.reset()
+  noticesStore.reset()
   resetAccessRoutes(router)
   await router.replace(LOGIN_PATH)
 }
@@ -171,11 +197,7 @@ async function onLogout() {
       class="backdrop"
       @click="drawerOpen = false"
     />
-    <aside
-      id="app-sidebar"
-      :aria-hidden="contentFullscreen || chrome === 'drawer-closed'"
-      :inert="contentFullscreen || chrome === 'drawer-closed'"
-    >
+    <aside id="app-sidebar" :aria-hidden="asideHidden" :inert="asideHidden">
       <div class="brand">{{ iconOnly ? appName.charAt(0) : appName }}</div>
       <nav>
         <div v-for="group in menuGroups" :key="group.key" class="group">
@@ -201,6 +223,7 @@ async function onLogout() {
     <div class="main">
       <header>
         <button
+          v-if="sidebarToggle"
           type="button"
           :aria-expanded="isSidebarExpanded(chrome)"
           aria-controls="app-sidebar"
@@ -208,9 +231,29 @@ async function onLogout() {
         >
           {{ toggleLabel }}
         </button>
+        <span v-if="headerNav" class="header-brand">{{ appName }}</span>
+        <nav v-if="headerNav" class="header-nav" aria-label="主导航">
+          <div v-for="group in menuGroups" :key="group.key" class="group">
+            <p v-if="group.title">{{ group.title }}</p>
+            <RouterLink
+              v-for="item in group.items"
+              :key="item.name"
+              :to="{ name: item.name }"
+              :title="item.title"
+            >
+              <component
+                v-if="resolveMenuIcon(item.icon)"
+                :is="resolveMenuIcon(item.icon)"
+                class="menu-icon"
+              />
+              <span>{{ item.title }}</span>
+            </RouterLink>
+          </div>
+        </nav>
         <h1>{{ pageTitle }}</h1>
         <div class="user">
           <AppSearch />
+          <AppNoticeBell />
           <AppShortcutHelp />
           <button type="button" title="重挂当前页，不是浏览器刷新" @click="refreshCurrentView">
             刷新
@@ -258,8 +301,13 @@ async function onLogout() {
 }
 
 .shell.drawer-closed,
-.shell.drawer-open {
+.shell.drawer-open,
+.shell.top {
   grid-template-columns: 1fr;
+}
+
+.shell.top aside {
+  display: none;
 }
 
 aside {
@@ -277,9 +325,24 @@ aside {
   color: var(--color-heading);
 }
 
-nav {
+aside nav {
   display: grid;
   gap: 0.85rem;
+}
+
+.header-brand {
+  flex: 0 0 auto;
+  font-weight: 650;
+  color: var(--color-heading);
+}
+
+.header-nav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.45rem 1rem;
+  flex: 1;
+  min-width: 0;
 }
 
 .group {
@@ -294,13 +357,25 @@ nav {
   opacity: 0.55;
 }
 
-nav a {
+aside nav a,
+.header-nav a {
   display: flex;
   align-items: center;
   gap: 0.5rem;
   border-radius: 0.4rem;
   padding: var(--chrome-nav-pad);
   color: var(--color-text);
+}
+
+.header-nav .group {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.15rem;
+}
+
+.header-nav .group p {
+  margin: 0 0.35rem 0 0;
 }
 
 .shell.docked-collapsed nav a {
@@ -337,10 +412,19 @@ nav a {
   font-size: 1.05rem;
 }
 
-nav a.router-link-exact-active {
+aside nav a.router-link-exact-active,
+.header-nav a.router-link-exact-active {
   background: var(--color-background-mute);
   color: var(--color-heading);
   font-weight: 600;
+}
+
+.shell.top header h1 {
+  flex: 0 1 auto;
+  max-width: 12rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .main {

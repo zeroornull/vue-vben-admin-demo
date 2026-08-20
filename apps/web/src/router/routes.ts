@@ -89,6 +89,19 @@ export const dynamicLayoutChildren: RouteRecordRaw[] = [
     component: () => import('@/views/AboutView.vue'),
     meta: { icon: 'about', menuCode: 'about', order: 6, roles: ['admin'], title: '关于', viewName: 'AboutView' },
   },
+  {
+    path: 'embed',
+    name: 'embed',
+    component: () => import('@/views/IframeView.vue'),
+    meta: {
+      icon: 'embed',
+      iframeSrc: '/embed-demo.html',
+      menuCode: 'embed',
+      order: 7,
+      title: '内嵌页',
+      viewName: 'IframeView',
+    },
+  },
 ]
 
 export const layoutChildren: RouteRecordRaw[] = [

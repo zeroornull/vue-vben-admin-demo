@@ -28,6 +28,7 @@ import {
   listMockUsers,
   updateMockUser,
 } from './users-store.ts'
+import { listMockNotices, markMockNoticeRead } from './notices-store.ts'
 import { bumpMockBuildId, readMockBuildId } from './version-store.ts'
 
 function readRoleIds(value: unknown): string[] {
@@ -179,6 +180,25 @@ const mockMiddleware: Connect.NextHandleFunction = async (req, res, next) => {
     if (req.method === 'POST' && path === '/api/version/bump') {
       if (!requireLogin(req, res)) return
       sendJson(res, 200, { code: 0, data: { buildId: bumpMockBuildId() }, message: 'ok' })
+      return
+    }
+
+    if (req.method === 'GET' && path === '/api/notices') {
+      const username = requireLogin(req, res)
+      if (!username) return
+      sendJson(res, 200, { code: 0, data: listMockNotices(username), message: 'ok' })
+      return
+    }
+
+    if (req.method === 'POST' && path === '/api/notices/read') {
+      const username = requireLogin(req, res)
+      if (!username) return
+      const id = String((await readJson(req)).id ?? '')
+      sendJson(res, 200, {
+        code: 0,
+        data: markMockNoticeRead(username, id || undefined),
+        message: 'ok',
+      })
       return
     }
 
