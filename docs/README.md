@@ -46,6 +46,12 @@
 | 32 | [round-26-loading-bar.md](./32-round-26-loading-bar.md) | 第 26 轮 | 请求进度条；pending 计数；不上 nprogress |
 | 33 | [round-27-watermark.md](./33-round-27-watermark.md) | 第 27 轮 | 页面水印；显示名 · 账号；偏好可关 |
 | 34 | [round-28-content-fullscreen.md](./34-round-28-content-fullscreen.md) | 第 28 轮 | 布局全屏；藏壳不调 Fullscreen API |
+| 35 | [round-29-view-refresh.md](./35-round-29-view-refresh.md) | 第 29 轮 | 刷新当前页；清 KeepAlive，不是 F5 |
+| 36 | [round-30-error-toast.md](./36-round-30-error-toast.md) | 第 30 轮 | 请求错误条；登录和 401 不出 |
+| 37 | [round-31-color-filter.md](./37-round-31-color-filter.md) | 第 31 轮 | 色弱 / 灰色；整页 filter；不是无障碍 |
+| 38 | [round-32-back-top.md](./38-round-32-back-top.md) | 第 32 轮 | 回到顶部；听 window 滚动 |
+| 39 | [round-33-document-title.md](./39-round-33-document-title.md) | 第 33 轮 | 浏览器标签标题；页名 · 应用名 |
+| 40 | [round-34-appearance-menu.md](./40-round-34-appearance-menu.md) | 第 34 轮 | 外观菜单；水印 / 色弱 / 主题收进面板 |
 
 后续轮次会继续加 `08-…`、`09-…`，并在本表追加一行。已拍板的结论不要默默改掉；必须修正时在原文加短注并改决策表（第 1 轮已按此修正：第 2 轮改用 `create-vue`，见 [03](./03-migration-roadmap.md)）。
 

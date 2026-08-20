@@ -4,5 +4,7 @@ declare module 'axios' {
   interface AxiosRequestConfig {
     /** 为 true 时不计入顶栏进度条（以后给轮询用） */
     skipLoadingBar?: boolean
+    /** 为 true 时不弹出全局错误条（登录表单自己展示） */
+    skipErrorToast?: boolean
   }
 }

@@ -5,6 +5,7 @@ import { useAuthStore } from '@/stores/auth'
 import { useRequestStore } from '@/stores/request'
 
 import { shouldTrackLoading } from './pending'
+import { errorToastText, requestError, shouldAnnounceError } from './toast'
 
 export type ApiBody<T> = {
   code: number
@@ -51,36 +52,48 @@ requestClient.interceptors.response.use(
   },
   (error: AxiosError<ApiBody<unknown>>) => {
     finishLoading(error.config)
-    if (error.response?.status === 401) {
+    const unauthorized = error.response?.status === 401
+    if (unauthorized) {
       void handleUnauthorized()
     }
     const message =
       error.response?.data?.message || error.message || '网络错误'
-    return Promise.reject(new Error(message))
+    return Promise.reject(requestError(message, unauthorized))
   },
 )
 
 async function unwrap<T>(
   request: Promise<{ data: ApiBody<T> }>,
+  config?: AxiosRequestConfig,
 ): Promise<T> {
-  const { data: body } = await request
-  return unwrapBody(body)
+  try {
+    const { data: body } = await request
+    if (body.code === 401) {
+      throw requestError(body.message || '未登录或登录已过期', true)
+    }
+    return unwrapBody(body)
+  } catch (error) {
+    if (shouldAnnounceError(error, config)) {
+      useRequestStore().fail(errorToastText(error))
+    }
+    throw error
+  }
 }
 
 export function get<T>(url: string, config?: AxiosRequestConfig) {
-  return unwrap(requestClient.get<ApiBody<T>>(url, config))
+  return unwrap(requestClient.get<ApiBody<T>>(url, config), config)
 }
 
 export function post<T>(url: string, data?: unknown, config?: AxiosRequestConfig) {
-  return unwrap(requestClient.post<ApiBody<T>>(url, data, config))
+  return unwrap(requestClient.post<ApiBody<T>>(url, data, config), config)
 }
 
 export function put<T>(url: string, data?: unknown, config?: AxiosRequestConfig) {
-  return unwrap(requestClient.put<ApiBody<T>>(url, data, config))
+  return unwrap(requestClient.put<ApiBody<T>>(url, data, config), config)
 }
 
 export function del<T>(url: string, config?: AxiosRequestConfig) {
-  return unwrap(requestClient.delete<ApiBody<T>>(url, config))
+  return unwrap(requestClient.delete<ApiBody<T>>(url, config), config)
 }
 
 async function handleUnauthorized() {

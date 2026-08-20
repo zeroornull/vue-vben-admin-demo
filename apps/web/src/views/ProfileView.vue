@@ -33,8 +33,8 @@ async function onSave() {
   try {
     await authStore.updateProfile(checked.value.realName)
     message.success('已保存显示名')
-  } catch (error) {
-    message.error(error instanceof Error ? error.message : '保存失败')
+  } catch {
+    // 失败由全局错误条提示
   } finally {
     saving.value = false
   }

@@ -116,6 +116,35 @@ describe('requestClient', () => {
     expect(store.pending).toBe(0)
   })
 
+  it('records a toast for business and HTTP errors', async () => {
+    mock.onPost('/auth/login').reply(200, {
+      code: 1,
+      data: null,
+      message: '账号或密码错误',
+    })
+    await expect(post('/auth/login', { password: 'bad', username: 'vben' })).rejects.toThrow(
+      '账号或密码错误',
+    )
+    expect(useRequestStore().notice).toBe('账号或密码错误')
+
+    useRequestStore().dismiss()
+    mock.onGet('/boom').reply(500, { code: 500, data: null, message: '挂了' })
+    await expect(get('/boom')).rejects.toThrow('挂了')
+    expect(useRequestStore().notice).toBe('挂了')
+  })
+
+  it('can skip the error toast', async () => {
+    mock.onPost('/auth/login').reply(200, {
+      code: 1,
+      data: null,
+      message: '账号或密码错误',
+    })
+    await expect(
+      post('/auth/login', { password: 'bad', username: 'vben' }, { skipErrorToast: true }),
+    ).rejects.toThrow('账号或密码错误')
+    expect(useRequestStore().notice).toBe('')
+  })
+
   it('clears the session on HTTP 401', async () => {
     const store = useAuthStore()
     store.accessToken = 'expired'
@@ -126,5 +155,6 @@ describe('requestClient', () => {
     })
     await expect(get('/user/info')).rejects.toThrow()
     expect(store.accessToken).toBe('')
+    expect(useRequestStore().notice).toBe('')
   })
 })

@@ -6,7 +6,7 @@ declare module 'vue-router' {
     public?: boolean
     /** 前端角色；缺省表示登录即可 */
     roles?: string[]
-    /** 侧栏标题；不设则不进菜单 */
+    /** 侧栏 / 页签 / 浏览器标签标题；不设则不进菜单 */
     title?: string
     /** 显式不进侧栏 */
     hideInMenu?: boolean

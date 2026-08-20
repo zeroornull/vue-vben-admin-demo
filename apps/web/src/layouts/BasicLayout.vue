@@ -1,10 +1,9 @@
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
+import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
 import { RouterLink, RouterView, useRoute, useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 
-import ThemeToggle from '@/components/ThemeToggle.vue'
-import WatermarkToggle from '@/components/WatermarkToggle.vue'
+import AppearanceMenu from '@/components/AppearanceMenu.vue'
 import { LOGIN_PATH } from '@/constants/auth'
 import { resolveMenuIcon } from '@/icons/menu-icons'
 import { useAccessMenu } from '@/router/access-menu'
@@ -21,6 +20,7 @@ import AppTabs from './AppTabs.vue'
 import LockScreen from './LockScreen.vue'
 import UserMenu from './UserMenu.vue'
 import { contentFullscreenLabel, shouldClearLayoutOverlays } from './content-fullscreen'
+import { excludeCachedName, readViewName, viewInstanceKey } from './view-refresh'
 import {
   isIconOnlySidebar,
   isSidebarExpanded,
@@ -43,6 +43,8 @@ const menuGroups = useAccessMenu()
 const narrow = useNarrowViewport()
 const drawerOpen = ref(false)
 const contentFullscreen = ref(false)
+const evictedViewName = ref('')
+const viewEpoch = ref(0)
 
 const chrome = computed(() =>
   sidebarChrome(narrow.value, sidebarCollapsed.value, drawerOpen.value),
@@ -52,6 +54,10 @@ const showTitles = computed(() => isSidebarExpanded(chrome.value))
 const toggleLabel = computed(() => sidebarToggleLabel(chrome.value))
 
 const pageTitle = computed(() => route.meta.title ?? appName.value)
+const keepAliveInclude = computed(() =>
+  excludeCachedName(cachedNames.value, evictedViewName.value),
+)
+const viewKey = computed(() => viewInstanceKey(route.name, viewEpoch.value))
 
 const allowedTabNames = computed(() => {
   const names = new Set<string>(staticLayoutNames())
@@ -87,6 +93,13 @@ watch(narrow, (isNarrow) => {
 })
 
 watch(
+  () => route.name,
+  () => {
+    evictedViewName.value = ''
+  },
+)
+
+watch(
   () => userInfo.value?.username,
   (name) => {
     if (name) lockStore.syncOwner(name)
@@ -109,6 +122,13 @@ function enterContentFullscreen() {
 
 function exitContentFullscreen() {
   contentFullscreen.value = false
+}
+
+async function refreshCurrentView() {
+  evictedViewName.value = readViewName(route.meta)
+  viewEpoch.value += 1
+  await nextTick()
+  evictedViewName.value = ''
 }
 
 function onEscape(event: KeyboardEvent) {
@@ -189,11 +209,13 @@ async function onLogout() {
         <h1>{{ pageTitle }}</h1>
         <div class="user">
           <AppSearch />
+          <button type="button" title="重挂当前页，不是浏览器刷新" @click="refreshCurrentView">
+            刷新
+          </button>
           <button type="button" :title="contentFullscreenLabel(false)" @click="enterContentFullscreen">
             {{ contentFullscreenLabel(false) }}
           </button>
-          <WatermarkToggle />
-          <ThemeToggle />
+          <AppearanceMenu />
           <UserMenu @lock="onLock" @logout="onLogout" />
         </div>
       </header>
@@ -201,21 +223,21 @@ async function onLogout() {
       <AppBreadcrumb />
       <section>
         <RouterView v-slot="{ Component }">
-          <KeepAlive :include="cachedNames">
-            <component :is="Component" :key="String(route.name)" />
+          <KeepAlive :include="keepAliveInclude">
+            <component :is="Component" :key="viewKey" />
           </KeepAlive>
         </RouterView>
       </section>
     </div>
   </div>
-  <button
-    v-if="contentFullscreen && !locked"
-    class="exit-full"
-    type="button"
-    @click="exitContentFullscreen"
-  >
-    {{ contentFullscreenLabel(true) }}
-  </button>
+  <div v-if="contentFullscreen && !locked" class="full-actions">
+    <button type="button" title="重挂当前页，不是浏览器刷新" @click="refreshCurrentView">
+      刷新
+    </button>
+    <button type="button" @click="exitContentFullscreen">
+      {{ contentFullscreenLabel(true) }}
+    </button>
+  </div>
   <LockScreen v-if="locked" @logout="onLogout" />
 </template>
 
@@ -376,11 +398,16 @@ section {
   grid-template-rows: 1fr;
 }
 
-.exit-full {
+.full-actions {
   position: fixed;
   top: 0.75rem;
   right: 0.75rem;
   z-index: 10;
+  display: flex;
+  gap: 0.4rem;
+}
+
+.full-actions button {
   border: 1px solid var(--color-border);
   border-radius: 0.4rem;
   background: var(--color-background);

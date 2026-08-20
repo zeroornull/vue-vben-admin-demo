@@ -72,8 +72,8 @@ async function load() {
     })
     items.value = result.items
     total.value = result.total
-  } catch (error) {
-    message.error(error instanceof Error ? error.message : '加载失败')
+  } catch {
+    // 失败由全局错误条提示
   } finally {
     loading.value = false
   }
@@ -108,21 +108,16 @@ function onEdit(row: SystemRole) {
 }
 
 async function onSubmit(values: RoleFormValues) {
-  try {
-    if (editing.value) {
-      await updateRole(editing.value.id, values)
-      message.success('已保存')
-    } else {
-      await createRole(values)
-      message.success('已创建')
-    }
-    modalOpen.value = false
-    await load()
-    await refreshSessionAccess()
-  } catch (error) {
-    message.error(error instanceof Error ? error.message : '保存失败')
-    throw error
+  if (editing.value) {
+    await updateRole(editing.value.id, values)
+    message.success('已保存')
+  } else {
+    await createRole(values)
+    message.success('已创建')
   }
+  modalOpen.value = false
+  await load()
+  await refreshSessionAccess()
 }
 
 async function refreshSessionAccess() {

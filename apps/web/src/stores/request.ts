@@ -5,6 +5,7 @@ import { nextPending } from '@/api/pending'
 
 export const useRequestStore = defineStore('request', () => {
   const pending = ref(0)
+  const notice = ref('')
   const active = computed(() => pending.value > 0)
 
   function begin() {
@@ -15,9 +16,18 @@ export const useRequestStore = defineStore('request', () => {
     pending.value = nextPending(pending.value, -1)
   }
 
-  function reset() {
-    pending.value = 0
+  function fail(message: string) {
+    notice.value = message
   }
 
-  return { active, begin, end, pending, reset }
+  function dismiss() {
+    notice.value = ''
+  }
+
+  function reset() {
+    pending.value = 0
+    notice.value = ''
+  }
+
+  return { active, begin, dismiss, end, fail, notice, pending, reset }
 })

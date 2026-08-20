@@ -13,7 +13,7 @@ const isAdmin = computed(() => userInfo.value?.roles.includes('admin'))
 <template>
   <div class="page">
     <p>
-      顶栏「全屏」只藏侧栏、顶栏、页签和面包屑，不是浏览器的 F11。Escape 或右上角「退出全屏」可退。刷新后壳会回来。
+      水印、色弱、深浅收在顶栏「外观」里。搜索 / 刷新 / 全屏还是动作，不进这个菜单。
     </p>
     <p v-access:role="'admin'">
       这段用 <code>v-access:role="'admin'"</code>，看的是登录角色，不是业务角色码 biz-admin。

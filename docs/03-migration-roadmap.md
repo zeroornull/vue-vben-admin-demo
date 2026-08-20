@@ -32,7 +32,13 @@
 第 25 轮 菜单搜索
 第 26 轮 请求进度条
 第 27 轮 页面水印
-第 28 轮 布局全屏  ← 当前
+第 28 轮 布局全屏
+第 29 轮 刷新当前页
+第 30 轮 请求错误条
+第 31 轮 色弱 / 灰色
+第 32 轮 回到顶部
+第 33 轮 浏览器标题
+第 34 轮 外观菜单  ← 当前
 ```
 
 轮次可以按实际卡点拆开（例如第 3 轮只做登录、第 3b 轮再做动态路由），但不要跳过「可运行」去堆包。
@@ -283,6 +289,42 @@ Ctrl+K 搜能去的页。个人中心能搜到。无权限的页不出现。不�
 > 已完成，执行记录见 [34-round-28-content-fullscreen.md](./34-round-28-content-fullscreen.md)。
 
 藏壳，不调 Fullscreen API。不 persist。Escape 分层退出。
+
+## 第 29 轮 · 刷新当前页
+
+> 已完成，执行记录见 [35-round-29-view-refresh.md](./35-round-29-view-refresh.md)。
+
+重挂当前 KeepAlive 实例。不是 F5。页签还在。
+
+## 第 30 轮 · 请求错误条
+
+> 已完成，执行记录见 [36-round-30-error-toast.md](./36-round-30-error-toast.md)。
+
+失败出红条。登录 / 解锁 / 401 不出。页面不再叠 message.error。
+
+## 第 31 轮 · 色弱 / 灰色
+
+> 已完成，执行记录见 [37-round-31-color-filter.md](./37-round-31-color-filter.md)。
+
+整页 CSS filter。不是无障碍。和主题分开 persist。
+
+## 第 32 轮 · 回到顶部
+
+> 已完成，执行记录见 [38-round-32-back-top.md](./38-round-32-back-top.md)。
+
+滚过 320px 出按钮。听 window。不上 antd BackTop。
+
+## 第 33 轮 · 浏览器标题
+
+> 已完成，执行记录见 [39-round-33-document-title.md](./39-round-33-document-title.md)。
+
+标签为「页名 · 应用名」。登录 / 403 / 404 也有。不上 useTitle。
+
+## 第 34 轮 · 外观菜单
+
+> 已完成，执行记录见 [40-round-34-appearance-menu.md](./40-round-34-appearance-menu.md)。
+
+水印 / 色弱 / 主题收进「外观」。动作按钮留在顶栏。
 
 ## 决策记录（第 1 轮已拍板）
 

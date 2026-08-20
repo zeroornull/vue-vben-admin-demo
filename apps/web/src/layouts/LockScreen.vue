@@ -3,7 +3,7 @@ import { computed, ref } from 'vue'
 import { storeToRefs } from 'pinia'
 
 import { unlockApi } from '@/api'
-import ThemeToggle from '@/components/ThemeToggle.vue'
+import AppearanceMenu from '@/components/AppearanceMenu.vue'
 import { useAuthStore } from '@/stores/auth'
 import { useLockStore } from '@/stores/lock'
 
@@ -41,7 +41,7 @@ async function onUnlock() {
     <section class="card">
       <div class="title-row">
         <h1 id="lock-title">锁屏</h1>
-        <ThemeToggle />
+        <AppearanceMenu />
       </div>
       <p class="lead">会话还在。输入当前账号密码解锁，不是重新登录。</p>
       <p v-if="meta" class="who">

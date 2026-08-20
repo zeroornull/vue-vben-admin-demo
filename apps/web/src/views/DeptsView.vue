@@ -50,8 +50,8 @@ async function load() {
   loading.value = true
   try {
     catalog.value = await getDeptList({ name: '', status: '' })
-  } catch (error) {
-    message.error(error instanceof Error ? error.message : '加载失败')
+  } catch {
+    // 失败由全局错误条提示
   } finally {
     loading.value = false
   }
@@ -81,20 +81,15 @@ function onEdit(row: SystemDept) {
 }
 
 async function onSubmit(values: DeptFormValues) {
-  try {
-    if (editing.value) {
-      await updateDept(editing.value.id, values)
-      message.success('已保存')
-    } else {
-      await createDept(values)
-      message.success('已创建')
-    }
-    modalOpen.value = false
-    await load()
-  } catch (error) {
-    message.error(error instanceof Error ? error.message : '保存失败')
-    throw error
+  if (editing.value) {
+    await updateDept(editing.value.id, values)
+    message.success('已保存')
+  } else {
+    await createDept(values)
+    message.success('已创建')
   }
+  modalOpen.value = false
+  await load()
 }
 
 function toDept(record: object): SystemDept {

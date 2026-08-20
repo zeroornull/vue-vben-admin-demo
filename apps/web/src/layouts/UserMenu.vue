@@ -5,6 +5,7 @@ import { storeToRefs } from 'pinia'
 
 import { useAuthStore } from '@/stores/auth'
 
+import { shouldClosePopover } from './popover'
 import { userMenuMeta } from './user-menu'
 
 const emit = defineEmits<{
@@ -26,9 +27,7 @@ function toggle() {
 }
 
 function onDocumentPointer(event: PointerEvent) {
-  if (!open.value || !root.value) return
-  if (event.target instanceof Node && root.value.contains(event.target)) return
-  close()
+  if (shouldClosePopover(event, root.value, open.value)) close()
 }
 
 function onKey(event: KeyboardEvent) {

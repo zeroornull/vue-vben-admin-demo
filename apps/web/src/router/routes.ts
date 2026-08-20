@@ -7,18 +7,19 @@ export const coreRoutes: RouteRecordRaw[] = [
     path: LOGIN_PATH,
     name: 'login',
     component: () => import('@/views/LoginView.vue'),
-    meta: { public: true },
+    meta: { public: true, title: '登录' },
   },
   {
     path: FORBIDDEN_PATH,
     name: 'forbidden',
     component: () => import('@/views/ForbiddenView.vue'),
+    meta: { title: '无权限' },
   },
   {
     path: '/:pathMatch(.*)*',
     name: 'not-found',
     component: () => import('@/views/NotFoundView.vue'),
-    meta: { public: true },
+    meta: { public: true, title: '未找到' },
   },
 ]
 

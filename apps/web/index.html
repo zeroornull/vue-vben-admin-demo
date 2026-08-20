@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN" data-theme="system">
+<html lang="zh-CN" data-theme="system" data-filter="none">
   <head>
     <meta charset="UTF-8">
     <link rel="icon" href="/favicon.ico">
@@ -12,8 +12,12 @@
           var mode = stored.themeMode
           if (mode !== 'light' && mode !== 'dark' && mode !== 'system') mode = 'system'
           document.documentElement.dataset.theme = mode
+          var filter = stored.colorFilter
+          if (filter !== 'weak' && filter !== 'gray') filter = 'none'
+          document.documentElement.dataset.filter = filter
         } catch (error) {
           document.documentElement.dataset.theme = 'system'
+          document.documentElement.dataset.filter = 'none'
         }
       })()
     </script>

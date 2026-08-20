@@ -2,7 +2,7 @@
 import { reactive, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
-import ThemeToggle from '@/components/ThemeToggle.vue'
+import AppearanceMenu from '@/components/AppearanceMenu.vue'
 import { HOME_PATH } from '@/constants/auth'
 import { useAuthStore } from '@/stores/auth'
 
@@ -48,7 +48,7 @@ async function onSubmit() {
     <section class="card">
       <div class="title-row">
         <h1>登录</h1>
-        <ThemeToggle />
+        <AppearanceMenu />
       </div>
       <p class="lead">账号走 Vite mock。登录角色管「关于」；业务角色管侧栏菜单。</p>
 
