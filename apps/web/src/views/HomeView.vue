@@ -10,8 +10,13 @@ const isAdmin = computed(() => userInfo.value?.roles.includes('admin'))
 
 <template>
   <div class="page">
-    <p>已登录。侧栏菜单来自 <code>layoutChildren</code>，按角色过滤；刷新后菜单仍在。业务示例在「工作区」。</p>
-    <p v-if="!isAdmin">当前是 user，侧栏不会出现「关于」。直接打开 /about 会到 403。</p>
+    <p>
+      工作台始终在。侧栏看菜单码，新建/编辑/删除看操作码。
+      「关于」还要登录角色是 <code>admin</code>。
+    </p>
+    <p v-if="!isAdmin">
+      当前是 user，默认绑访客：只有工作区和分析。直接打开 /users 或 /about 会到 403。
+    </p>
   </div>
 </template>
 

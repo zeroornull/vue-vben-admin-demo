@@ -10,6 +10,15 @@ export const useAuthStore = defineStore(
     const accessToken = ref('')
     const userInfo = ref<UserInfo | null>(null)
     const loginLoading = ref(false)
+    const isAccessGenerated = ref(false)
+
+    function markAccessGenerated() {
+      isAccessGenerated.value = true
+    }
+
+    function invalidateAccess() {
+      isAccessGenerated.value = false
+    }
 
     async function login(params: LoginParams) {
       loginLoading.value = true
@@ -17,6 +26,7 @@ export const useAuthStore = defineStore(
         const { accessToken: token } = await loginApi(params)
         accessToken.value = token
         userInfo.value = await getUserInfoApi()
+        invalidateAccess()
         return userInfo.value
       } finally {
         loginLoading.value = false
@@ -40,15 +50,19 @@ export const useAuthStore = defineStore(
     function clearSession() {
       accessToken.value = ''
       userInfo.value = null
+      invalidateAccess()
     }
 
     return {
       accessToken,
       clearSession,
       fetchUserInfo,
+      invalidateAccess,
+      isAccessGenerated,
       login,
       loginLoading,
       logout,
+      markAccessGenerated,
       userInfo,
     }
   },

@@ -24,6 +24,13 @@
 | 10 | [round-04-layout.md](./10-round-04-layout.md) | 第 4 轮 | 侧栏顶栏壳、按角色菜单、preferences |
 | 11 | [round-05-workspace.md](./11-round-05-workspace.md) | 第 5 轮 | 工作区业务页（未引入图表库） |
 | 12 | [round-06-engineering.md](./12-round-06-engineering.md) | 第 6 轮 | oxlint、Vitest；CI 文件保留但已停自动跑 |
+| 13 | [round-07-analytics.md](./13-round-07-analytics.md) | 第 7 轮 | 分析页；按需引入 ECharts，不搬 @vben/plugins |
+| 14 | [round-08-antd-users.md](./14-round-08-antd-users.md) | 第 8 轮 | 选定 ant-design-vue；用户 Form / Table / mock CRUD |
+| 15 | [round-09-depts.md](./15-round-09-depts.md) | 第 9 轮 | 部门树表；侧栏「系统」分组；无新依赖 |
+| 16 | [round-10-user-dept.md](./16-round-10-user-dept.md) | 第 10 轮 | 用户挂部门；筛选含下级；有人不能删部门 |
+| 17 | [round-11-roles.md](./17-round-11-roles.md) | 第 11 轮 | 业务角色 CRUD；用户多选角色；与登录权限分开 |
+| 18 | [round-12-role-menus.md](./18-round-12-role-menus.md) | 第 12 轮 | 角色绑菜单；登录后 addRoute；403 / 404 分清 |
+| 19 | [round-13-button-access.md](./19-round-13-button-access.md) | 第 13 轮 | 按钮操作码；藏按钮；mock 写接口也校验 |
 
 后续轮次会继续加 `08-…`、`09-…`，并在本表追加一行。已拍板的结论不要默默改掉；必须修正时在原文加短注并改决策表（第 1 轮已按此修正：第 2 轮改用 `create-vue`，见 [03](./03-migration-roadmap.md)）。
 

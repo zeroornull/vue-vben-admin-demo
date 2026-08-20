@@ -61,6 +61,4 @@ bun run dev
 
 ## 下一轮从哪里开始
 
-[03-migration-roadmap.md](./03-migration-roadmap.md) 第 6 轮：工程化。
-
-若还要继续搬业务，下一页是 `legacy/apps/web-antd/src/views/dashboard/analytics`，那时再评估 ECharts。
+工程化见 [12-round-06-engineering.md](./12-round-06-engineering.md)。分析页（含 ECharts）见 [13-round-07-analytics.md](./13-round-07-analytics.md)。

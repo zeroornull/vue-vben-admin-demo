@@ -12,5 +12,9 @@ declare module 'vue-router' {
     hideInMenu?: boolean
     /** 菜单排序，越小越靠前 */
     order?: number
+    /** 侧栏分组标题；相同值收成一组 */
+    group?: string
+    /** 业务角色可勾选的菜单码；不设表示登录即可（工作台） */
+    menuCode?: string
   }
 }

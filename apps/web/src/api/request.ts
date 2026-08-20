@@ -62,6 +62,14 @@ export function post<T>(url: string, data?: unknown, config?: AxiosRequestConfig
   return unwrap(requestClient.post<ApiBody<T>>(url, data, config))
 }
 
+export function put<T>(url: string, data?: unknown, config?: AxiosRequestConfig) {
+  return unwrap(requestClient.put<ApiBody<T>>(url, data, config))
+}
+
+export function del<T>(url: string, config?: AxiosRequestConfig) {
+  return unwrap(requestClient.delete<ApiBody<T>>(url, config))
+}
+
 async function handleUnauthorized() {
   const authStore = useAuthStore()
   const currentPath = window.location.pathname + window.location.search

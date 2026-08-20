@@ -5,6 +5,7 @@ import { storeToRefs } from 'pinia'
 
 import { LOGIN_PATH } from '@/constants/auth'
 import { useAccessMenu } from '@/router/access-menu'
+import { resetAccessRoutes } from '@/router/dynamic-access'
 import { useAuthStore } from '@/stores/auth'
 import { usePreferencesStore } from '@/stores/preferences'
 
@@ -14,12 +15,13 @@ const authStore = useAuthStore()
 const preferences = usePreferencesStore()
 const { userInfo } = storeToRefs(authStore)
 const { appName, sidebarCollapsed } = storeToRefs(preferences)
-const menuItems = useAccessMenu()
+const menuGroups = useAccessMenu()
 
 const pageTitle = computed(() => route.meta.title ?? appName.value)
 
 async function onLogout() {
   await authStore.logout()
+  resetAccessRoutes(router)
   await router.replace(LOGIN_PATH)
 }
 </script>
@@ -29,14 +31,17 @@ async function onLogout() {
     <aside id="app-sidebar">
       <div class="brand">{{ sidebarCollapsed ? appName.charAt(0) : appName }}</div>
       <nav>
-        <RouterLink
-          v-for="item in menuItems"
-          :key="item.name"
-          :to="{ name: item.name }"
-          :title="item.title"
-        >
-          {{ sidebarCollapsed ? item.title.slice(0, 1) : item.title }}
-        </RouterLink>
+        <div v-for="group in menuGroups" :key="group.key" class="group">
+          <p v-if="group.title && !sidebarCollapsed">{{ group.title }}</p>
+          <RouterLink
+            v-for="item in group.items"
+            :key="item.name"
+            :to="{ name: item.name }"
+            :title="item.title"
+          >
+            {{ sidebarCollapsed ? item.title.slice(0, 1) : item.title }}
+          </RouterLink>
+        </div>
       </nav>
     </aside>
 
@@ -92,7 +97,19 @@ aside {
 
 nav {
   display: grid;
+  gap: 0.85rem;
+}
+
+.group {
+  display: grid;
   gap: 0.25rem;
+}
+
+.group p {
+  margin: 0 0.5rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  opacity: 0.55;
 }
 
 nav a {

@@ -16,9 +16,9 @@ const form = reactive({
 const errorMessage = ref('')
 
 const accounts = [
-  { username: 'vben', roles: 'admin + user' },
-  { username: 'admin', roles: 'admin' },
-  { username: 'user', roles: 'user' },
+  { username: 'vben', roles: '登录 admin+user · 菜单 biz-admin' },
+  { username: 'admin', roles: '登录 admin · 菜单 biz-admin' },
+  { username: 'user', roles: '登录 user · 菜单 viewer' },
 ] as const
 
 function useAccount(username: string) {
@@ -46,7 +46,7 @@ async function onSubmit() {
   <main class="login">
     <section class="card">
       <h1>登录</h1>
-      <p class="lead">第 3 轮登录闭环。账号密码走 Vite mock，不接真实后端。</p>
+      <p class="lead">账号走 Vite mock。登录角色管「关于」；业务角色管侧栏菜单。</p>
 
       <form @submit.prevent="onSubmit">
         <label>

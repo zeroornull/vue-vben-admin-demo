@@ -66,6 +66,10 @@ export const projectItems: WorkbenchProjectItem[] = [
 export const quickNavItems: WorkbenchQuickNavItem[] = [
   { color: '#1fdaca', mark: '台', title: '工作台', url: '/' },
   { color: '#3fb27f', mark: '区', title: '工作区', url: '/workspace' },
+  { color: '#4f69fd', mark: '析', title: '分析', url: '/analytics' },
+  { color: '#e18525', mark: '户', title: '用户', url: '/users' },
+  { color: '#c4a000', mark: '部', title: '部门', url: '/depts' },
+  { color: '#3fb27f', mark: '角', title: '角色', url: '/roles' },
   {
     color: '#bf0c2c',
     mark: '关',

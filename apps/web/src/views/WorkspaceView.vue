@@ -109,7 +109,7 @@ function navTo(item: WorkbenchProjectItem | WorkbenchQuickNavItem) {
         </WorkspaceCard>
 
         <WorkspaceCard title="访问来源">
-          <p class="hint">旧仓这里是 ECharts 饼图。本轮用数字列表占位，不引入图表依赖。</p>
+          <p class="hint">这里仍用数字列表。ECharts 饼图在「分析」页。</p>
           <ul class="sources">
             <li v-for="item in visitSourceItems" :key="item.name">
               <span>{{ item.name }}</span>

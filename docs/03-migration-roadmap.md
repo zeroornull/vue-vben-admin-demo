@@ -10,7 +10,14 @@
 第 3 轮  请求 / 登录 / 权限路由
 第 4 轮  布局壳 + 偏好 + 基础样式
 第 5 轮  业务页按需移植（dashboard 等）
-第 6 轮  工程化（lint / test / CI）与依赖冻结  ← 当前
+第 6 轮  工程化（lint / test / CI）与依赖冻结
+第 7 轮  分析页 + ECharts
+第 8 轮  组件库 + 用户 Form/Table
+第 9 轮  部门树 + 侧栏分组
+第 10 轮 用户挂部门
+第 11 轮 业务角色 + 用户挂角色
+第 12 轮 角色绑菜单 + 动态路由
+第 13 轮 按钮权限  ← 当前
 ```
 
 轮次可以按实际卡点拆开（例如第 3 轮只做登录、第 3b 轮再做动态路由），但不要跳过「可运行」去堆包。
@@ -111,7 +118,7 @@
 
 ## 第 5 轮 · 业务页
 
-> 工作区已完成，见 [11-round-05-workspace.md](./11-round-05-workspace.md)。分析页尚未搬。
+> 工作区见 [11-round-05-workspace.md](./11-round-05-workspace.md)；分析页见 [13-round-07-analytics.md](./13-round-07-analytics.md)。
 
 从 `legacy/apps/web-antd/src/views/dashboard` 开始，一次一页。
 
@@ -130,6 +137,48 @@
 - CI：`bun ci` + typecheck + build
 - 再评估要不要 Turbo：单 app 时 `bun run --filter` 足够
 
+## 第 7 轮 · 分析页
+
+> 已完成，执行记录见 [13-round-07-analytics.md](./13-round-07-analytics.md)。
+
+对照 `legacy/apps/web-antd/src/views/dashboard/analytics`。这一页本身就是图表，所以引入 ECharts；不搬 `@vben/plugins/echarts`、`@vueuse/core`、暗色 preferences。
+
+## 第 8 轮 · 组件库与用户页
+
+> 已完成，执行记录见 [14-round-08-antd-users.md](./14-round-08-antd-users.md)。
+
+选定 **ant-design-vue 4**（对照 `web-antd`，不用 playground 的 `antdv-next` / vxe-table）。落地一页用户列表：查询表单、分页表、新建/编辑弹窗、删除确认；mock 内存 CRUD。
+
+## 第 9 轮 · 部门树
+
+> 已完成，执行记录见 [15-round-09-depts.md](./15-round-09-depts.md)。
+
+对照 `legacy/playground/src/views/system/dept`。用 antd Table 树 + TreeSelect 做部门 CRUD；侧栏用 `meta.group` 把用户/部门收成「系统」。仍不上 vxe-table。
+
+## 第 10 轮 · 用户挂部门
+
+> 已完成，执行记录见 [16-round-10-user-dept.md](./16-round-10-user-dept.md)。
+
+用户表加上 `deptId`：筛选含下级、表单 TreeSelect、部门人数、有人不能删。零新依赖。
+
+## 第 11 轮 · 业务角色
+
+> 已完成，执行记录见 [17-round-11-roles.md](./17-round-11-roles.md)。
+
+角色是业务数据（`biz-admin` / `editor` / `viewer`），编码避开登录用的 `admin` / `user`。用户可多选角色；有人占用则不能删。
+
+## 第 12 轮 · 角色绑菜单
+
+> 已完成，执行记录见 [18-round-12-role-menus.md](./18-round-12-role-menus.md)。
+
+角色勾选菜单；登录账号映射到业务角色；守卫 `addRoute`。登录 `meta.roles` 仍只管「关于」。不做按钮权限。
+
+## 第 13 轮 · 按钮权限
+
+> 已完成，执行记录见 [19-round-13-button-access.md](./19-round-13-button-access.md)。
+
+操作码与菜单码分开。页面藏按钮，mock 写接口也查码。不做 `v-access`。
+
 ## 决策记录（第 1 轮已拍板）
 
 | 议题 | 决定 | 原因 |
@@ -143,6 +192,7 @@
 | 第 2 轮如何初始化 | **`bun x create-vue@latest apps/web`**，再套 Bun workspace | 官方模板对齐最新稳定 Vue/Vite/TS；手写配置容易漏；monorepo 是后加的一层，不是手写整个 app 的理由 |
 | 第 6 轮 lint | 只上 oxlint | 不叠 ESLint / Stylelint |
 | 第 6 轮 Turbo | 不上 | 单 app，`bun run --filter` 足够 |
+| 第 8 轮组件库 | ant-design-vue 4.2.6 | 对照仓是 `web-antd`；官方包最新稳定是 4.x。不上 antdv-next、vxe-table、五套皮肤 |
 
 需要改上述决定时，开新一轮文档，不要默默改这一节而不留痕迹。
 
