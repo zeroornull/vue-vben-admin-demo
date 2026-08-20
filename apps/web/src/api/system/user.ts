@@ -1,3 +1,5 @@
+import type { AxiosRequestConfig } from 'axios'
+
 import { del, get, post, put } from '@/api/request'
 import type { SystemUser, UserFormValues, UserListQuery, UserListResult } from '@/views/users/types'
 
@@ -5,8 +7,8 @@ export function getUserList(params: UserListQuery) {
   return get<UserListResult>('/system/user/list', { params })
 }
 
-export function createUser(data: UserFormValues) {
-  return post<SystemUser>('/system/user', data)
+export function createUser(data: UserFormValues, config?: AxiosRequestConfig) {
+  return post<SystemUser>('/system/user', data, config)
 }
 
 export function updateUser(id: string, data: UserFormValues) {

@@ -55,10 +55,6 @@ bun run build
 
 ## 下一轮从哪里开始
 
-还可以继续加，仍不要第二套库：
-
-1. 登录页改 antd Form（收益仍小）
-2. 页签右键 / 拖拽（旧仓有，本仓故意没搬）
-3. 改密（三个账号共用 123456，收益小）
+第 35 轮做了用户 CSV 导出，见 [41-round-35-user-csv.md](./41-round-35-user-csv.md)。
 
 不要把 `@core`、五套皮肤、VitePress、Turbo 或 Vue 3.6 默认栈搬进来。

@@ -13,7 +13,7 @@ const isAdmin = computed(() => userInfo.value?.roles.includes('admin'))
 <template>
   <div class="page">
     <p>
-      水印、色弱、深浅收在顶栏「外观」里。搜索 / 刷新 / 全屏还是动作，不进这个菜单。
+      按 ? 或 Ctrl+/ 看已有快捷键。输入框里打问号不会打开。Esc 先关最上面一层。
     </p>
     <p v-access:role="'admin'">
       这段用 <code>v-access:role="'admin'"</code>，看的是登录角色，不是业务角色码 biz-admin。

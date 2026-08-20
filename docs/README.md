@@ -52,6 +52,9 @@
 | 38 | [round-32-back-top.md](./38-round-32-back-top.md) | 第 32 轮 | 回到顶部；听 window 滚动 |
 | 39 | [round-33-document-title.md](./39-round-33-document-title.md) | 第 33 轮 | 浏览器标签标题；页名 · 应用名 |
 | 40 | [round-34-appearance-menu.md](./40-round-34-appearance-menu.md) | 第 34 轮 | 外观菜单；水印 / 色弱 / 主题收进面板 |
+| 41 | [round-35-user-csv.md](./41-round-35-user-csv.md) | 第 35 轮 | 用户 CSV 导出；筛选结果；公式转义 |
+| 42 | [round-36-user-csv-import.md](./42-round-36-user-csv-import.md) | 第 36 轮 | 用户 CSV 导入；同一校验；user:create |
+| 43 | [round-37-shortcut-help.md](./43-round-37-shortcut-help.md) | 第 37 轮 | 快捷键说明；? / Ctrl+/；Esc 分层 |
 
 后续轮次会继续加 `08-…`、`09-…`，并在本表追加一行。已拍板的结论不要默默改掉；必须修正时在原文加短注并改决策表（第 1 轮已按此修正：第 2 轮改用 `create-vue`，见 [03](./03-migration-roadmap.md)）。
 

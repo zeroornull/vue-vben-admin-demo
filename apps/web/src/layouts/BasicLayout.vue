@@ -16,6 +16,7 @@ import { useTabsStore } from '@/stores/tabs'
 
 import AppBreadcrumb from './AppBreadcrumb.vue'
 import AppSearch from './AppSearch.vue'
+import AppShortcutHelp from './AppShortcutHelp.vue'
 import AppTabs from './AppTabs.vue'
 import LockScreen from './LockScreen.vue'
 import UserMenu from './UserMenu.vue'
@@ -209,6 +210,7 @@ async function onLogout() {
         <h1>{{ pageTitle }}</h1>
         <div class="user">
           <AppSearch />
+          <AppShortcutHelp />
           <button type="button" title="重挂当前页，不是浏览器刷新" @click="refreshCurrentView">
             刷新
           </button>
