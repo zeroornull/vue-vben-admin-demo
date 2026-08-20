@@ -1,4 +1,6 @@
 <script setup lang="ts">
+defineOptions({ name: 'DeptsView' })
+
 import type { TableColumnsType } from 'ant-design-vue'
 import { Button, Form, FormItem, Input, Modal, Select, Space, Table, Tag, message } from 'ant-design-vue'
 import { computed, onMounted, reactive, ref } from 'vue'

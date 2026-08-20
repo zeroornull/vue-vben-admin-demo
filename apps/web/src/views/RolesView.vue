@@ -1,4 +1,6 @@
 <script setup lang="ts">
+defineOptions({ name: 'RolesView' })
+
 import type { TableColumnsType, TablePaginationConfig } from 'ant-design-vue'
 import {
   Button,

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, watch } from 'vue'
 import { RouterLink, RouterView, useRoute, useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 
@@ -8,19 +8,47 @@ import { useAccessMenu } from '@/router/access-menu'
 import { resetAccessRoutes } from '@/router/dynamic-access'
 import { useAuthStore } from '@/stores/auth'
 import { usePreferencesStore } from '@/stores/preferences'
+import { useTabsStore } from '@/stores/tabs'
+
+import AppTabs from './AppTabs.vue'
 
 const route = useRoute()
 const router = useRouter()
 const authStore = useAuthStore()
 const preferences = usePreferencesStore()
+const tabsStore = useTabsStore()
 const { userInfo } = storeToRefs(authStore)
 const { appName, sidebarCollapsed } = storeToRefs(preferences)
+const { cachedNames } = storeToRefs(tabsStore)
 const menuGroups = useAccessMenu()
 
 const pageTitle = computed(() => route.meta.title ?? appName.value)
 
+const allowedTabNames = computed(() => {
+  const names = new Set<string>(['home'])
+  for (const group of menuGroups.value) {
+    for (const item of group.items) {
+      names.add(item.name)
+    }
+  }
+  return [...names]
+})
+
+watch(
+  () => [route.fullPath, route.name, userInfo.value?.username, allowedTabNames.value.join(',')] as const,
+  () => {
+    if (userInfo.value?.username) {
+      tabsStore.syncOwner(userInfo.value.username)
+    }
+    tabsStore.prune(allowedTabNames.value)
+    tabsStore.openFromRoute(route)
+  },
+  { immediate: true },
+)
+
 async function onLogout() {
   await authStore.logout()
+  tabsStore.reset()
   resetAccessRoutes(router)
   await router.replace(LOGIN_PATH)
 }
@@ -61,8 +89,13 @@ async function onLogout() {
           <button type="button" @click="onLogout">退出</button>
         </div>
       </header>
+      <AppTabs />
       <section>
-        <RouterView />
+        <RouterView v-slot="{ Component }">
+          <KeepAlive :include="cachedNames">
+            <component :is="Component" :key="String(route.name)" />
+          </KeepAlive>
+        </RouterView>
       </section>
     </div>
   </div>
@@ -126,7 +159,7 @@ nav a.router-link-exact-active {
 
 .main {
   display: grid;
-  grid-template-rows: 3.5rem 1fr;
+  grid-template-rows: 3.5rem auto 1fr;
   min-width: 0;
 }
 
@@ -163,6 +196,7 @@ button {
 }
 
 section {
+  min-width: 0;
   padding: 1.25rem 1.5rem 2rem;
 }
 </style>

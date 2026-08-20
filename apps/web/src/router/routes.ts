@@ -28,7 +28,7 @@ export const staticLayoutChildren: RouteRecordRaw[] = [
     path: '',
     name: 'home',
     component: () => import('@/views/HomeView.vue'),
-    meta: { order: 0, title: '工作台' },
+    meta: { affixTab: true, order: 0, title: '工作台', viewName: 'HomeView' },
   },
 ]
 
@@ -38,37 +38,37 @@ export const dynamicLayoutChildren: RouteRecordRaw[] = [
     path: 'workspace',
     name: 'workspace',
     component: () => import('@/views/WorkspaceView.vue'),
-    meta: { menuCode: 'workspace', order: 1, title: '工作区' },
+    meta: { menuCode: 'workspace', order: 1, title: '工作区', viewName: 'WorkspaceView' },
   },
   {
     path: 'analytics',
     name: 'analytics',
     component: () => import('@/views/AnalyticsView.vue'),
-    meta: { menuCode: 'analytics', order: 2, title: '分析' },
+    meta: { menuCode: 'analytics', order: 2, title: '分析', viewName: 'AnalyticsView' },
   },
   {
     path: 'users',
     name: 'users',
     component: () => import('@/views/UsersView.vue'),
-    meta: { group: '系统', menuCode: 'users', order: 3, title: '用户' },
+    meta: { group: '系统', menuCode: 'users', order: 3, title: '用户', viewName: 'UsersView' },
   },
   {
     path: 'depts',
     name: 'depts',
     component: () => import('@/views/DeptsView.vue'),
-    meta: { group: '系统', menuCode: 'depts', order: 4, title: '部门' },
+    meta: { group: '系统', menuCode: 'depts', order: 4, title: '部门', viewName: 'DeptsView' },
   },
   {
     path: 'roles',
     name: 'roles',
     component: () => import('@/views/RolesView.vue'),
-    meta: { group: '系统', menuCode: 'roles', order: 5, title: '角色' },
+    meta: { group: '系统', menuCode: 'roles', order: 5, title: '角色', viewName: 'RolesView' },
   },
   {
     path: 'about',
     name: 'about',
     component: () => import('@/views/AboutView.vue'),
-    meta: { menuCode: 'about', order: 6, roles: ['admin'], title: '关于' },
+    meta: { menuCode: 'about', order: 6, roles: ['admin'], title: '关于', viewName: 'AboutView' },
   },
 ]
 

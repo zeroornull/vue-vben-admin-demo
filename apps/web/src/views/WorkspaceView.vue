@@ -1,4 +1,6 @@
 <script setup lang="ts">
+defineOptions({ name: 'WorkspaceView' })
+
 import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'

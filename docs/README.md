@@ -31,6 +31,7 @@
 | 17 | [round-11-roles.md](./17-round-11-roles.md) | 第 11 轮 | 业务角色 CRUD；用户多选角色；与登录权限分开 |
 | 18 | [round-12-role-menus.md](./18-round-12-role-menus.md) | 第 12 轮 | 角色绑菜单；登录后 addRoute；403 / 404 分清 |
 | 19 | [round-13-button-access.md](./19-round-13-button-access.md) | 第 13 轮 | 按钮操作码；藏按钮；mock 写接口也校验 |
+| 20 | [round-14-tabs.md](./20-round-14-tabs.md) | 第 14 轮 | 页签；KeepAlive；工作台钉住 |
 
 后续轮次会继续加 `08-…`、`09-…`，并在本表追加一行。已拍板的结论不要默默改掉；必须修正时在原文加短注并改决策表（第 1 轮已按此修正：第 2 轮改用 `create-vue`，见 [03](./03-migration-roadmap.md)）。
 

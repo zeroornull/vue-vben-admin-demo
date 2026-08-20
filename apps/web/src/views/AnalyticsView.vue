@@ -1,4 +1,6 @@
 <script setup lang="ts">
+defineOptions({ name: 'AnalyticsView' })
+
 import { computed, ref } from 'vue'
 
 import ChartPanel from '@/components/ChartPanel.vue'

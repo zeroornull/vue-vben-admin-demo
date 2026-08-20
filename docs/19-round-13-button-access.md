@@ -71,10 +71,6 @@ bun run build
 
 ## 下一轮从哪里开始
 
-还可以继续加，仍不要第二套库：
-
-1. 登录页改 antd Form（收益小）
-2. `v-access` 指令（码再多时）
-3. 导出 / 导入一类次要按钮
+第 14 轮做了页签和 KeepAlive，见 [20-round-14-tabs.md](./20-round-14-tabs.md)。
 
 不要把 `@core`、五套皮肤、VitePress、Turbo 或 Vue 3.6 默认栈搬进来。

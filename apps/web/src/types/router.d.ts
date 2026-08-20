@@ -16,5 +16,9 @@ declare module 'vue-router' {
     group?: string
     /** 业务角色可勾选的菜单码；不设表示登录即可（工作台） */
     menuCode?: string
+    /** KeepAlive 用的组件 name，必须和 defineOptions 一致 */
+    viewName?: string
+    /** 页签不可关闭（工作台） */
+    affixTab?: boolean
   }
 }
