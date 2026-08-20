@@ -38,10 +38,7 @@ const page = ref(1)
 const pageSize = ref(10)
 const modalOpen = ref(false)
 const editing = ref<SystemRole | null>(null)
-const { hasAction } = useAccess()
-const canCreate = computed(() => hasAction('role:create'))
-const canUpdate = computed(() => hasAction('role:update'))
-const canDelete = computed(() => hasAction('role:delete'))
+const { hasAnyAction } = useAccess()
 const query = reactive<{ code: string; name: string; status: UserStatus | undefined }>({
   code: '',
   name: '',
@@ -59,7 +56,7 @@ const columns = computed<TableColumnsType<SystemRole>>(() => {
     { dataIndex: 'remark', title: '备注' },
     { dataIndex: 'createTime', title: '创建时间', width: 180 },
   ]
-  if (!canUpdate.value && !canDelete.value) return base
+  if (!hasAnyAction('role:update', 'role:delete')) return base
   return [...base, { key: 'actions', title: '操作', width: 160 }]
 })
 
@@ -204,7 +201,7 @@ onMounted(() => {
         <Space>
           <Button html-type="submit" type="primary">查询</Button>
           <Button @click="onReset">重置</Button>
-          <Button v-if="canCreate" type="primary" @click="onCreate">新建</Button>
+          <Button v-access="'role:create'" type="primary" @click="onCreate">新建</Button>
         </Space>
       </FormItem>
     </Form>
@@ -240,8 +237,8 @@ onMounted(() => {
         </template>
         <template v-else-if="column.key === 'actions'">
           <Space>
-            <Button v-if="canUpdate" type="link" @click="onEdit(toRole(record))">编辑</Button>
-            <Button v-if="canDelete" danger type="link" @click="onDelete(toRole(record))">删除</Button>
+            <Button v-access="'role:update'" type="link" @click="onEdit(toRole(record))">编辑</Button>
+            <Button v-access="'role:delete'" danger type="link" @click="onDelete(toRole(record))">删除</Button>
           </Space>
         </template>
       </template>

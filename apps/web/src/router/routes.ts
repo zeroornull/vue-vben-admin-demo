@@ -28,9 +28,27 @@ export const staticLayoutChildren: RouteRecordRaw[] = [
     path: '',
     name: 'home',
     component: () => import('@/views/HomeView.vue'),
-    meta: { affixTab: true, order: 0, title: '工作台', viewName: 'HomeView' },
+    meta: { affixTab: true, icon: 'home', order: 0, title: '工作台', viewName: 'HomeView' },
+  },
+  {
+    path: 'profile',
+    name: 'profile',
+    component: () => import('@/views/ProfileView.vue'),
+    meta: {
+      hideInMenu: true,
+      icon: 'profile',
+      order: 99,
+      title: '个人中心',
+      viewName: 'ProfileView',
+    },
   },
 ]
+
+export function staticLayoutNames(routes = staticLayoutChildren): string[] {
+  return routes
+    .map((route) => (typeof route.name === 'string' ? route.name : ''))
+    .filter(Boolean)
+}
 
 /** 按 userInfo.menuCodes addRoute；目录是守卫判断 403 的依据 */
 export const dynamicLayoutChildren: RouteRecordRaw[] = [
@@ -38,37 +56,37 @@ export const dynamicLayoutChildren: RouteRecordRaw[] = [
     path: 'workspace',
     name: 'workspace',
     component: () => import('@/views/WorkspaceView.vue'),
-    meta: { menuCode: 'workspace', order: 1, title: '工作区', viewName: 'WorkspaceView' },
+    meta: { icon: 'workspace', menuCode: 'workspace', order: 1, title: '工作区', viewName: 'WorkspaceView' },
   },
   {
     path: 'analytics',
     name: 'analytics',
     component: () => import('@/views/AnalyticsView.vue'),
-    meta: { menuCode: 'analytics', order: 2, title: '分析', viewName: 'AnalyticsView' },
+    meta: { icon: 'analytics', menuCode: 'analytics', order: 2, title: '分析', viewName: 'AnalyticsView' },
   },
   {
     path: 'users',
     name: 'users',
     component: () => import('@/views/UsersView.vue'),
-    meta: { group: '系统', menuCode: 'users', order: 3, title: '用户', viewName: 'UsersView' },
+    meta: { group: '系统', icon: 'users', menuCode: 'users', order: 3, title: '用户', viewName: 'UsersView' },
   },
   {
     path: 'depts',
     name: 'depts',
     component: () => import('@/views/DeptsView.vue'),
-    meta: { group: '系统', menuCode: 'depts', order: 4, title: '部门', viewName: 'DeptsView' },
+    meta: { group: '系统', icon: 'depts', menuCode: 'depts', order: 4, title: '部门', viewName: 'DeptsView' },
   },
   {
     path: 'roles',
     name: 'roles',
     component: () => import('@/views/RolesView.vue'),
-    meta: { group: '系统', menuCode: 'roles', order: 5, title: '角色', viewName: 'RolesView' },
+    meta: { group: '系统', icon: 'roles', menuCode: 'roles', order: 5, title: '角色', viewName: 'RolesView' },
   },
   {
     path: 'about',
     name: 'about',
     component: () => import('@/views/AboutView.vue'),
-    meta: { menuCode: 'about', order: 6, roles: ['admin'], title: '关于', viewName: 'AboutView' },
+    meta: { icon: 'about', menuCode: 'about', order: 6, roles: ['admin'], title: '关于', viewName: 'AboutView' },
   },
 ]
 

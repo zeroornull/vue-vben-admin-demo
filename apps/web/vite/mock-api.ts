@@ -3,6 +3,7 @@ import type { IncomingMessage, ServerResponse } from 'node:http'
 import type { Connect, Plugin } from 'vite'
 
 import { hasAccessCode, resolveActionCodes, resolveMenuCodes } from '../src/access/resolve.ts'
+import { passwordsMatch, readUnlockPassword } from '../src/auth/unlock.ts'
 import type { SystemDept } from '../src/views/depts/types.ts'
 
 import {
@@ -141,9 +142,9 @@ const mockMiddleware: Connect.NextHandleFunction = async (req, res, next) => {
     if (req.method === 'POST' && path === '/api/auth/login') {
       const body = await readJson(req)
       const username = String(body.username ?? '')
-      const password = String(body.password ?? '')
+      const password = readUnlockPassword(body.password)
       const account = ACCOUNTS[username]
-      if (!account || account.password !== password) {
+      if (!account || !passwordsMatch(password, account.password)) {
         sendJson(res, 200, { code: 1, data: null, message: '账号或密码错误' })
         return
       }
@@ -156,6 +157,19 @@ const mockMiddleware: Connect.NextHandleFunction = async (req, res, next) => {
     }
 
     if (req.method === 'POST' && path === '/api/auth/logout') {
+      sendJson(res, 200, { code: 0, data: null, message: 'ok' })
+      return
+    }
+
+    if (req.method === 'POST' && path === '/api/auth/unlock') {
+      const username = requireLogin(req, res)
+      if (!username) return
+      const account = ACCOUNTS[username]
+      const password = readUnlockPassword((await readJson(req)).password)
+      if (!account || !passwordsMatch(password, account.password)) {
+        sendJson(res, 200, { code: 1, data: null, message: '密码错误' })
+        return
+      }
       sendJson(res, 200, { code: 0, data: null, message: 'ok' })
       return
     }

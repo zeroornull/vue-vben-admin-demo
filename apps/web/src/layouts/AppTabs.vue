@@ -3,6 +3,8 @@ import { computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 
+import { resolveMenuIcon } from '@/icons/menu-icons'
+import { tabIconName } from '@/layouts/tab-query'
 import { useTabsStore } from '@/stores/tabs'
 
 const route = useRoute()
@@ -45,6 +47,11 @@ function onCloseOthers() {
         type="button"
         @click="onSelect(tab.fullPath)"
       >
+        <component
+          v-if="resolveMenuIcon(tabIconName(tab))"
+          :is="resolveMenuIcon(tabIconName(tab))"
+          class="tab-icon"
+        />
         <span>{{ tab.title }}</span>
         <button
           v-if="!tab.affix"
@@ -101,6 +108,11 @@ function onCloseOthers() {
   font-size: 0.85rem;
   white-space: nowrap;
   cursor: pointer;
+}
+
+.tab-icon {
+  flex: 0 0 auto;
+  font-size: 0.95rem;
 }
 
 .tab[aria-selected='true'] {

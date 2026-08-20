@@ -2,15 +2,19 @@ import { computed } from 'vue'
 
 import { useAuthStore } from '@/stores/auth'
 
-import { hasAccessCode } from './resolve'
+import { matchAccess } from './match'
 
 export function useAccess() {
   const authStore = useAuthStore()
   const actionCodes = computed(() => authStore.userInfo?.actionCodes ?? [])
 
   function hasAction(code: string) {
-    return hasAccessCode(actionCodes.value, code)
+    return matchAccess({ arg: 'action', value: code }, authStore.userInfo)
   }
 
-  return { actionCodes, hasAction }
+  function hasAnyAction(...codes: string[]) {
+    return matchAccess({ arg: 'action', value: codes }, authStore.userInfo)
+  }
+
+  return { actionCodes, hasAction, hasAnyAction }
 }

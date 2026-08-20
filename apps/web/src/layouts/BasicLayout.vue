@@ -1,32 +1,56 @@
 <script setup lang="ts">
-import { computed, watch } from 'vue'
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import { RouterLink, RouterView, useRoute, useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 
 import ThemeToggle from '@/components/ThemeToggle.vue'
 import { LOGIN_PATH } from '@/constants/auth'
+import { resolveMenuIcon } from '@/icons/menu-icons'
 import { useAccessMenu } from '@/router/access-menu'
+import { staticLayoutNames } from '@/router/routes'
 import { resetAccessRoutes } from '@/router/dynamic-access'
 import { useAuthStore } from '@/stores/auth'
+import { useLockStore } from '@/stores/lock'
 import { usePreferencesStore } from '@/stores/preferences'
 import { useTabsStore } from '@/stores/tabs'
 
+import AppBreadcrumb from './AppBreadcrumb.vue'
 import AppTabs from './AppTabs.vue'
+import LockScreen from './LockScreen.vue'
+import UserMenu from './UserMenu.vue'
+import {
+  isIconOnlySidebar,
+  isSidebarExpanded,
+  sidebarChrome,
+  sidebarToggleLabel,
+} from './sidebar-chrome'
+import { useNarrowViewport } from './use-narrow'
 
 const route = useRoute()
 const router = useRouter()
 const authStore = useAuthStore()
 const preferences = usePreferencesStore()
 const tabsStore = useTabsStore()
+const lockStore = useLockStore()
 const { userInfo } = storeToRefs(authStore)
+const { locked } = storeToRefs(lockStore)
 const { appName, sidebarCollapsed } = storeToRefs(preferences)
 const { cachedNames } = storeToRefs(tabsStore)
 const menuGroups = useAccessMenu()
+const narrow = useNarrowViewport()
+const drawerOpen = ref(false)
+
+const chrome = computed(() =>
+  sidebarChrome(narrow.value, sidebarCollapsed.value, drawerOpen.value),
+)
+const iconOnly = computed(() => isIconOnlySidebar(chrome.value))
+const showTitles = computed(() => isSidebarExpanded(chrome.value))
+const toggleLabel = computed(() => sidebarToggleLabel(chrome.value))
 
 const pageTitle = computed(() => route.meta.title ?? appName.value)
 
 const allowedTabNames = computed(() => {
-  const names = new Set<string>(['home'])
+  const names = new Set<string>(staticLayoutNames())
   for (const group of menuGroups.value) {
     for (const item of group.items) {
       names.add(item.name)
@@ -47,6 +71,52 @@ watch(
   { immediate: true },
 )
 
+watch(
+  () => route.fullPath,
+  () => {
+    drawerOpen.value = false
+  },
+)
+
+watch(narrow, (isNarrow) => {
+  if (!isNarrow) drawerOpen.value = false
+})
+
+watch(
+  () => userInfo.value?.username,
+  (name) => {
+    if (name) lockStore.syncOwner(name)
+  },
+  { immediate: true },
+)
+
+function onToggleSidebar() {
+  if (narrow.value) {
+    drawerOpen.value = !drawerOpen.value
+    return
+  }
+  preferences.toggleSidebar()
+}
+
+function onEscape(event: KeyboardEvent) {
+  if (event.key === 'Escape') {
+    drawerOpen.value = false
+  }
+}
+
+onMounted(() => {
+  window.addEventListener('keydown', onEscape)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('keydown', onEscape)
+})
+
+function onLock() {
+  drawerOpen.value = false
+  lockStore.lock()
+}
+
 async function onLogout() {
   await authStore.logout()
   tabsStore.reset()
@@ -56,19 +126,34 @@ async function onLogout() {
 </script>
 
 <template>
-  <div class="shell" :class="{ collapsed: sidebarCollapsed }">
-    <aside id="app-sidebar">
-      <div class="brand">{{ sidebarCollapsed ? appName.charAt(0) : appName }}</div>
+  <div class="shell" :class="chrome" :inert="locked">
+    <div
+      v-if="chrome === 'drawer-open'"
+      class="backdrop"
+      @click="drawerOpen = false"
+    />
+    <aside
+      id="app-sidebar"
+      :aria-hidden="chrome === 'drawer-closed'"
+      :inert="chrome === 'drawer-closed'"
+    >
+      <div class="brand">{{ iconOnly ? appName.charAt(0) : appName }}</div>
       <nav>
         <div v-for="group in menuGroups" :key="group.key" class="group">
-          <p v-if="group.title && !sidebarCollapsed">{{ group.title }}</p>
+          <p v-if="group.title && showTitles">{{ group.title }}</p>
           <RouterLink
             v-for="item in group.items"
             :key="item.name"
             :to="{ name: item.name }"
             :title="item.title"
           >
-            {{ sidebarCollapsed ? item.title.slice(0, 1) : item.title }}
+            <component
+              v-if="resolveMenuIcon(item.icon)"
+              :is="resolveMenuIcon(item.icon)"
+              class="menu-icon"
+            />
+            <span v-else-if="iconOnly">{{ item.title.slice(0, 1) }}</span>
+            <span v-if="showTitles">{{ item.title }}</span>
           </RouterLink>
         </div>
       </nav>
@@ -78,20 +163,20 @@ async function onLogout() {
       <header>
         <button
           type="button"
-          :aria-expanded="!sidebarCollapsed"
+          :aria-expanded="isSidebarExpanded(chrome)"
           aria-controls="app-sidebar"
-          @click="preferences.toggleSidebar()"
+          @click="onToggleSidebar"
         >
-          {{ sidebarCollapsed ? '展开菜单' : '收起菜单' }}
+          {{ toggleLabel }}
         </button>
         <h1>{{ pageTitle }}</h1>
         <div class="user">
           <ThemeToggle />
-          <span>{{ userInfo?.realName }}</span>
-          <button type="button" @click="onLogout">退出</button>
+          <UserMenu @lock="onLock" @logout="onLogout" />
         </div>
       </header>
       <AppTabs />
+      <AppBreadcrumb />
       <section>
         <RouterView v-slot="{ Component }">
           <KeepAlive :include="cachedNames">
@@ -101,6 +186,7 @@ async function onLogout() {
       </section>
     </div>
   </div>
+  <LockScreen v-if="locked" @logout="onLogout" />
 </template>
 
 <style scoped>
@@ -111,8 +197,13 @@ async function onLogout() {
   min-height: 100vh;
 }
 
-.shell.collapsed {
+.shell.docked-collapsed {
   --sidebar-width: 4.25rem;
+}
+
+.shell.drawer-closed,
+.shell.drawer-open {
+  grid-template-columns: 1fr;
 }
 
 aside {
@@ -148,9 +239,46 @@ nav {
 }
 
 nav a {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
   border-radius: 0.4rem;
   padding: 0.45rem 0.6rem;
   color: var(--color-text);
+}
+
+.shell.docked-collapsed nav a {
+  justify-content: center;
+}
+
+.shell.drawer-closed aside,
+.shell.drawer-open aside {
+  position: fixed;
+  inset: 0 auto 0 0;
+  z-index: 20;
+  width: min(220px, 85vw);
+  transition: transform 0.2s ease;
+}
+
+.shell.drawer-closed aside {
+  transform: translateX(-100%);
+}
+
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 15;
+  background: rgb(0 0 0 / 35%);
+}
+
+.shell.drawer-closed :deep(.user-label),
+.shell.drawer-open :deep(.user-label) {
+  display: none;
+}
+
+.menu-icon {
+  flex: 0 0 auto;
+  font-size: 1.05rem;
 }
 
 nav a.router-link-exact-active {
@@ -161,7 +289,7 @@ nav a.router-link-exact-active {
 
 .main {
   display: grid;
-  grid-template-rows: 3.5rem auto 1fr;
+  grid-template-rows: 3.5rem auto auto 1fr;
   min-width: 0;
 }
 

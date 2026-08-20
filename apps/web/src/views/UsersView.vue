@@ -51,12 +51,9 @@ const query = reactive<{
   status: undefined,
 })
 
-const { hasAction } = useAccess()
+const { hasAnyAction } = useAccess()
 const names = computed(() => deptNameById(flattenDepts(catalog.value)))
 const roleNames = computed(() => roleNameById(roleCatalog.value))
-const canCreate = computed(() => hasAction('user:create'))
-const canUpdate = computed(() => hasAction('user:update'))
-const canDelete = computed(() => hasAction('user:delete'))
 
 const columns = computed<TableColumnsType<SystemUser>>(() => {
   const base: TableColumnsType<SystemUser> = [
@@ -67,7 +64,7 @@ const columns = computed<TableColumnsType<SystemUser>>(() => {
     { dataIndex: 'remark', title: '备注' },
     { dataIndex: 'createTime', title: '创建时间', width: 180 },
   ]
-  if (!canUpdate.value && !canDelete.value) return base
+  if (!hasAnyAction('user:update', 'user:delete')) return base
   return [...base, { key: 'actions', title: '操作', width: 160 }]
 })
 
@@ -228,7 +225,7 @@ onMounted(async () => {
         <Space>
           <Button html-type="submit" type="primary">查询</Button>
           <Button @click="onReset">重置</Button>
-          <Button v-if="canCreate" type="primary" @click="onCreate">新建</Button>
+          <Button v-access="'user:create'" type="primary" @click="onCreate">新建</Button>
         </Space>
       </FormItem>
     </Form>
@@ -261,8 +258,8 @@ onMounted(async () => {
         </template>
         <template v-else-if="column.key === 'actions'">
           <Space>
-            <Button v-if="canUpdate" type="link" @click="onEdit(toUser(record))">编辑</Button>
-            <Button v-if="canDelete" danger type="link" @click="onDelete(toUser(record))">删除</Button>
+            <Button v-access="'user:update'" type="link" @click="onEdit(toUser(record))">编辑</Button>
+            <Button v-access="'user:delete'" danger type="link" @click="onDelete(toUser(record))">删除</Button>
           </Space>
         </template>
       </template>

@@ -3,6 +3,7 @@ import { HOME_PATH } from '@/constants/auth'
 export type AppTab = {
   affix: boolean
   fullPath: string
+  icon?: string
   name: string
   title: string
   viewName: string
@@ -11,6 +12,7 @@ export type AppTab = {
 export const HOME_TAB: AppTab = {
   affix: true,
   fullPath: HOME_PATH,
+  icon: 'home',
   name: 'home',
   title: '工作台',
   viewName: 'HomeView',
@@ -20,6 +22,7 @@ export type TabRouteInput = {
   fullPath: string
   meta?: {
     affixTab?: boolean
+    icon?: string
     title?: string
     viewName?: string
   }
@@ -33,10 +36,16 @@ export function tabFromRoute(route: TabRouteInput): AppTab | null {
   return {
     affix: Boolean(route.meta?.affixTab),
     fullPath: route.fullPath,
+    icon: route.meta?.icon,
     name: route.name,
     title,
     viewName,
   }
+}
+
+/** persist 里旧页签没有 icon 时，用路由 name 去同一张登记表查 */
+export function tabIconName(tab: { icon?: string; name: string }): string {
+  return tab.icon || tab.name
 }
 
 export function ensureHome(tabs: AppTab[]): AppTab[] {

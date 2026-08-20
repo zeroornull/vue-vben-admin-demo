@@ -16,3 +16,7 @@ export function loginApi(data: LoginParams) {
 export function logoutApi() {
   return post<null>('/auth/logout')
 }
+
+export function unlockApi(password: string) {
+  return post<null>('/auth/unlock', { password })
+}

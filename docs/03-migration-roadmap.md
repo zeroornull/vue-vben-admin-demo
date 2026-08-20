@@ -19,7 +19,15 @@
 第 12 轮 角色绑菜单 + 动态路由
 第 13 轮 按钮权限
 第 14 轮 页签 + KeepAlive
-第 15 轮 暗色开关  ← 当前
+第 15 轮 暗色开关
+第 16 轮 面包屑
+第 17 轮 v-access
+第 18 轮 侧栏图标
+第 19 轮 页签图标
+第 20 轮 窄屏侧栏
+第 21 轮 用户菜单
+第 22 轮 锁屏
+第 23 轮 个人中心  ← 当前
 ```
 
 轮次可以按实际卡点拆开（例如第 3 轮只做登录、第 3b 轮再做动态路由），但不要跳过「可运行」去堆包。
@@ -193,6 +201,54 @@
 
 `themeMode`：system / light / dark。antd 和 ECharts 跟 resolved 主题。无主题色拾色器。
 
+## 第 16 轮 · 面包屑
+
+> 已完成，执行记录见 [22-round-16-breadcrumb.md](./22-round-16-breadcrumb.md)。
+
+`工作台 / 系统 / 用户`。分组段不能跳。工作台上藏条。不用 antd Breadcrumb，不扫 `route.matched`。
+
+## 第 17 轮 · v-access
+
+> 已完成，执行记录见 [23-round-17-v-access.md](./23-round-17-v-access.md)。
+
+按钮用 `v-access="'user:create'"`。操作列和 mock 写接口仍走函数。`v-access:role` 只认登录角色。
+
+## 第 18 轮 · 侧栏图标
+
+> 已完成，执行记录见 [24-round-18-menu-icons.md](./24-round-18-menu-icons.md)。
+
+`@ant-design/icons-vue@7.0.1`。`meta.icon` 是登记名。不上 Iconify。登录页 Form 仍不做。
+
+## 第 19 轮 · 页签图标
+
+> 已完成，执行记录见 [25-round-19-tab-icons.md](./25-round-19-tab-icons.md)。
+
+页签复用 `menuIcons`。旧 persist 用路由名回退。不加右键菜单。
+
+## 第 20 轮 · 窄屏侧栏
+
+> 已完成，执行记录见 [26-round-20-narrow-sidebar.md](./26-round-20-narrow-sidebar.md)。
+
+≤768px 改抽屉。`drawerOpen` 不 persist。不上 VueUse。
+
+## 第 21 轮 · 用户菜单
+
+> 已完成，执行记录见 [27-round-21-user-menu.md](./27-round-21-user-menu.md)。
+
+顶栏下拉：账号 + 两层角色 + 退出。不用 antd Dropdown。无个人中心页。
+
+## 第 22 轮 · 锁屏
+
+> 已完成，执行记录见 [28-round-22-lock-screen.md](./28-round-22-lock-screen.md)。
+
+锁屏不清 token。解锁校验当前账号密码。个人中心页仍不做。
+
+## 第 23 轮 · 个人中心
+
+> 已完成，执行记录见 [29-round-23-profile.md](./29-round-23-profile.md)。
+
+`/profile` 静态、藏侧栏。看会话不是系统用户。页签白名单改 `staticLayoutNames()`。
+
 ## 决策记录（第 1 轮已拍板）
 
 | 议题 | 决定 | 原因 |
@@ -207,6 +263,7 @@
 | 第 6 轮 lint | 只上 oxlint | 不叠 ESLint / Stylelint |
 | 第 6 轮 Turbo | 不上 | 单 app，`bun run --filter` 足够 |
 | 第 8 轮组件库 | ant-design-vue 4.2.6 | 对照仓是 `web-antd`；官方包最新稳定是 4.x。不上 antdv-next、vxe-table、五套皮肤 |
+| 第 18 轮图标 | `@ant-design/icons-vue` 具名引入 | 已跟 antd；不上 Iconify / unplugin-icons |
 
 需要改上述决定时，开新一轮文档，不要默默改这一节而不留痕迹。
 

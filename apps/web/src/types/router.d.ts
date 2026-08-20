@@ -20,5 +20,7 @@ declare module 'vue-router' {
     viewName?: string
     /** 页签不可关闭（工作台） */
     affixTab?: boolean
+    /** 侧栏图标登记名，见 menuIcons；不是 antd 组件名 */
+    icon?: string
   }
 }

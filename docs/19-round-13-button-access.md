@@ -8,7 +8,7 @@
 
 页面按 `userInfo.actionCodes` 藏按钮。mock 写接口也会查同一份码，只藏按钮不够。
 
-没有做 `v-access` 指令。调用 `useAccess().hasAction`。
+当时没做 `v-access`，调用 `useAccess().hasAction`。第 17 轮补了指令，见 [23-round-17-v-access.md](./23-round-17-v-access.md)。
 
 零新依赖。
 

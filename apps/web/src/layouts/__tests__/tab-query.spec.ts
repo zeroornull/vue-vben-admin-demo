@@ -9,12 +9,14 @@ import {
   nextPathAfterClose,
   pruneTabs,
   tabFromRoute,
+  tabIconName,
   upsertTab,
 } from '../tab-query'
 
 const users = {
   affix: false,
   fullPath: '/users',
+  icon: 'users',
   name: 'users',
   title: '用户',
   viewName: 'UsersView',
@@ -34,10 +36,18 @@ describe('tabFromRoute', () => {
     expect(
       tabFromRoute({
         fullPath: '/users',
-        meta: { affixTab: false, title: '用户', viewName: 'UsersView' },
+        meta: { affixTab: false, icon: 'users', title: '用户', viewName: 'UsersView' },
         name: 'users',
       }),
     ).toEqual(users)
+  })
+})
+
+describe('tabIconName', () => {
+  it('falls back to the route name for persisted tabs without icon', () => {
+    expect(tabIconName({ icon: 'users', name: 'users' })).toBe('users')
+    expect(tabIconName({ name: 'users' })).toBe('users')
+    expect(HOME_TAB.icon).toBe('home')
   })
 })
 

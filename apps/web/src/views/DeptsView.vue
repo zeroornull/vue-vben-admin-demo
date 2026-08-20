@@ -23,10 +23,7 @@ const query = reactive<{ name: string; status: UserStatus | undefined }>({
   status: undefined,
 })
 
-const { hasAction } = useAccess()
-const canCreate = computed(() => hasAction('dept:create'))
-const canUpdate = computed(() => hasAction('dept:update'))
-const canDelete = computed(() => hasAction('dept:delete'))
+const { hasAnyAction } = useAccess()
 
 const tree = computed(() =>
   filterDeptTree(catalog.value, {
@@ -43,7 +40,7 @@ const columns = computed<TableColumnsType<SystemDept>>(() => {
     { dataIndex: 'remark', title: '备注' },
     { dataIndex: 'createTime', title: '创建时间', width: 180 },
   ]
-  if (!canCreate.value && !canUpdate.value && !canDelete.value) return base
+  if (!hasAnyAction('dept:create', 'dept:update', 'dept:delete')) return base
   return [...base, { key: 'actions', title: '操作', width: 220 }]
 })
 
@@ -152,7 +149,7 @@ onMounted(() => {
       <FormItem>
         <Space>
           <Button @click="onReset">重置</Button>
-          <Button v-if="canCreate" type="primary" @click="onCreate">新建</Button>
+          <Button v-access="'dept:create'" type="primary" @click="onCreate">新建</Button>
         </Space>
       </FormItem>
     </Form>
@@ -177,9 +174,9 @@ onMounted(() => {
         </template>
         <template v-else-if="column.key === 'actions'">
           <Space>
-            <Button v-if="canCreate" type="link" @click="onAppend(toDept(record))">下级</Button>
-            <Button v-if="canUpdate" type="link" @click="onEdit(toDept(record))">编辑</Button>
-            <Button v-if="canDelete" danger type="link" @click="onDelete(toDept(record))">删除</Button>
+            <Button v-access="'dept:create'" type="link" @click="onAppend(toDept(record))">下级</Button>
+            <Button v-access="'dept:update'" type="link" @click="onEdit(toDept(record))">编辑</Button>
+            <Button v-access="'dept:delete'" danger type="link" @click="onDelete(toDept(record))">删除</Button>
           </Space>
         </template>
       </template>

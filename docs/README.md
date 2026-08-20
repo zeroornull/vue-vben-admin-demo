@@ -33,6 +33,14 @@
 | 19 | [round-13-button-access.md](./19-round-13-button-access.md) | 第 13 轮 | 按钮操作码；藏按钮；mock 写接口也校验 |
 | 20 | [round-14-tabs.md](./20-round-14-tabs.md) | 第 14 轮 | 页签；KeepAlive；工作台钉住 |
 | 21 | [round-15-theme.md](./21-round-15-theme.md) | 第 15 轮 | 浅色 / 深色 / 跟随系统；antd 与图表同步 |
+| 22 | [round-16-breadcrumb.md](./22-round-16-breadcrumb.md) | 第 16 轮 | 面包屑；分组段不能跳；工作台上藏条 |
+| 23 | [round-17-v-access.md](./23-round-17-v-access.md) | 第 17 轮 | v-access；操作列和写接口仍走函数 |
+| 24 | [round-18-menu-icons.md](./24-round-18-menu-icons.md) | 第 18 轮 | 侧栏图标；`meta.icon` 登记名；无 Iconify |
+| 25 | [round-19-tab-icons.md](./25-round-19-tab-icons.md) | 第 19 轮 | 页签复用同一套图标；persist 用 name 回退 |
+| 26 | [round-20-narrow-sidebar.md](./26-round-20-narrow-sidebar.md) | 第 20 轮 | 窄屏抽屉侧栏；不改已保存的收起偏好 |
+| 27 | [round-21-user-menu.md](./27-round-21-user-menu.md) | 第 21 轮 | 顶栏用户菜单；登录角色与业务角色分开 |
+| 28 | [round-22-lock-screen.md](./28-round-22-lock-screen.md) | 第 22 轮 | 锁屏；解锁走当前账号密码；不清会话 |
+| 29 | [round-23-profile.md](./29-round-23-profile.md) | 第 23 轮 | 个人中心；静态路由；看会话不是系统用户 |
 
 后续轮次会继续加 `08-…`、`09-…`，并在本表追加一行。已拍板的结论不要默默改掉；必须修正时在原文加短注并改决策表（第 1 轮已按此修正：第 2 轮改用 `create-vue`，见 [03](./03-migration-roadmap.md)）。
 

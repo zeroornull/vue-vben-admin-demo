@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
 import { canSeeRoute, groupMenuItems, toMenuItems } from '../access-menu'
+import { staticLayoutNames } from '../routes'
 
 const viewer = { menuCodes: ['users', 'depts', 'roles', 'about'], roles: ['user'] }
 const admin = { menuCodes: ['users', 'depts', 'roles', 'about'], roles: ['admin'] }
@@ -8,6 +9,10 @@ const admin = { menuCodes: ['users', 'depts', 'roles', 'about'], roles: ['admin'
 describe('canSeeRoute', () => {
   it('hides routes without a title', () => {
     expect(canSeeRoute({ path: '/hidden', meta: {} }, admin)).toBe(false)
+  })
+
+  it('lists static layout names for tab allowlists', () => {
+    expect(staticLayoutNames()).toEqual(['home', 'profile'])
   })
 
   it('hides routes marked hideInMenu', () => {
@@ -54,5 +59,13 @@ describe('groupMenuItems', () => {
     expect(groups[0]?.items.map((item) => item.name)).toEqual(['home'])
     expect(groups[1]?.items.map((item) => item.name)).toEqual(['users', 'depts', 'roles'])
     expect(groups[2]?.items.map((item) => item.name)).toEqual(['about'])
+  })
+
+  it('copies meta.icon onto the menu item', () => {
+    const [item] = toMenuItems(
+      [{ path: '/users', name: 'users', meta: { icon: 'users', menuCode: 'users', title: '用户' } }],
+      viewer,
+    )
+    expect(item?.icon).toBe('users')
   })
 })

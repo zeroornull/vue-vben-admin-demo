@@ -2,6 +2,7 @@ import { ref } from 'vue'
 import { defineStore } from 'pinia'
 
 import { getUserInfoApi, loginApi, logoutApi, type LoginParams } from '@/api'
+import { useLockStore } from '@/stores/lock'
 import type { UserInfo } from '@/types/user'
 
 export const useAuthStore = defineStore(
@@ -27,6 +28,7 @@ export const useAuthStore = defineStore(
         accessToken.value = token
         userInfo.value = await getUserInfoApi()
         invalidateAccess()
+        useLockStore().reset()
         return userInfo.value
       } finally {
         loginLoading.value = false
@@ -51,6 +53,7 @@ export const useAuthStore = defineStore(
       accessToken.value = ''
       userInfo.value = null
       invalidateAccess()
+      useLockStore().reset()
     }
 
     return {

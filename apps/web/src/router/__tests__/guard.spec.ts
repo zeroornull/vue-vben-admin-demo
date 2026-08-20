@@ -185,6 +185,15 @@ describe('decideAccess', () => {
     expect(markAccessGenerated).toHaveBeenCalledOnce()
   })
 
+  it('lets any signed-in user open the static profile page', async () => {
+    await expect(
+      decideAccess(
+        { fullPath: '/profile', meta: {}, path: '/profile', query: {} },
+        ctx({ accessToken: 'mock.user', userInfo: user }),
+      ),
+    ).resolves.toBe(true)
+  })
+
   it('blocks a catalog page the business role did not grant', async () => {
     await expect(
       decideAccess(

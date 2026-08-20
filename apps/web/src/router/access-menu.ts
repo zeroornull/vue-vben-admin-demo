@@ -8,6 +8,7 @@ import { layoutChildren } from './routes'
 
 export type AccessMenuItem = {
   group?: string
+  icon?: string
   name: string
   order: number
   title: string
@@ -31,6 +32,7 @@ export function toMenuItems(routes: RouteRecordRaw[], viewer: AccessViewer): Acc
     .filter((route) => canSeeRoute(route, viewer))
     .map((route) => ({
       group: route.meta?.group,
+      icon: route.meta?.icon,
       name: String(route.name),
       order: route.meta?.order ?? 0,
       title: route.meta?.title ?? String(route.name),

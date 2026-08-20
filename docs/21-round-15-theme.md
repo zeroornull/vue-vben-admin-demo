@@ -69,10 +69,6 @@ bun run build
 
 ## 下一轮从哪里开始
 
-还可以继续加，仍不要第二套库：
-
-1. 面包屑
-2. `v-access`（码再多时）
-3. 登录页改 antd Form（收益仍小）
+第 16 轮做了面包屑，见 [22-round-16-breadcrumb.md](./22-round-16-breadcrumb.md)。
 
 不要把 `@core`、五套皮肤、VitePress、Turbo 或 Vue 3.6 默认栈搬进来。
