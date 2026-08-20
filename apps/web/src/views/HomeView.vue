@@ -13,7 +13,7 @@ const isAdmin = computed(() => userInfo.value?.roles.includes('admin'))
 <template>
   <div class="page">
     <p>
-      表单有未保存改动时，关弹窗或换页会先确认。用的是浏览器自带 confirm。个人中心关标签页也会拦一下。登录页仍不做 Form。
+      宽屏展开侧栏时，右边可以拖宽度，写进偏好。收起、顶栏、窄屏抽屉都不吃这个数。外观里能重置回 220。
     </p>
     <p v-access:role="'admin'">
       这段用 <code>v-access:role="'admin'"</code>，看的是登录角色，不是业务角色码 biz-admin。

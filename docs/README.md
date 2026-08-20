@@ -69,6 +69,7 @@
 | 55 | [round-49-audit.md](./55-round-49-audit.md) | 第 49 轮 | 操作日志；只读；biz-admin 默认可见 |
 | 56 | [round-50-embed-links.md](./56-round-50-embed-links.md) | 第 50 轮 | 可配置外链；数据菜单；同一 iframe |
 | 57 | [round-51-unsaved.md](./57-round-51-unsaved.md) | 第 51 轮 | 未保存离开确认；`window.confirm`；不 persist |
+| 58 | [round-52-sidebar-width.md](./58-round-52-sidebar-width.md) | 第 52 轮 | 侧栏宽度；拖条 persist；抽屉不跟 |
 
 后续轮次会继续加 `08-…`、`09-…`，并在本表追加一行。已拍板的结论不要默默改掉；必须修正时在原文加短注并改决策表（第 1 轮已按此修正：第 2 轮改用 `create-vue`，见 [03](./03-migration-roadmap.md)）。
 

@@ -7,6 +7,13 @@ import AppearanceMenu from '@/components/AppearanceMenu.vue'
 import { LOGIN_PATH } from '@/constants/auth'
 import { resolveMenuIcon } from '@/icons/menu-icons'
 import { normalizeNavLayout } from '@/preferences/nav-layout'
+import {
+  SIDEBAR_WIDTH_MAX,
+  SIDEBAR_WIDTH_MIN,
+  normalizeSidebarWidth,
+  sidebarWidthByKey,
+  sidebarWidthFromDrag,
+} from '@/preferences/sidebar-width'
 import { extraTabNames, menuItemTo, useAccessMenu } from '@/router/access-menu'
 import { staticLayoutNames } from '@/router/routes'
 import { resetAccessRoutes } from '@/router/dynamic-access'
@@ -33,6 +40,7 @@ import {
   sidebarChrome,
   sidebarToggleLabel,
   showsHeaderNav,
+  showsSidebarResizer,
   showsSidebarToggle,
 } from './sidebar-chrome'
 import { useIdleLock } from './use-idle-lock'
@@ -48,7 +56,9 @@ const linksStore = useLinksStore()
 const noticesStore = useNoticesStore()
 const { userInfo } = storeToRefs(authStore)
 const { locked } = storeToRefs(lockStore)
-const { appName, navLayout, sidebarCollapsed } = storeToRefs(preferences)
+const { appName, navLayout, sidebarCollapsed, sidebarWidth } = storeToRefs(preferences)
+const dragWidth = ref<number | null>(null)
+const dragStart = ref<{ startWidth: number; startX: number } | null>(null)
 const { cachedNames } = storeToRefs(tabsStore)
 const menuGroups = useAccessMenu()
 const narrow = useNarrowViewport()
@@ -75,6 +85,52 @@ const asideHidden = computed(
 const iconOnly = computed(() => isIconOnlySidebar(chrome.value))
 const showTitles = computed(() => isSidebarExpanded(chrome.value))
 const toggleLabel = computed(() => sidebarToggleLabel(chrome.value))
+const sidebarResizer = computed(() => showsSidebarResizer(chrome.value))
+const appliedSidebarWidth = computed(
+  () => dragWidth.value ?? normalizeSidebarWidth(sidebarWidth.value),
+)
+const shellStyle = computed(() =>
+  sidebarResizer.value ? { '--sidebar-width': `${appliedSidebarWidth.value}px` } : undefined,
+)
+
+function setResizingClass(on: boolean) {
+  document.documentElement.classList.toggle('sidebar-resizing', on)
+}
+
+function onResizeStart(event: PointerEvent) {
+  if (event.button !== 0 || !sidebarResizer.value) return
+  event.preventDefault()
+  ;(event.currentTarget as HTMLElement).setPointerCapture(event.pointerId)
+  const startWidth = normalizeSidebarWidth(sidebarWidth.value)
+  dragStart.value = { startWidth, startX: event.clientX }
+  dragWidth.value = startWidth
+  setResizingClass(true)
+}
+
+function onResizeMove(event: PointerEvent) {
+  if (!dragStart.value) return
+  dragWidth.value = sidebarWidthFromDrag(
+    dragStart.value.startWidth,
+    dragStart.value.startX,
+    event.clientX,
+  )
+}
+
+function onResizeEnd() {
+  if (dragWidth.value !== null) {
+    preferences.setSidebarWidth(dragWidth.value)
+  }
+  dragStart.value = null
+  dragWidth.value = null
+  setResizingClass(false)
+}
+
+function onResizeKey(event: KeyboardEvent) {
+  const next = sidebarWidthByKey(appliedSidebarWidth.value, event.key)
+  if (next === null) return
+  event.preventDefault()
+  preferences.setSidebarWidth(next)
+}
 
 const pageTitle = computed(() => {
   if (route.name === 'embed-link') {
@@ -161,6 +217,10 @@ watch(locked, (isLocked) => {
   contentFullscreen.value = false
 })
 
+watch(sidebarResizer, (canResize) => {
+  if (!canResize && dragStart.value) onResizeEnd()
+})
+
 function onToggleSidebar() {
   if (narrow.value) {
     drawerOpen.value = !drawerOpen.value
@@ -197,6 +257,7 @@ onMounted(() => {
 
 onUnmounted(() => {
   window.removeEventListener('keydown', onEscape)
+  setResizingClass(false)
 })
 
 function onLock() {
@@ -217,7 +278,8 @@ async function onLogout() {
 <template>
   <div
     class="shell"
-    :class="[chrome, { 'content-full': contentFullscreen }]"
+    :class="[chrome, { 'content-full': contentFullscreen, resizing: dragStart }]"
+    :style="shellStyle"
     :inert="locked"
   >
     <div
@@ -246,6 +308,24 @@ async function onLogout() {
           </RouterLink>
         </div>
       </nav>
+      <div
+        v-if="sidebarResizer"
+        class="sidebar-resizer"
+        role="separator"
+        tabindex="0"
+        aria-label="调整侧栏宽度"
+        aria-orientation="vertical"
+        :aria-valuenow="appliedSidebarWidth"
+        :aria-valuemin="SIDEBAR_WIDTH_MIN"
+        :aria-valuemax="SIDEBAR_WIDTH_MAX"
+        title="拖动调整侧栏宽度，双击恢复 220"
+        @pointerdown="onResizeStart"
+        @pointermove="onResizeMove"
+        @pointerup="onResizeEnd"
+        @pointercancel="onResizeEnd"
+        @dblclick="preferences.resetSidebarWidth()"
+        @keydown="onResizeKey"
+      />
     </aside>
 
     <div class="main">
@@ -339,12 +419,28 @@ async function onLogout() {
 }
 
 aside {
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: 1rem;
   border-right: 1px solid var(--color-border);
   background: var(--color-background-soft);
   padding: var(--chrome-aside-pad);
+}
+
+.sidebar-resizer {
+  position: absolute;
+  top: 0;
+  right: -3px;
+  z-index: 2;
+  width: 6px;
+  height: 100%;
+  cursor: col-resize;
+}
+
+.sidebar-resizer:hover,
+.shell.resizing .sidebar-resizer {
+  background: var(--color-border);
 }
 
 .brand {

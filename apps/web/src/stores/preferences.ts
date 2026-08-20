@@ -5,6 +5,7 @@ import { normalizeColorFilter, type ColorFilter } from '@/preferences/color-filt
 import { normalizeDensity, type Density } from '@/preferences/density'
 import { normalizeIdleLockMinutes, type IdleLockMinutes } from '@/preferences/idle-lock'
 import { normalizeNavLayout, type NavLayout } from '@/preferences/nav-layout'
+import { normalizeSidebarWidth, SIDEBAR_WIDTH_DEFAULT } from '@/preferences/sidebar-width'
 import { normalizeThemeMode, type ThemeMode } from '@/preferences/theme'
 
 export const usePreferencesStore = defineStore(
@@ -12,6 +13,7 @@ export const usePreferencesStore = defineStore(
   () => {
     const appName = ref('Vue Admin')
     const sidebarCollapsed = ref(false)
+    const sidebarWidth = ref(SIDEBAR_WIDTH_DEFAULT)
     const themeMode = ref<ThemeMode>('system')
     const watermarkEnabled = ref(true)
     const colorFilter = ref<ColorFilter>('none')
@@ -47,6 +49,14 @@ export const usePreferencesStore = defineStore(
       idleLockMinutes.value = normalizeIdleLockMinutes(value)
     }
 
+    function setSidebarWidth(value: unknown) {
+      sidebarWidth.value = normalizeSidebarWidth(value)
+    }
+
+    function resetSidebarWidth() {
+      sidebarWidth.value = SIDEBAR_WIDTH_DEFAULT
+    }
+
     return {
       appName,
       colorFilter,
@@ -56,9 +66,12 @@ export const usePreferencesStore = defineStore(
       setColorFilter,
       setDensity,
       setIdleLockMinutes,
+      resetSidebarWidth,
       setNavLayout,
+      setSidebarWidth,
       setThemeMode,
       sidebarCollapsed,
+      sidebarWidth,
       themeMode,
       toggleSidebar,
       toggleWatermark,
@@ -73,6 +86,7 @@ export const usePreferencesStore = defineStore(
         'idleLockMinutes',
         'navLayout',
         'sidebarCollapsed',
+        'sidebarWidth',
         'themeMode',
         'watermarkEnabled',
       ],

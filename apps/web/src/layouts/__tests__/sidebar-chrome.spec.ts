@@ -8,6 +8,7 @@ import {
   sidebarChrome,
   sidebarToggleLabel,
   showsHeaderNav,
+  showsSidebarResizer,
   showsSidebarToggle,
 } from '../sidebar-chrome'
 
@@ -33,6 +34,10 @@ describe('sidebarChrome', () => {
     expect(sidebarChrome(true, true, true, 'top')).toBe('drawer-open')
     expect(showsHeaderNav('top')).toBe(true)
     expect(showsSidebarToggle('top')).toBe(false)
+    expect(showsSidebarResizer('docked-open')).toBe(true)
+    expect(showsSidebarResizer('docked-collapsed')).toBe(false)
+    expect(showsSidebarResizer('drawer-open')).toBe(false)
+    expect(showsSidebarResizer('top')).toBe(false)
     expect(showsHeaderNav('docked-open')).toBe(false)
     expect(isSidebarExpanded('top')).toBe(false)
     expect(isIconOnlySidebar('top')).toBe(false)

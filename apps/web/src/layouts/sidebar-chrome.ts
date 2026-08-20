@@ -34,6 +34,10 @@ export function showsSidebarToggle(chrome: SidebarChrome): boolean {
   return chrome !== 'top'
 }
 
+export function showsSidebarResizer(chrome: SidebarChrome): boolean {
+  return chrome === 'docked-open'
+}
+
 export function isSidebarExpanded(chrome: SidebarChrome): boolean {
   return chrome === 'docked-open' || chrome === 'drawer-open'
 }
