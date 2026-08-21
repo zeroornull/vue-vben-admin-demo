@@ -78,10 +78,6 @@ bun run build
 
 ## 下一轮从哪里开始
 
-点名过的边角已经收完。再说「继续」没有同等体量的表能力或壳能力可搬。下面这些仍不做：
+点名过的边角已经收完。第一期停在这里。
 
-1. i18n、第二套皮肤、`@core`、Turbo、Vue 3.6
-2. 通知已读写 `localStorage`
-3. VitePress、Iconify、vxe-table、五套皮肤、`packages/` 拆包、Playwright 自动 CI
-
-不要把 `@core`、五套皮肤、VitePress、Turbo 或 Vue 3.6 默认栈搬进来。
+若要做 i18n、多皮肤、拆包、Turbo、Vue 3.6 等，走二期第 69 轮，路线见 [75-phase-2-roadmap.md](./75-phase-2-roadmap.md)。通知已读写 `localStorage` 仍不做。

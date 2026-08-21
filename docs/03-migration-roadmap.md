@@ -72,8 +72,10 @@
 第 65 轮 角色外链导入
 第 66 轮 三表列显隐
 第 67 轮 部门展开 + iframe 重载
-第 68 轮 边角一次收完  ← 当前
+第 68 轮 边角一次收完
 ```
+
+第一期到此结束。二期路线见 [75-phase-2-roadmap.md](./75-phase-2-roadmap.md)。第 69 轮 catalog 已落地，执行记录见 [76-round-69-catalog.md](./76-round-69-catalog.md)。当前 ← 第 69 轮。
 
 轮次可以按实际卡点拆开（例如第 3 轮只做登录、第 3b 轮再做动态路由），但不要跳过「可运行」去堆包。
 
@@ -564,6 +566,12 @@ path 变了就 abort 上一页 GET。写操作和轮询不挂。
 
 登录改 antd Form。页签右键 + 拖拽。个人中心改密。日志按导出格式回放导入。部门树也能开关列。
 
+## 第 69 轮 · bun catalog
+
+> 已完成，执行记录见 [76-round-69-catalog.md](./76-round-69-catalog.md)。
+
+根 workspace 加上 catalog。vue / router / pinia / vite / typescript / vue-tsc / plugin-vue 只在根上写版本。没有拆包，没有升 3.6。
+
 ## 决策记录（第 1 轮已拍板）
 
 | 议题 | 决定 | 原因 |
@@ -573,14 +581,14 @@ path 变了就 abort 上一页 GET。写操作和轮询不挂。
 | 默认对照 app | `web-antd` | 结构最完整、示例最多 |
 | 是否保留 5 套皮肤 | 否，先一套 | adapter 是后期优化 |
 | `legacy/` 是否提交 | 否 | 体积大，且与上游仓库重复；本机对照即可 |
-| 包管理 | Bun | 用户指定；workspace 与 catalog 已具备 |
+| 包管理 | Bun | 用户指定；workspace 已有。catalog 第 69 轮落地（vue / router / pinia / vite / ts / vue-tsc / plugin-vue），见 [76](./76-round-69-catalog.md) |
 | 第 2 轮如何初始化 | **`bun x create-vue@latest apps/web`**，再套 Bun workspace | 官方模板对齐最新稳定 Vue/Vite/TS；手写配置容易漏；monorepo 是后加的一层，不是手写整个 app 的理由 |
 | 第 6 轮 lint | 只上 oxlint | 不叠 ESLint / Stylelint |
 | 第 6 轮 Turbo | 不上 | 单 app，`bun run --filter` 足够 |
 | 第 8 轮组件库 | ant-design-vue 4.2.6 | 对照仓是 `web-antd`；官方包最新稳定是 4.x。不上 antdv-next、vxe-table、五套皮肤 |
 | 第 18 轮图标 | `@ant-design/icons-vue` 具名引入 | 已跟 antd；不上 Iconify / unplugin-icons |
 
-需要改上述决定时，开新一轮文档，不要默默改这一节而不留痕迹。
+需要改上述决定时，开新一轮文档，不要默默改这一节而不留痕迹。二期若真做多皮肤 / Iconify / vxe-table / Turbo / VitePress，按 [75](./75-phase-2-roadmap.md) 在**执行当轮**再改上表对应行，不要提前把「否」改成「是」。
 
 ## 风险
 

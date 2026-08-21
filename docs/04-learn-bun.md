@@ -74,7 +74,7 @@ Bun 也支持 catalog，写在根 `package.json`：
 }
 ```
 
-子包同样写 `"vue": "catalog:"`。第 2 轮只把「会重复出现的核心依赖」放进 catalog，不要把旧 yaml 整表贴过来。
+子包同样写 `"vue": "catalog:"`。第 2 轮只把「会重复出现的核心依赖」放进 catalog，不要把旧 yaml 整表贴过来。第 69 轮已按此落地，见 [76-round-69-catalog.md](./76-round-69-catalog.md)。
 
 ### 3. 锁文件要进 Git
 
