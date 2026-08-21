@@ -26,7 +26,9 @@
     "pinia-plugin-persistedstate": "^4.7.1",
     "vue": "catalog:",
     "vue-i18n": "^11.1.12",
-    "vue-router": "catalog:"
+    "vue-router": "catalog:",
+    "vxe-pc-ui": "^4.17.3",
+    "vxe-table": "^4.20.12"
   },
   "devDependencies": {
     "@tsconfig/node24": "^24.0.4",

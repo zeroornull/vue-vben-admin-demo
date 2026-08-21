@@ -24,4 +24,4 @@ bun run docs
 
 ## 下一轮从哪里开始
 
-第 79 轮：默认 app 的用户表换成 vxe-table。见 [75-phase-2-roadmap.md](./75-phase-2-roadmap.md)。
+第 79 轮已做，见 [88-round-79-vxe.md](./88-round-79-vxe.md)。下一轮是第 80 轮 Naive UI。

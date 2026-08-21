@@ -23,10 +23,10 @@
          第 77  ele 其余系统页       ← 已完成
 
 展开     第 78  VitePress             ← 已完成
-         第 79  vxe-table（先一张表）
-         第 80  Naive UI
-         第 81  TDesign
-         第 82  antdv-next
+         第 79  vxe-table（先一张表） ← 已完成
+         第 80  Naive UI              ← 已完成
+         第 81  TDesign               ← 已完成
+         第 82  antdv-next            ← 已完成
 
 收口     第 83  Playwright + 自动 CI
          第 84  Vue 3.6 实验（默认仍是 3.5）
@@ -165,6 +165,8 @@ views、layouts、stores、vite mock **留在 app**。测试跟着代码走。�
 
 ## 第 79 轮 · vxe-table
 
+> 已完成，见 [88-round-79-vxe.md](./88-round-79-vxe.md)。
+
 **做：** 只换默认 app **用户表** 这一张（行最多、列开关 / 排序 / 批量删除最全）。其它表仍 antd / Element Table。CSV、权限、mock 接口不动。
 
 **不做：** 五张表一起换；不要上 vxe 商业套件。
@@ -174,6 +176,8 @@ views、layouts、stores、vite mock **留在 app**。测试跟着代码走。�
 **验收：** 用户表筛选、排序、列显隐、批量删除、导入导出仍过；页签刷新不丢状态。
 
 ## 第 80–82 轮 · 其余三套皮肤
+
+第 80 轮已完成，见 [89-round-80-naive.md](./89-round-80-naive.md)。第 81 轮已完成，见 [90-round-81-tdesign.md](./90-round-81-tdesign.md)。第 82 轮已完成，见 [91-round-82-antdv-next.md](./91-round-82-antdv-next.md)。
 
 每轮一个 app，同一套验收（登录 + 用户 + 部门树 + 个人中心）：
 

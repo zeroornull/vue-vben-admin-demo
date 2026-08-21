@@ -1,0 +1,49 @@
+{
+  "name": "@app/web-antdv-next",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "run-p type-check \"build-only {@}\" --",
+    "preview": "vite preview",
+    "build-only": "vite build",
+    "type-check": "vue-tsc --build",
+    "test": "vitest run",
+    "lint": "oxlint src"
+  },
+  "dependencies": {
+    "@app/access": "workspace:*",
+    "@app/core": "workspace:*",
+    "@app/mock": "workspace:*",
+    "@app/request": "workspace:*",
+    "@app/tables": "workspace:*",
+    "@iconify/vue": "^5.0.0",
+    "antdv-next": "~1.5.2",
+    "axios": "^1.19.0",
+    "echarts": "^6.0.0",
+    "pinia": "catalog:",
+    "pinia-plugin-persistedstate": "^4.7.1",
+    "vue": "catalog:",
+    "vue-i18n": "^11.1.12",
+    "vue-router": "catalog:"
+  },
+  "devDependencies": {
+    "@tsconfig/node24": "^24.0.4",
+    "@types/node": "^24.13.3",
+    "@vitejs/plugin-vue": "catalog:",
+    "@vue/tsconfig": "^0.9.1",
+    "axios-mock-adapter": "^2.1.0",
+    "happy-dom": "^20.0.0",
+    "npm-run-all2": "^9.0.2",
+    "oxlint": "^1.0.0",
+    "typescript": "catalog:",
+    "vitest": "^4.0.0",
+    "vite": "catalog:",
+    "vite-plugin-vue-devtools": "^8.1.5",
+    "vue-tsc": "catalog:"
+  },
+  "engines": {
+    "node": "^22.18.0 || >=24.12.0"
+  }
+}

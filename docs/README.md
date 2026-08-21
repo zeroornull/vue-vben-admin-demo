@@ -99,13 +99,17 @@
 | 85 | [round-77-ele-system.md](./85-round-77-ele-system.md) | 第 77 轮 | ele 部门、角色、外链、日志 |
 | 86 | [adapter.md](./86-adapter.md) | 专章 | 二期 / adapter：核、两套皮肤、抄路 |
 | 87 | [round-78-vitepress.md](./87-round-78-vitepress.md) | 第 78 轮 | VitePress；`bun run docs` |
+| 88 | [round-79-vxe.md](./88-round-79-vxe.md) | 第 79 轮 | 默认用户表换 vxe-table |
+| 89 | [round-80-naive.md](./89-round-80-naive.md) | 第 80 轮 | web-naive；登录 / 用户 / 部门 / 改密 |
+| 90 | [round-81-tdesign.md](./90-round-81-tdesign.md) | 第 81 轮 | web-tdesign；登录 / 用户 / 部门 / 改密 |
+| 91 | [round-82-antdv-next.md](./91-round-82-antdv-next.md) | 第 82 轮 | web-antdv-next；与 antd 4 隔离 |
 
 后续轮次会继续加 `08-…`、`09-…`，并在本表追加一行。已拍板的结论不要默默改掉；必须修正时在原文加短注并改决策表（第 1 轮已按此修正：第 2 轮改用 `create-vue`，见 [03](./03-migration-roadmap.md)）。二期若改「一套皮肤 / 不上 Iconify」等决定，按 [75](./75-phase-2-roadmap.md) 执行并回写 [03](./03-migration-roadmap.md) 的表。
 
 ## 约定
 
 - **对照源码**一律写 `legacy/...` 路径，不要再写仓库根下的旧路径。
-- **新代码**写在 `apps/web`、`apps/web-ele`、`apps/docs`（以及 `packages/`）。对照源码仍只写 `legacy/...`。站点用 `bun run docs` 打开。
+- **新代码**写在 `apps/web`、`apps/web-ele`、`apps/web-naive`、`apps/web-tdesign`、`apps/web-antdv-next`、`apps/docs`（以及 `packages/`）。对照源码仍只写 `legacy/...`。站点用 `bun run docs` 打开。
 - `legacy/` 只存在于本机，不进 Git。换机器后需要自己再放一份对照仓，或从 [vbenjs/vue-vben-admin](https://github.com/vbenjs/vue-vben-admin) 再克隆。
 - 文档用中文写决策和理由，代码标识符、包名、命令保持原文。
 - **文档不按 UI 库分叉。** 旧仓有 Ant Design Vue / Element Plus / Naive UI / TDesign / antdv-next 五套皮肤，那是 Vben 模板的卖点。本仓库只维护一份教程。盘点里列出五套，只为说明旧仓结构，不会写成五份平行书。对照默认仍是 `legacy/apps/web-antd`。二期若开第二套皮肤，只加一篇 adapter 专章和该皮肤的短记录，见 [75](./75-phase-2-roadmap.md)。

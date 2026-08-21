@@ -1,23 +1,24 @@
 <script setup lang="ts">
 defineOptions({ name: 'UsersView' })
 
-import type { TableColumnsType, TablePaginationConfig } from 'ant-design-vue'
 import {
   Button,
   Form,
   FormItem,
   Input,
   Modal,
+  Pagination,
   Select,
   Space,
-  Table,
+  Spin,
   Tag,
   TreeSelect,
   message,
 } from 'ant-design-vue'
-import { computed, onMounted, reactive, ref } from 'vue'
+import { computed, nextTick, onMounted, reactive, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { onBeforeRouteLeave } from 'vue-router'
+import type { VxeTableInstance } from 'vxe-table'
 
 import { getDeptList } from '@/api/system/dept'
 import { getRoleList } from '@/api/system/role'
@@ -26,17 +27,21 @@ import { createUser, deleteUser, deleteUsers, getUserList, updateUser } from '@/
 import AntdPage from '@/components/AntdPage.vue'
 import TableColumnPicker from '@/components/TableColumnPicker.vue'
 import type { UnsavedFormHandle } from '@/forms/use-unsaved'
+import { usePreferencesStore } from '@/stores/preferences'
 import { useTableColumnsStore } from '@/stores/table-columns'
 import { useTablePageStore } from '@/stores/table-page'
 import { useTableSortStore } from '@/stores/table-sort'
+import { normalizeDensity } from '@app/core'
+import { useTheme } from '@/preferences/use-theme'
 import { TABLE_PAGE_SIZE_OPTIONS } from '@app/tables/page-size'
-import { nextTableQuery, TABLE_SORT_FIELDS, tableColumnSort } from '@app/tables/sort'
+import { TABLE_SORT_FIELDS } from '@app/tables/sort'
+import { applyVxeTheme, VxeColumn, VxeTable, vxeTableSize } from '@/tables/vxe'
+import { nextVxePage, nextVxeTableQuery, vxeSortOrder } from '@/tables/vxe-sort'
 import { deptNameById, flattenDepts, toParentOptions } from '@/views/depts/query'
 import type { SystemDept } from '@/views/depts/types'
 import { roleNameById } from '@/views/roles/query'
 import type { SystemRole } from '@/views/roles/types'
 
-import { tableColumnKey } from '@app/tables/columns'
 import { useDisplayTitle } from '@/i18n/display'
 
 import UserFormModal from './users/UserFormModal.vue'
@@ -59,6 +64,9 @@ import type { SystemUser, UserFormValues, UserStatus } from './users/types'
 
 const { t } = useI18n()
 const { columnTitle } = useDisplayTitle()
+const { resolved } = useTheme()
+const preferences = usePreferencesStore()
+const tableRef = ref<VxeTableInstance<SystemUser>>()
 const loading = ref(false)
 const exporting = ref(false)
 const importing = ref(false)
@@ -89,34 +97,18 @@ const query = reactive<{
 })
 
 const { hasAnyAction } = useAccess()
-const rowSelection = computed(() => {
-  if (!hasAnyAction('user:delete')) return undefined
-  return {
-    selectedRowKeys: selectedKeys.value,
-    onChange(keys: (string | number)[]) {
-      selectedKeys.value = normalizeUserIds(keys).slice(0, USER_BATCH_DELETE_MAX)
-    },
-  }
-})
 const tableColumns = useTableColumnsStore()
 const names = computed(() => deptNameById(flattenDepts(catalog.value)))
 const roleNames = computed(() => roleNameById(roleCatalog.value))
+const tableSize = computed(() => vxeTableSize(normalizeDensity(preferences.density)))
+const sortConfig = computed(() => ({
+  remote: true,
+  defaultSort: sort.value
+    ? { field: sort.value.field, order: vxeSortOrder(sort.value.order) }
+    : undefined,
+}))
 
-const columns = computed<TableColumnsType<SystemUser>>(() => {
-  const allowed = TABLE_SORT_FIELDS.users
-  const current = sort.value
-  const base: TableColumnsType<SystemUser> = [
-    { dataIndex: 'name', title: columnTitle('users', 'name'), ...tableColumnSort('name', allowed, current) },
-    { dataIndex: 'deptId', title: columnTitle('users', 'deptId'), width: 140 },
-    { dataIndex: 'roleIds', title: columnTitle('users', 'roleIds'), width: 180 },
-    { dataIndex: 'status', title: columnTitle('users', 'status'), width: 100, ...tableColumnSort('status', allowed, current) },
-    { dataIndex: 'remark', title: columnTitle('users', 'remark') },
-    { dataIndex: 'createTime', title: columnTitle('users', 'createTime'), width: 180, ...tableColumnSort('createTime', allowed, current) },
-  ]
-  const visible = base.filter((column) => tableColumns.isVisible('users', tableColumnKey(column)))
-  if (!hasAnyAction('user:update', 'user:delete')) return visible
-  return [...visible, { key: 'actions', title: t('column.actions'), width: 160 }]
-})
+watch(resolved, (mode) => applyVxeTheme(mode), { immediate: true })
 
 async function loadCatalogs() {
   const [depts, roles] = await Promise.all([
@@ -142,6 +134,7 @@ async function load() {
     })
     items.value = result.items
     total.value = result.total
+    await syncCheckbox()
   } catch {
     // 失败由全局错误条提示
   } finally {
@@ -239,19 +232,46 @@ function onReset() {
   onSearch()
 }
 
-function onTableChange(pagination: TablePaginationConfig, _filters: unknown, sorter: unknown) {
-  const next = nextTableQuery(
+async function syncCheckbox() {
+  await nextTick()
+  const table = tableRef.value
+  if (!table) return
+  await table.clearCheckboxRow()
+  if (selectedKeys.value.length) {
+    await table.setCheckboxRowKey(selectedKeys.value, true)
+  }
+}
+
+function onPageOrSize(nextPage: number, nextSize: number) {
+  const paging = nextVxePage(page.value, pageSize.value, nextPage, nextSize)
+  if (paging.page === page.value && paging.pageSize === pageSize.value) return
+  page.value = paging.page
+  tablePage.setPageSize('users', paging.pageSize)
+  void load()
+}
+
+function onSortChange(payload: { field?: unknown; order?: unknown }) {
+  const next = nextVxeTableQuery(
     page.value,
     pageSize.value,
     sort.value,
-    pagination,
-    sorter,
+    { current: page.value, pageSize: pageSize.value },
+    payload,
     TABLE_SORT_FIELDS.users,
   )
   page.value = next.page
   tablePage.setPageSize('users', next.pageSize)
   tableSort.setSort('users', next.sort)
   void load()
+}
+
+function onCheckboxChange(payload: { records: SystemUser[] }) {
+  const pageIds = new Set(items.value.map((item) => item.id))
+  const kept = selectedKeys.value.filter((id) => !pageIds.has(id))
+  const current = payload.records.map((row) => row.id)
+  const next = normalizeUserIds([...kept, ...current])
+  selectedKeys.value = next.slice(0, USER_BATCH_DELETE_MAX)
+  if (next.length > USER_BATCH_DELETE_MAX) void syncCheckbox()
 }
 
 function onCreate() {
@@ -398,42 +418,92 @@ onMounted(async () => {
       </FormItem>
     </Form>
 
-    <Table
-      :columns="columns"
-      :data-source="items"
-      :loading="loading"
-      :pagination="{
-        current: page,
-        pageSize,
-        pageSizeOptions: TABLE_PAGE_SIZE_OPTIONS,
-        showSizeChanger: true,
-        showTotal: (count) => t('table.total', { count }),
-        total,
-      }"
-      :row-selection="rowSelection"
-      row-key="id"
-      @change="onTableChange"
-    >
-      <template #bodyCell="{ column, record }">
-        <template v-if="column.dataIndex === 'deptId'">
-          {{ deptLabel(toUser(record).deptId) }}
-        </template>
-        <template v-else-if="column.dataIndex === 'roleIds'">
-          {{ roleLabel(toUser(record).roleIds) }}
-        </template>
-        <template v-else-if="column.dataIndex === 'status'">
-          <Tag :color="toUser(record).status === 1 ? 'success' : 'default'">
-            {{ toUser(record).status === 1 ? t('filter.enabled') : t('filter.disabled') }}
-          </Tag>
-        </template>
-        <template v-else-if="column.key === 'actions'">
-          <Space>
-            <Button v-access="'user:update'" type="link" @click="onEdit(toUser(record))">编辑</Button>
-            <Button v-access="'user:delete'" danger type="link" @click="onDelete(toUser(record))">删除</Button>
-          </Space>
-        </template>
-      </template>
-    </Table>
+    <Spin :spinning="loading">
+      <VxeTable
+        ref="tableRef"
+        class="users-vxe"
+        :checkbox-config="{ highlight: true }"
+        :data="items"
+        :row-config="{ keyField: 'id' }"
+        :size="tableSize"
+        :sort-config="sortConfig"
+        @checkbox-all="onCheckboxChange"
+        @checkbox-change="onCheckboxChange"
+        @sort-change="onSortChange"
+      >
+        <VxeColumn v-if="hasAnyAction('user:delete')" type="checkbox" width="48" />
+        <VxeColumn
+          v-if="tableColumns.isVisible('users', 'name')"
+          field="name"
+          sortable
+          :title="columnTitle('users', 'name')"
+        />
+        <VxeColumn
+          v-if="tableColumns.isVisible('users', 'deptId')"
+          field="deptId"
+          :title="columnTitle('users', 'deptId')"
+          width="140"
+        >
+          <template #default="{ row }">{{ deptLabel(toUser(row).deptId) }}</template>
+        </VxeColumn>
+        <VxeColumn
+          v-if="tableColumns.isVisible('users', 'roleIds')"
+          field="roleIds"
+          :title="columnTitle('users', 'roleIds')"
+          width="180"
+        >
+          <template #default="{ row }">{{ roleLabel(toUser(row).roleIds) }}</template>
+        </VxeColumn>
+        <VxeColumn
+          v-if="tableColumns.isVisible('users', 'status')"
+          field="status"
+          sortable
+          :title="columnTitle('users', 'status')"
+          width="100"
+        >
+          <template #default="{ row }">
+            <Tag :color="toUser(row).status === 1 ? 'success' : 'default'">
+              {{ toUser(row).status === 1 ? t('filter.enabled') : t('filter.disabled') }}
+            </Tag>
+          </template>
+        </VxeColumn>
+        <VxeColumn
+          v-if="tableColumns.isVisible('users', 'remark')"
+          field="remark"
+          :title="columnTitle('users', 'remark')"
+        />
+        <VxeColumn
+          v-if="tableColumns.isVisible('users', 'createTime')"
+          field="createTime"
+          sortable
+          :title="columnTitle('users', 'createTime')"
+          width="180"
+        />
+        <VxeColumn
+          v-if="hasAnyAction('user:update', 'user:delete')"
+          :title="t('column.actions')"
+          width="160"
+        >
+          <template #default="{ row }">
+            <Space>
+              <Button v-access="'user:update'" type="link" @click="onEdit(toUser(row))">编辑</Button>
+              <Button v-access="'user:delete'" danger type="link" @click="onDelete(toUser(row))">删除</Button>
+            </Space>
+          </template>
+        </VxeColumn>
+      </VxeTable>
+    </Spin>
+
+    <Pagination
+      :current="page"
+      :page-size="pageSize"
+      :page-size-options="TABLE_PAGE_SIZE_OPTIONS"
+      show-size-changer
+      :show-total="(count) => t('table.total', { count })"
+      :total="total"
+      @change="onPageOrSize"
+      @showSizeChange="onPageOrSize"
+    />
 
     <input
       ref="fileInput"
@@ -453,4 +523,10 @@ onMounted(async () => {
     />
   </AntdPage>
 </template>
+
+<style scoped>
+.users-vxe {
+  width: 100%;
+}
+</style>
 

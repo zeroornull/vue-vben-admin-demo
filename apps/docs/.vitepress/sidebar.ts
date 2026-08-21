@@ -127,6 +127,10 @@ export const sidebar: DefaultTheme.Sidebar = [
       item('85 ele 系统页', '/85-round-77-ele-system'),
       item('86 adapter 专章', '/86-adapter'),
       item('87 VitePress', '/87-round-78-vitepress'),
+      item('88 vxe-table', '/88-round-79-vxe'),
+      item('89 Naive UI', '/89-round-80-naive'),
+      item('90 TDesign', '/90-round-81-tdesign'),
+      item('91 antdv-next', '/91-round-82-antdv-next'),
     ],
   },
 ]

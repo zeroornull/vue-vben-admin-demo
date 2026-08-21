@@ -9,6 +9,9 @@
 | [`docs/`](./docs/README.md) | 迁移与学习文档；`bun run docs` 开 VitePress |
 | [`apps/web`](./apps/web) | 默认 app（ant-design-vue） |
 | [`apps/web-ele`](./apps/web-ele) | 第二套 app（Element Plus，第 75–77 轮） |
+| [`apps/web-naive`](./apps/web-naive) | 第三套 app（Naive UI，第 80 轮） |
+| [`apps/web-tdesign`](./apps/web-tdesign) | 第四套 app（TDesign Vue，第 81 轮） |
+| [`apps/web-antdv-next`](./apps/web-antdv-next) | 第五套 app（antdv-next，第 82 轮） |
 | [`packages/`](./packages) | `@app/access` / `@app/core` / `@app/mock` / `@app/request` / `@app/tables` |
 | `legacy/` | 原 Vben 完整源码，仅作本地对照，已被 `.gitignore` 忽略 |
 
@@ -22,6 +25,9 @@
 bun install
 bun run dev
 # Element 皮肤：bun run dev:ele
+# Naive 皮肤：bun run dev:naive
+# TDesign 皮肤：bun run dev:tdesign
+# antdv-next 皮肤：bun run dev:antdv-next
 # 学习文档：bun run docs
 ```
 

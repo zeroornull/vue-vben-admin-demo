@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>内嵌演示</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 1.5rem;
+        font: 15px/1.6 system-ui, sans-serif;
+        color: #1f2937;
+        background: #f8fafc;
+      }
+      h1 {
+        margin: 0 0 0.5rem;
+        font-size: 1.15rem;
+      }
+      p {
+        margin: 0.4rem 0 0;
+        max-width: 36rem;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>同源演示页</h1>
+    <p>这是 <code>public/embed-demo.html</code>，被壳用 iframe 打开。第三方站点常常设了 X-Frame-Options，嵌不进去。</p>
+    <p>父页给了 sandbox，没有 <code>allow-top-navigation</code>，这里不能把整个后台顶走。</p>
+  </body>
+</html>

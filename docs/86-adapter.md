@@ -14,10 +14,15 @@
 | --- | --- | --- | --- |
 | `@app/web` | `initAntdSkin()` | `apps/web/src/adapter/antd.ts` | `AntdPage` |
 | `@app/web-ele` | `initElementSkin()` | `apps/web-ele/src/adapter/element.ts` | `ElePage` |
+| `@app/web-naive` | `initNaiveSkin()` | `apps/web-naive/src/adapter/naive.ts` | `NaivePage` |
+| `@app/web-tdesign` | `initTdesignSkin()` | `apps/web-tdesign/src/adapter/tdesign.ts` | `TdPage` |
+| `@app/web-antdv-next` | `initAntdvSkin()` | `apps/web-antdv-next/src/adapter/antdv.ts` | `AntdvPage` |
 
 Adapter 现在只保证：Form / Input / Modal、`message`、`confirm`、`controlSize(density)`。Table、TreeSelect、上传不在核里。
 
 页面仍直接 `import` 自己的 UI 库。不要为了共用把 antd 的 `UsersView` 改成 `requireSkin()`。
+
+第 79 轮默认用户表换成 `vxe-table`，那是表格实现，不是第三套皮肤。见 [88-round-79-vxe.md](./88-round-79-vxe.md)。
 
 ## 第二套皮肤实际踩过的路
 

@@ -83,9 +83,13 @@
 第 76 轮 ele 用户表 + 改密
 第 77 轮 ele 其余系统页
 第 78 轮 VitePress
+第 79 轮 vxe-table
+第 80 轮 Naive UI
+第 81 轮 TDesign
+第 82 轮 antdv-next
 ```
 
-第一期到此结束。二期路线见 [75-phase-2-roadmap.md](./75-phase-2-roadmap.md)。第 69–78 轮已落地。当前 ← 第 78 轮。下一轮是第 79 轮 vxe-table。执行记录见 [76](./76-round-69-catalog.md) 至 [87](./87-round-78-vitepress.md)。
+第一期到此结束。二期路线见 [75-phase-2-roadmap.md](./75-phase-2-roadmap.md)。第 69–82 轮已落地。当前 ← 第 82 轮。下一轮是第 83 轮 Playwright + 自动 CI。执行记录见 [76](./76-round-69-catalog.md) 至 [91](./91-round-82-antdv-next.md)。
 
 轮次可以按实际卡点拆开（例如第 3 轮只做登录、第 3b 轮再做动态路由），但不要跳过「可运行」去堆包。
 
@@ -636,6 +640,30 @@ Element 用户表、用户弹窗、个人中心改密。CSV / 权限 / mock 不�
 
 现有 `docs/` 做成站点。`bun run docs`。加 [86-adapter.md](./86-adapter.md)。不搬 `legacy/docs`。
 
+## 第 79 轮 · vxe-table
+
+> 已完成，执行记录见 [88-round-79-vxe.md](./88-round-79-vxe.md)。
+
+只换默认 app 用户表。其它表仍 antd / Element。不上商业套件。
+
+## 第 80 轮 · Naive UI
+
+> 已完成，执行记录见 [89-round-80-naive.md](./89-round-80-naive.md)。
+
+`apps/web-naive`。登录、用户、部门树、个人中心。角色 / 外链 / 日志先占位。
+
+## 第 81 轮 · TDesign Vue
+
+> 已完成，执行记录见 [90-round-81-tdesign.md](./90-round-81-tdesign.md)。
+
+`apps/web-tdesign`。登录、用户、部门树、个人中心。角色 / 外链 / 日志先占位。
+
+## 第 82 轮 · antdv-next
+
+> 已完成，执行记录见 [91-round-82-antdv-next.md](./91-round-82-antdv-next.md)。
+
+`apps/web-antdv-next`。只引进 `antdv-next`，不引进 `ant-design-vue`。登录、用户、部门树、个人中心。角色 / 外链 / 日志先占位。
+
 ## 决策记录（第 1 轮已拍板）
 
 | 议题 | 决定 | 原因 |
@@ -649,7 +677,7 @@ Element 用户表、用户弹窗、个人中心改密。CSV / 权限 / mock 不�
 | 第 2 轮如何初始化 | **`bun x create-vue@latest apps/web`**，再套 Bun workspace | 官方模板对齐最新稳定 Vue/Vite/TS；手写配置容易漏；monorepo 是后加的一层，不是手写整个 app 的理由 |
 | 第 6 轮 lint | 只上 oxlint | 不叠 ESLint / Stylelint |
 | 第 6 轮 Turbo | 第 72 轮上 | 第 6 轮单 app 时不上；拆包后缓存才有对象，见 [79](./79-round-72-turbo.md) |
-| 第 8 轮组件库 | ant-design-vue 4.2.6 | 对照仓是 `web-antd`；官方包最新稳定是 4.x。不上 antdv-next、vxe-table、五套皮肤 |
+| 第 8 轮组件库 | ant-design-vue 4.2.6 | 对照仓是 `web-antd`。第 79 轮默认用户表改用 vxe-table；其它表仍 antd。antdv-next 在第 82 轮单独成 app |
 | 第 18 轮图标 | 第 74 轮改为 `@iconify/vue` 离线白名单 | 第 18 轮先跟 antd 具名引入；第 74 轮换成登记名，见 [81](./81-round-74-iconify.md) |
 
 需要改上述决定时，开新一轮文档，不要默默改这一节而不留痕迹。二期若真做多皮肤 / Iconify / vxe-table / Turbo / VitePress，按 [75](./75-phase-2-roadmap.md) 在**执行当轮**再改上表对应行，不要提前把「否」改成「是」。

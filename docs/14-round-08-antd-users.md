@@ -15,7 +15,7 @@
 | ant-design-vue 4 | **采用** | 对照仓 `legacy/apps/web-antd` 用的就是它；npm 上这个包名的最新稳定是 4.2.6 |
 | antdv-next / Ant Design Vue 5 | 不上 | playground 在用，等于跳到第五套皮肤；本仓仍只一套 |
 | Element / Naive / TDesign | 不上 | 文档不按 UI 库分叉 |
-| vxe-table | 不上 | 旧仓表格壳；本页用 antd Table 就够 |
+| vxe-table | 第 8 轮不上；第 79 轮只换用户表 | 见 [88-round-79-vxe.md](./88-round-79-vxe.md) |
 | `@vben/common-ui` / form adapter | 不上 | schema 表单是后期优化 |
 
 登录页仍是原生 form，没有改成 antd。壳子也还是自己的侧栏顶栏。
