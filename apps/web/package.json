@@ -10,11 +10,12 @@
     "build-only": "vite build",
     "type-check": "vue-tsc --build",
     "test": "vitest run",
-    "lint": "oxlint src vite"
+    "lint": "oxlint src"
   },
   "dependencies": {
     "@app/access": "workspace:*",
     "@app/core": "workspace:*",
+    "@app/mock": "workspace:*",
     "@app/request": "workspace:*",
     "@app/tables": "workspace:*",
     "@iconify/vue": "^5.0.0",

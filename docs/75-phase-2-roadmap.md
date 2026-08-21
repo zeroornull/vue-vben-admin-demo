@@ -18,19 +18,23 @@
 
 产品     第 73  i18n                  ← 已完成
          第 74  Iconify               ← 已完成
-         第 75  第二套皮肤（Element Plus）
+         第 75  ele 空壳 + 登录       ← 已完成
+         第 76  ele 用户表 + 改密    ← 已完成
+         第 77  ele 其余系统页       ← 已完成
 
-展开     第 76  VitePress
-         第 77  vxe-table（先一张表）
-         第 78  Naive UI
-         第 79  TDesign
-         第 80  antdv-next
+展开     第 78  VitePress
+         第 79  vxe-table（先一张表）
+         第 80  Naive UI
+         第 81  TDesign
+         第 82  antdv-next
 
-收口     第 81  Playwright + 自动 CI
-         第 82  Vue 3.6 实验（默认仍是 3.5）
+收口     第 83  Playwright + 自动 CI
+         第 84  Vue 3.6 实验（默认仍是 3.5）
 ```
 
-「五套皮肤」= 现在的 antd + 后面四套。第二套单独一轮，用来验证 adapter；其余三套各一轮，不要一周开四个 app。
+2026-08-21：原「第 75 一轮皮肤」改成第 75–77 三轮，后面整段 +2。理由见 [82-ele-split.md](./82-ele-split.md)。
+
+「五套皮肤」= 现在的 antd + 后面四套。第二套用三轮站稳 adapter；其余三套各一轮，不要一周开四个 app。
 
 `@core` 是自己抽的 `@app/core`，不是把 `legacy/packages/@core` 整棵贴过来。旧核为四套皮肤服务，体积和包名都会把第一期的扁平结构撑爆。
 
@@ -83,7 +87,7 @@ views、layouts、stores、vite mock **留在 app**。测试跟着代码走。�
 - 消息 / 弹窗 / 表单控件的 **adapter 类型**（注册 Input、Modal、message）
 - 第一份实现：antd adapter，仍由 `apps/web` 注册，核里不 `import 'ant-design-vue'`
 
-`AntdPage` 改成「当前皮肤的 ConfigProvider」，名字可以仍叫 `AntdPage` 直到第 75 轮。
+`AntdPage` 改成「当前皮肤的 ConfigProvider」，名字可以仍叫 `AntdPage` 直到第 75 轮开 `ElePage`。
 
 **不做：** 复制 `legacy/packages/@core`；form-ui 整包；为还不存在的皮肤建空目录。
 
@@ -117,25 +121,49 @@ views、layouts、stores、vite mock **留在 app**。测试跟着代码走。�
 
 **验收：** 侧栏图标还在；`apps/web` 可以不再直接依赖 `@ant-design/icons-vue`（antd 自己带的按钮图标另算）。
 
-## 第 75 轮 · 第二套皮肤（Element Plus）
+## 第 75 轮 · ele 空壳 + 登录
 
-**做：** `apps/web-ele`。对照 `legacy/apps/web-ele` 只看 adapter 和依赖，不抄它的 views。业务页尽量共用（能共用的放 `packages/`，不能共用的在 app 里用 Element 重写 Table / Form / Modal）。注册 Element adapter。根脚本加 `dev:ele`。
+> 已完成，见 [83-round-75-ele-shell.md](./83-round-75-ele-shell.md)。
 
-**不做：** 这一轮再开 Naive / TDesign；不要为了共用把 antd 页改烂。
+**做：** `apps/web-ele`。对照 `legacy/apps/web-ele` 只看 adapter 和依赖，不抄它的 views。`element-plus` + `ElePage` + Element adapter。mock 抽到两家能用。根脚本加 `dev:ele`。Element 登录页。不要从 `@app/web` 引 `.vue`。
 
-**验收：** `bun run dev:ele` 能登录、能开用户表、能改密；权限和 mock 与 antd 同一套。`apps/web` 仍是默认。
+**不做：** 用户表、改密、部门树；再开 Naive / TDesign；为了共用把 antd 页改烂；抽万能 Table。
 
-## 第 76 轮 · VitePress
+**验收：** `bun run dev:ele` 能登录、能看到工作台。`apps/web` 仍是默认。
 
-**做：** 用现有 `docs/*.md` 做站点（例如 `apps/docs` 或根 `docs/.vitepress`），把 00–75 编进侧栏。加「二期 / adapter」一章。开发 `bun run docs`。
+细节见 [82-ele-split.md](./82-ele-split.md)。
+
+## 第 76 轮 · ele 用户表 + 改密
+
+> 已完成，见 [84-round-76-ele-users.md](./84-round-76-ele-users.md)。
+
+**做：** 在 `web-ele` 里用 Element 重写用户表、用户弹窗、个人中心改密。CSV、权限、mock 不动。
+
+**不做：** 部门 / 角色 / 外链 / 日志。不上 vxe。
+
+**验收：** 能开用户表、能改密。权限和 mock 与 antd 同一套。
+
+## 第 77 轮 · ele 其余系统页
+
+> 已完成，见 [85-round-77-ele-system.md](./85-round-77-ele-system.md)。
+
+**做：** 部门树、角色、外链、操作日志及其弹窗。
+
+**不做：** 为 80–82 提前抽万能表单。
+
+**验收：** `user` 在 ele 里仍只有工作区 / 分析 / 内嵌；`vben` 能改部门树和角色勾选。
+
+## 第 78 轮 · VitePress
+
+**做：** 用现有 `docs/*.md` 做站点（例如 `apps/docs` 或根 `docs/.vitepress`），把已有文档编进侧栏。加「二期 / adapter」一章。开发 `bun run docs`。
 
 **不做：** 搬运 `legacy/docs`（那是 Vben 官方站，和我们的学习记录不是一份）；不要按皮肤复制五份教程。
 
 **验收：** 本地打开站点能从总览点到本页；构建出静态目录。
 
-## 第 77 轮 · vxe-table
+## 第 79 轮 · vxe-table
 
-**做：** 只换 **用户表** 这一张（行最多、列开关 / 排序 / 批量删除最全）。其它表仍 antd / Element Table。CSV、权限、mock 接口不动。
+**做：** 只换默认 app **用户表** 这一张（行最多、列开关 / 排序 / 批量删除最全）。其它表仍 antd / Element Table。CSV、权限、mock 接口不动。
 
 **不做：** 五张表一起换；不要上 vxe 商业套件。
 
@@ -143,21 +171,21 @@ views、layouts、stores、vite mock **留在 app**。测试跟着代码走。�
 
 **验收：** 用户表筛选、排序、列显隐、批量删除、导入导出仍过；页签刷新不丢状态。
 
-## 第 78–80 轮 · 其余三套皮肤
+## 第 80–82 轮 · 其余三套皮肤
 
 每轮一个 app，同一套验收（登录 + 用户 + 部门树 + 个人中心）：
 
 | 轮 | app | 库 | 对照 |
 | --- | --- | --- | --- |
-| 78 | `apps/web-naive` | Naive UI | `legacy/apps/web-naive` |
-| 79 | `apps/web-tdesign` | TDesign Vue | `legacy/apps/web-tdesign` |
-| 80 | `apps/web-antdv-next` | antdv-next | `legacy/apps/web-antdv-next` |
+| 80 | `apps/web-naive` | Naive UI | `legacy/apps/web-naive` |
+| 81 | `apps/web-tdesign` | TDesign Vue | `legacy/apps/web-tdesign` |
+| 82 | `apps/web-antdv-next` | antdv-next | `legacy/apps/web-antdv-next` |
 
-第 80 轮特别小心：它和 `apps/web` 都是 antd 家系，差在包和 API。两套依赖必须隔离，禁止一个 app 同时引进 `ant-design-vue@4` 和 antdv-next。
+第 82 轮特别小心：它和 `apps/web` 都是 antd 家系，差在包和 API。两套依赖必须隔离，禁止一个 app 同时引进 `ant-design-vue@4` 和 antdv-next。
 
 **不做：** playground；为演示再做一套「五种皮肤切换器」（那是模板站卖点，不是本仓目标）。五个 app 五个 dev 脚本即可。
 
-## 第 81 轮 · Playwright + 自动 CI
+## 第 83 轮 · Playwright + 自动 CI
 
 **做：**
 
@@ -169,7 +197,7 @@ views、layouts、stores、vite mock **留在 app**。测试跟着代码走。�
 
 **验收：** 本地 `bun run test:e2e` 过；PR 上能看到 ci + e2e 两个 job。
 
-## 第 82 轮 · Vue 3.6 实验
+## 第 84 轮 · Vue 3.6 实验
 
 2026-08-21 时 Vue 3.6 仍是 RC（Vapor + alien-signals），稳定默认仍是 3.5。这一轮**不准**改默认运行时。
 
@@ -189,12 +217,12 @@ views、layouts、stores、vite mock **留在 app**。测试跟着代码走。�
 | Turbo | 72 | `turbo` |
 | i18n | 73 | `vue-i18n` |
 | Iconify | 74 | `@iconify/vue` 或 `unplugin-icons`（开做时二选一写进当轮记录） |
-| 第二套皮肤 | 75 | `element-plus` |
-| VitePress | 76 | `vitepress` |
-| vxe-table | 77 | `vxe-table`（及它当时要求的配套） |
-| 其余皮肤 | 78–80 | `naive-ui` / `tdesign-vue-next` / antdv-next |
-| Playwright 自动 CI | 81 | `@playwright/test` |
-| Vue 3.6 | 82 | `vue@rc` 仅实验 app |
+| 第二套皮肤 | 75–77 | `element-plus`（空壳 / 用户表 / 其余系统页） |
+| VitePress | 78 | `vitepress` |
+| vxe-table | 79 | `vxe-table`（及它当时要求的配套） |
+| 其余皮肤 | 80–82 | `naive-ui` / `tdesign-vue-next` / antdv-next |
+| Playwright 自动 CI | 83 | `@playwright/test` |
+| Vue 3.6 | 84 | `vue@rc` 仅实验 app |
 
 ## 和第一期决策怎么相处
 
@@ -205,9 +233,9 @@ views、layouts、stores、vite mock **留在 app**。测试跟着代码走。�
 | 一套皮肤 | 第 75 轮起变成多 app，默认仍是 `apps/web`（antd） |
 | 不上 Turbo | 第 72 轮上，前提是已经拆包 |
 | 不上 Iconify | 第 74 轮上 |
-| 不上 vxe-table | 第 77 轮只上用户表 |
-| 不上 VitePress | 第 76 轮上**我们自己的**学习站 |
-| Vue 3.5 默认 | 不改；第 82 轮只加实验 app |
+| 不上 vxe-table | 第 79 轮只上用户表 |
+| 不上 VitePress | 第 78 轮上**我们自己的**学习站 |
+| Vue 3.5 默认 | 不改；第 84 轮只加实验 app |
 | catalog「已具备」 | 第 2 轮写过、没落地；第 69 轮才算具备 |
 | 文档不按皮肤分叉 | 仍只维护一份教程；每套皮肤一篇短记录，不写五本平行书 |
 
@@ -217,7 +245,7 @@ views、layouts、stores、vite mock **留在 app**。测试跟着代码走。�
 | --- | --- |
 | 把 `@vben-core` 当作业抄 | 第 71 轮验收：核包零 UI 库依赖 |
 | 五套皮肤 × 两套语言 | i18n 必须在第 75 轮之前；业务页尽量进包 |
-| antd 4 和 antdv-next 抢依赖 | 第 80 轮隔离，catalog 里不要强行收成同一个键 |
+| antd 4 和 antdv-next 抢依赖 | 第 82 轮隔离，catalog 里不要强行收成同一个键 |
 | Playwright 碰 Vite mock 不稳定 | 先四条烟测；失败先修 mock 时序，不加 `waitForTimeout` |
 | 3.6 / Vapor 和组件库不兼容 | 默认锁 3.5；实验 app 挂了就记文档，不回滚第一期 |
 | Turbo 和 `bun run --filter` 两套脚本 | 文档写清：dev 用 filter，CI 用 turbo |

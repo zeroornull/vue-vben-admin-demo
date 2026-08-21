@@ -33,4 +33,4 @@ apps/web/src/layouts/AppSearch.vue
 
 ## 下一轮从哪里开始
 
-第 75 轮：第二套皮肤 `apps/web-ele`。对照只看 `legacy/apps/web-ele` 的 adapter 和依赖。路线见 [75](./75-phase-2-roadmap.md)。
+第 75 轮已做，见 [83-round-75-ele-shell.md](./83-round-75-ele-shell.md)。下一轮是第 76 轮 ele 用户表。

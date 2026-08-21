@@ -79,9 +79,12 @@
 第 72 轮 Turbo
 第 73 轮 i18n
 第 74 轮 Iconify
+第 75 轮 ele 空壳 + 登录
+第 76 轮 ele 用户表 + 改密
+第 77 轮 ele 其余系统页
 ```
 
-第一期到此结束。二期路线见 [75-phase-2-roadmap.md](./75-phase-2-roadmap.md)。第 69–74 轮已落地。当前 ← 第 74 轮。执行记录见 [76](./76-round-69-catalog.md) 至 [81](./81-round-74-iconify.md)。
+第一期到此结束。二期路线见 [75-phase-2-roadmap.md](./75-phase-2-roadmap.md)。第 69–77 轮已落地。当前 ← 第 77 轮。下一轮是第 78 轮 VitePress。执行记录见 [76](./76-round-69-catalog.md) 至 [85](./85-round-77-ele-system.md)。
 
 轮次可以按实际卡点拆开（例如第 3 轮只做登录、第 3b 轮再做动态路由），但不要跳过「可运行」去堆包。
 
@@ -608,6 +611,24 @@ path 变了就 abort 上一页 GET。写操作和轮询不挂。
 
 `@iconify/vue` 离线白名单。`meta.icon` 仍是登记名。app 不再直接依赖 `@ant-design/icons-vue`。
 
+## 第 75 轮 · ele 空壳 + 登录
+
+> 已完成，执行记录见 [83-round-75-ele-shell.md](./83-round-75-ele-shell.md)。
+
+`apps/web-ele` + Element 登录 + `@app/mock`。默认仍是 `apps/web`。
+
+## 第 76 轮 · ele 用户表 + 改密
+
+> 已完成，执行记录见 [84-round-76-ele-users.md](./84-round-76-ele-users.md)。
+
+Element 用户表、用户弹窗、个人中心改密。CSV / 权限 / mock 不动。
+
+## 第 77 轮 · ele 其余系统页
+
+> 已完成，执行记录见 [85-round-77-ele-system.md](./85-round-77-ele-system.md)。
+
+部门树、角色、外链、操作日志。`user` 仍只有工作区 / 分析 / 内嵌。
+
 ## 决策记录（第 1 轮已拍板）
 
 | 议题 | 决定 | 原因 |
@@ -615,7 +636,7 @@ path 变了就 abort 上一页 GET。写操作和轮询不挂。
 | 是否整仓 `pnpm import` 到 Bun | 否 | 包数量和 preinstall 绑定会把问题搅在一起 |
 | 默认 Vue | 3.5 最新稳定（现 3.5.41） | 3.6 仍是 RC，Vapor 与现有 SFC/生态未作为默认 |
 | 默认对照 app | `web-antd` | 结构最完整、示例最多 |
-| 是否保留 5 套皮肤 | 否，先一套 | adapter 是后期优化 |
+| 是否保留 5 套皮肤 | 第 75 轮起第二套 app，默认仍 `apps/web` | 第 1 轮先一套；第 75 轮开 `web-ele`，见 [83](./83-round-75-ele-shell.md) |
 | `legacy/` 是否提交 | 否 | 体积大，且与上游仓库重复；本机对照即可 |
 | 包管理 | Bun | 用户指定；workspace 已有。catalog 第 69 轮落地（vue / router / pinia / vite / ts / vue-tsc / plugin-vue），见 [76](./76-round-69-catalog.md) |
 | 第 2 轮如何初始化 | **`bun x create-vue@latest apps/web`**，再套 Bun workspace | 官方模板对齐最新稳定 Vue/Vite/TS；手写配置容易漏；monorepo 是后加的一层，不是手写整个 app 的理由 |

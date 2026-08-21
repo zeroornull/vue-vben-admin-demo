@@ -20,7 +20,7 @@
 
 | 目的 | pnpm / turbo（旧） | Bun（新） |
 | --- | --- | --- |
-| 交互选 app 开发 | `pnpm dev` → `turbo-run` | 单 app：`bun run dev` |
+| 交互选 app 开发 | `pnpm dev` → `turbo-run` | 默认 `bun run dev`；Element：`bun run dev:ele` |
 | 指定 app 开发 | `pnpm dev:antd` / `pnpm -F @vben/web-antd run dev` | `bun run --filter @app/web dev` |
 | 全仓构建 | `pnpm build` → `turbo build` | `bun run build` → `turbo run build` |
 | 类型检查 | `pnpm check:type` → `turbo typecheck` | `bun run typecheck` → `turbo run type-check` |

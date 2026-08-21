@@ -26,4 +26,4 @@
 
 ## 下一轮从哪里开始
 
-第 74 轮已做，见 [81-round-74-iconify.md](./81-round-74-iconify.md)。下一轮是第 75 轮第二套皮肤。
+第 74 轮已做，见 [81-round-74-iconify.md](./81-round-74-iconify.md)。皮肤从第 75 轮起共三轮，见 [82-ele-split.md](./82-ele-split.md)。

@@ -17,6 +17,7 @@
   },
   "scripts": {
     "dev": "bun run --filter @app/web dev",
+    "dev:ele": "bun run --filter @app/web-ele dev",
     "build": "turbo run build",
     "preview": "bun run --filter @app/web preview",
     "typecheck": "turbo run type-check",

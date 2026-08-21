@@ -1,0 +1,23 @@
+{
+  "name": "@app/mock",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/mock-api.ts"
+  },
+  "scripts": {
+    "lint": "oxlint src",
+    "type-check": "tsc --noEmit -p tsconfig.json"
+  },
+  "dependencies": {
+    "@app/access": "workspace:*",
+    "@app/tables": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^24.13.3",
+    "oxlint": "^1.0.0",
+    "typescript": "catalog:",
+    "vite": "catalog:"
+  }
+}

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="system" data-filter="none" data-density="comfortable">
+  <head>
+    <meta charset="UTF-8">
+    <link rel="icon" href="/favicon.ico">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vue Admin</title>
+    <script>
+      (function () {
+        try {
+          var stored = JSON.parse(localStorage.getItem('preferences') || '{}')
+          var mode = stored.themeMode
+          if (mode !== 'light' && mode !== 'dark' && mode !== 'system') mode = 'system'
+          document.documentElement.dataset.theme = mode
+          var filter = stored.colorFilter
+          if (filter !== 'weak' && filter !== 'gray') filter = 'none'
+          document.documentElement.dataset.filter = filter
+          var density = stored.density
+          if (density !== 'compact') density = 'comfortable'
+          document.documentElement.dataset.density = density
+        } catch (error) {
+          document.documentElement.dataset.theme = 'system'
+          document.documentElement.dataset.filter = 'none'
+          document.documentElement.dataset.density = 'comfortable'
+        }
+      })()
+    </script>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
