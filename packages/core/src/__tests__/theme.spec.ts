@@ -1,11 +1,12 @@
 import { describe, expect, it } from 'vitest'
 
 import {
+  applyThemeDataset,
   nextThemeMode,
   normalizeThemeMode,
   readStoredThemeMode,
   resolveTheme,
-} from '../theme'
+} from '../theme.ts'
 
 describe('normalizeThemeMode / resolveTheme', () => {
   it('falls back to system', () => {
@@ -32,5 +33,13 @@ describe('nextThemeMode / readStoredThemeMode', () => {
     expect(readStoredThemeMode(null)).toBe('system')
     expect(readStoredThemeMode('{')).toBe('system')
     expect(readStoredThemeMode('{"sidebarCollapsed":true,"themeMode":"dark"}')).toBe('dark')
+  })
+})
+
+describe('applyThemeDataset', () => {
+  it('writes data-theme', () => {
+    const root = { dataset: {} as DOMStringMap }
+    applyThemeDataset(root, 'dark')
+    expect(root.dataset.theme).toBe('dark')
   })
 })

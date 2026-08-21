@@ -89,6 +89,10 @@
 | 75 | [phase-2-roadmap.md](./75-phase-2-roadmap.md) | 二期规划 | catalog / 拆包 / 薄核 / i18n / 多皮肤 / e2e；第 69–82 轮 |
 | 76 | [round-69-catalog.md](./76-round-69-catalog.md) | 第 69 轮 | bun catalog；核心 7 个版本收进根 |
 | 77 | [round-70-packages.md](./77-round-70-packages.md) | 第 70 轮 | packages 薄拆；access / request / tables |
+| 78 | [round-71-core.md](./78-round-71-core.md) | 第 71 轮 | @app/core 薄核；antd adapter 口子 |
+| 79 | [round-72-turbo.md](./79-round-72-turbo.md) | 第 72 轮 | Turbo；lint/test/typecheck/build 走缓存 |
+| 80 | [round-73-i18n.md](./80-round-73-i18n.md) | 第 73 轮 | vue-i18n；zh-CN / en-US；语言进 preferences |
+| 81 | [round-74-iconify.md](./81-round-74-iconify.md) | 第 74 轮 | Iconify 离线白名单；去掉 icons-vue 直接依赖 |
 
 后续轮次会继续加 `08-…`、`09-…`，并在本表追加一行。已拍板的结论不要默默改掉；必须修正时在原文加短注并改决策表（第 1 轮已按此修正：第 2 轮改用 `create-vue`，见 [03](./03-migration-roadmap.md)）。二期若改「一套皮肤 / 不上 Iconify」等决定，按 [75](./75-phase-2-roadmap.md) 执行并回写 [03](./03-migration-roadmap.md) 的表。
 

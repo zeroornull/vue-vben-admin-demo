@@ -1,0 +1,24 @@
+{
+  "name": "@app/core",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./adapter": "./src/adapter.ts",
+    "./color-filter": "./src/color-filter.ts",
+    "./density": "./src/density.ts",
+    "./locale": "./src/locale.ts",
+    "./theme": "./src/theme.ts"
+  },
+  "scripts": {
+    "lint": "oxlint src",
+    "test": "vitest run",
+    "type-check": "tsc --noEmit -p tsconfig.json"
+  },
+  "devDependencies": {
+    "oxlint": "^1.0.0",
+    "typescript": "catalog:",
+    "vitest": "^4.0.0"
+  }
+}

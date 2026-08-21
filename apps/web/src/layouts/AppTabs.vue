@@ -3,10 +3,11 @@ import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 
+import MenuIcon from '@/icons/MenuIcon.vue'
 import { resolveMenuIcon } from '@/icons/menu-icons'
 import { shouldClosePopover } from '@/layouts/popover'
+import { useDisplayTitle } from '@/i18n/display'
 import {
-  TAB_MENU_LABELS,
   tabIconName,
   tabMenuActions,
   type AppTab,
@@ -22,6 +23,11 @@ const route = useRoute()
 const router = useRouter()
 const tabsStore = useTabsStore()
 const { tabs } = storeToRefs(tabsStore)
+const { menuTitle, t } = useDisplayTitle()
+
+function tabLabel(tab: AppTab) {
+  return menuTitle({ name: tab.name, path: tab.fullPath, title: tab.title })
+}
 
 const canCloseOthers = computed(() => {
   return tabs.value.filter((tab) => !tab.affix && tab.name !== route.name).length > 0
@@ -170,17 +176,13 @@ onUnmounted(() => {
         @dragstart="onDragStart($event, tab)"
         @drop="onDrop($event, tab)"
       >
-        <component
-          v-if="resolveMenuIcon(tabIconName(tab))"
-          :is="resolveMenuIcon(tabIconName(tab))"
-          class="tab-icon"
-        />
-        <span>{{ tab.title }}</span>
+        <MenuIcon v-if="resolveMenuIcon(tabIconName(tab))" :name="tabIconName(tab)" class="tab-icon" />
+        <span>{{ tabLabel(tab) }}</span>
         <button
           v-if="!tab.affix"
           class="close"
           type="button"
-          :aria-label="`关闭 ${tab.title}`"
+          :aria-label="t('tab.closeNamed', { title: tabLabel(tab) })"
           @click.stop="onClose(tab.name)"
         >
           ×
@@ -193,7 +195,7 @@ onUnmounted(() => {
       type="button"
       @click="onCloseOthers"
     >
-      关闭其他
+      {{ t('tab.closeOthers') }}
     </button>
     <div
       v-if="menu"
@@ -209,7 +211,7 @@ onUnmounted(() => {
         role="menuitem"
         @click="onMenuAction(action)"
       >
-        {{ TAB_MENU_LABELS[action] }}
+        {{ t(`tab.${action}`) }}
       </button>
     </div>
   </div>

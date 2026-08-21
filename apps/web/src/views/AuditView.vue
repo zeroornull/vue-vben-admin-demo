@@ -12,6 +12,7 @@ import { useTableColumnsStore } from '@/stores/table-columns'
 import { useTablePageStore } from '@/stores/table-page'
 import { useTableSortStore } from '@/stores/table-sort'
 import { tableColumnKey } from '@app/tables/columns'
+import { useDisplayTitle } from '@/i18n/display'
 import { csvFileName } from '@app/tables/csv'
 import { TABLE_PAGE_SIZE_OPTIONS } from '@app/tables/page-size'
 import { nextTableQuery, TABLE_SORT_FIELDS, tableColumnSort } from '@app/tables/sort'
@@ -30,6 +31,7 @@ import {
   type AuditTarget,
 } from '@/views/audit/query'
 
+const { columnTitle } = useDisplayTitle()
 const loading = ref(false)
 const exporting = ref(false)
 const importing = ref(false)
@@ -53,11 +55,11 @@ const columns = computed<TableColumnsType<AuditEntry>>(() => {
   const allowed = TABLE_SORT_FIELDS.audit
   const current = sort.value
   return [
-    { dataIndex: 'at', title: '时间', width: 180, ...tableColumnSort('at', allowed, current) },
-    { dataIndex: 'actor', title: '操作者', width: 120, ...tableColumnSort('actor', allowed, current) },
-    { dataIndex: 'target', title: '对象', width: 100 },
-    { dataIndex: 'action', title: '动作', width: 90 },
-    { dataIndex: 'summary', title: '摘要' },
+    { dataIndex: 'at', title: columnTitle('audit', 'at'), width: 180, ...tableColumnSort('at', allowed, current) },
+    { dataIndex: 'actor', title: columnTitle('audit', 'actor'), width: 120, ...tableColumnSort('actor', allowed, current) },
+    { dataIndex: 'target', title: columnTitle('audit', 'target'), width: 100 },
+    { dataIndex: 'action', title: columnTitle('audit', 'action'), width: 90 },
+    { dataIndex: 'summary', title: columnTitle('audit', 'summary') },
   ].filter((column) => tableColumns.isVisible('audit', tableColumnKey(column)))
 })
 

@@ -1,11 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import {
-  antdComponentSize,
-  nextDensity,
-  normalizeDensity,
-  readStoredDensity,
-} from '../density'
+import { applyDensityDataset, nextDensity, normalizeDensity, readStoredDensity } from '../density.ts'
 
 describe('normalizeDensity / nextDensity', () => {
   it('falls back to comfortable', () => {
@@ -19,17 +14,18 @@ describe('normalizeDensity / nextDensity', () => {
   })
 })
 
-describe('antdComponentSize', () => {
-  it('maps chrome density to ConfigProvider size', () => {
-    expect(antdComponentSize('comfortable')).toBe('middle')
-    expect(antdComponentSize('compact')).toBe('small')
-  })
-})
-
 describe('readStoredDensity', () => {
   it('reads the pinia persist payload', () => {
     expect(readStoredDensity(null)).toBe('comfortable')
     expect(readStoredDensity('{')).toBe('comfortable')
     expect(readStoredDensity('{"themeMode":"dark","density":"compact"}')).toBe('compact')
+  })
+})
+
+describe('applyDensityDataset', () => {
+  it('writes data-density', () => {
+    const root = { dataset: {} as DOMStringMap }
+    applyDensityDataset(root, 'compact')
+    expect(root.dataset.density).toBe('compact')
   })
 })

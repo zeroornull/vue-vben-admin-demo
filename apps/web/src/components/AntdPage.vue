@@ -2,24 +2,32 @@
 import 'ant-design-vue/dist/reset.css'
 import { computed } from 'vue'
 import { ConfigProvider, theme } from 'ant-design-vue'
+import enUS from 'ant-design-vue/es/locale/en_US'
 import zhCN from 'ant-design-vue/es/locale/zh_CN'
 
 import { storeToRefs } from 'pinia'
 
-import { antdComponentSize, normalizeDensity } from '@/preferences/density'
+import { getSkin, normalizeDensity, normalizeLocale } from '@app/core'
+
+import { antdControlSize } from '@/adapter/antd'
 import { useTheme } from '@/preferences/use-theme'
 import { usePreferencesStore } from '@/stores/preferences'
 
 const { resolved } = useTheme()
-const { density } = storeToRefs(usePreferencesStore())
+const { density, locale } = storeToRefs(usePreferencesStore())
+const antdLocale = computed(() => (normalizeLocale(locale.value) === 'en-US' ? enUS : zhCN))
 const algorithm = computed(() =>
   resolved.value === 'dark' ? theme.darkAlgorithm : theme.defaultAlgorithm,
 )
-const componentSize = computed(() => antdComponentSize(normalizeDensity(density.value)))
+const componentSize = computed(() => {
+  const densityValue = normalizeDensity(density.value)
+  const size = getSkin()?.controlSize(densityValue) ?? antdControlSize(densityValue)
+  return size === 'small' ? 'small' : 'middle'
+})
 </script>
 
 <template>
-  <ConfigProvider :component-size="componentSize" :locale="zhCN" :theme="{ algorithm }">
+  <ConfigProvider :component-size="componentSize" :locale="antdLocale" :theme="{ algorithm }">
     <div class="antd-page">
       <slot />
     </div>

@@ -1,12 +1,19 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
 
-import { normalizeColorFilter, type ColorFilter } from '@/preferences/color-filter'
-import { normalizeDensity, type Density } from '@/preferences/density'
+import {
+  normalizeColorFilter,
+  normalizeDensity,
+  normalizeLocale,
+  normalizeThemeMode,
+  type AppLocale,
+  type ColorFilter,
+  type Density,
+  type ThemeMode,
+} from '@app/core'
 import { normalizeIdleLockMinutes, type IdleLockMinutes } from '@/preferences/idle-lock'
 import { normalizeNavLayout, type NavLayout } from '@/preferences/nav-layout'
 import { normalizeSidebarWidth, SIDEBAR_WIDTH_DEFAULT } from '@/preferences/sidebar-width'
-import { normalizeThemeMode, type ThemeMode } from '@/preferences/theme'
 
 export const usePreferencesStore = defineStore(
   'preferences',
@@ -20,6 +27,7 @@ export const usePreferencesStore = defineStore(
     const density = ref<Density>('comfortable')
     const navLayout = ref<NavLayout>('sidebar')
     const idleLockMinutes = ref<IdleLockMinutes>(0)
+    const locale = ref<AppLocale>('zh-CN')
 
     function toggleSidebar() {
       sidebarCollapsed.value = !sidebarCollapsed.value
@@ -49,6 +57,10 @@ export const usePreferencesStore = defineStore(
       idleLockMinutes.value = normalizeIdleLockMinutes(value)
     }
 
+    function setLocale(value: unknown) {
+      locale.value = normalizeLocale(value)
+    }
+
     function setSidebarWidth(value: unknown) {
       sidebarWidth.value = normalizeSidebarWidth(value)
     }
@@ -62,10 +74,12 @@ export const usePreferencesStore = defineStore(
       colorFilter,
       density,
       idleLockMinutes,
+      locale,
       navLayout,
       setColorFilter,
       setDensity,
       setIdleLockMinutes,
+      setLocale,
       resetSidebarWidth,
       setNavLayout,
       setSidebarWidth,
@@ -84,6 +98,7 @@ export const usePreferencesStore = defineStore(
         'colorFilter',
         'density',
         'idleLockMinutes',
+        'locale',
         'navLayout',
         'sidebarCollapsed',
         'sidebarWidth',

@@ -16,6 +16,7 @@ import {
   message,
 } from 'ant-design-vue'
 import { computed, onMounted, reactive, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { onBeforeRouteLeave } from 'vue-router'
 
 import { getDeptList } from '@/api/system/dept'
@@ -36,6 +37,7 @@ import { roleNameById } from '@/views/roles/query'
 import type { SystemRole } from '@/views/roles/types'
 
 import { tableColumnKey } from '@app/tables/columns'
+import { useDisplayTitle } from '@/i18n/display'
 
 import UserFormModal from './users/UserFormModal.vue'
 import {
@@ -55,6 +57,8 @@ import {
 } from './users/query'
 import type { SystemUser, UserFormValues, UserStatus } from './users/types'
 
+const { t } = useI18n()
+const { columnTitle } = useDisplayTitle()
 const loading = ref(false)
 const exporting = ref(false)
 const importing = ref(false)
@@ -102,16 +106,16 @@ const columns = computed<TableColumnsType<SystemUser>>(() => {
   const allowed = TABLE_SORT_FIELDS.users
   const current = sort.value
   const base: TableColumnsType<SystemUser> = [
-    { dataIndex: 'name', title: '用户名', ...tableColumnSort('name', allowed, current) },
-    { dataIndex: 'deptId', title: '部门', width: 140 },
-    { dataIndex: 'roleIds', title: '业务角色', width: 180 },
-    { dataIndex: 'status', title: '状态', width: 100, ...tableColumnSort('status', allowed, current) },
-    { dataIndex: 'remark', title: '备注' },
-    { dataIndex: 'createTime', title: '创建时间', width: 180, ...tableColumnSort('createTime', allowed, current) },
+    { dataIndex: 'name', title: columnTitle('users', 'name'), ...tableColumnSort('name', allowed, current) },
+    { dataIndex: 'deptId', title: columnTitle('users', 'deptId'), width: 140 },
+    { dataIndex: 'roleIds', title: columnTitle('users', 'roleIds'), width: 180 },
+    { dataIndex: 'status', title: columnTitle('users', 'status'), width: 100, ...tableColumnSort('status', allowed, current) },
+    { dataIndex: 'remark', title: columnTitle('users', 'remark') },
+    { dataIndex: 'createTime', title: columnTitle('users', 'createTime'), width: 180, ...tableColumnSort('createTime', allowed, current) },
   ]
   const visible = base.filter((column) => tableColumns.isVisible('users', tableColumnKey(column)))
   if (!hasAnyAction('user:update', 'user:delete')) return visible
-  return [...visible, { key: 'actions', title: '操作', width: 160 }]
+  return [...visible, { key: 'actions', title: t('column.actions'), width: 160 }]
 })
 
 async function loadCatalogs() {
@@ -277,12 +281,12 @@ function toUser(record: object): SystemUser {
 }
 
 function deptLabel(deptId: string | null) {
-  if (!deptId) return '未分配'
+  if (!deptId) return t('filter.unassigned')
   return names.value.get(deptId) ?? deptId
 }
 
 function roleLabel(roleIds: string[]) {
-  if (!roleIds.length) return '未分配'
+  if (!roleIds.length) return t('filter.unassigned')
   return roleIds.map((id) => roleNames.value.get(id) ?? id).join('、')
 }
 
@@ -291,12 +295,12 @@ function onBatchDelete() {
   if (!ids.length) return
   Modal.confirm({
     content: batchDeleteConfirmText(ids.length),
-    okText: '删除',
+    okText: t('confirm.delete'),
     okType: 'danger',
-    title: '批量删除',
+    title: t('confirm.batchDelete'),
     async onOk() {
       const result = await deleteUsers(ids)
-      message.success(`已删除 ${result.deleted} 人`)
+      message.success(t('toast.deletedPeople', { count: result.deleted }))
       const deletedOnPage = items.value.filter((item) => ids.includes(item.id)).length
       page.value = nextPageAfterDeletes(page.value, items.value.length, deletedOnPage)
       selectedKeys.value = []
@@ -307,13 +311,13 @@ function onBatchDelete() {
 
 function onDelete(row: SystemUser) {
   Modal.confirm({
-    content: `确定删除 ${row.name}？内存 mock，刷新页面后种子数据会回来。`,
-    okText: '删除',
+    content: t('confirm.deleteUserNamed', { name: row.name }),
+    okText: t('confirm.delete'),
     okType: 'danger',
-    title: '删除用户',
+    title: t('confirm.deleteUser'),
     async onOk() {
       await deleteUser(row.id)
-      message.success('已删除')
+      message.success(t('toast.deleted'))
       selectedKeys.value = selectedKeys.value.filter((id) => id !== row.id)
       page.value = nextPageAfterDeletes(page.value, items.value.length, 1)
       await load()
@@ -340,45 +344,45 @@ onMounted(async () => {
 <template>
   <AntdPage>
     <Form layout="inline" @finish="onSearch">
-      <FormItem label="用户名">
-        <Input v-model:value="query.name" allow-clear placeholder="模糊匹配" />
+      <FormItem :label="t('users.name')">
+        <Input v-model:value="query.name" allow-clear :placeholder="t('filter.fuzzy')" />
       </FormItem>
-      <FormItem label="部门">
+      <FormItem :label="t('users.dept')">
         <TreeSelect
           v-model:value="query.deptId"
           allow-clear
           :tree-data="toParentOptions(catalog)"
-          placeholder="含下级"
+          :placeholder="t('filter.includeChildren')"
           style="width: 12rem"
           tree-default-expand-all
         />
       </FormItem>
-      <FormItem label="业务角色">
+      <FormItem :label="t('users.role')">
         <Select
           v-model:value="query.roleId"
           allow-clear
-          placeholder="全部"
+          :placeholder="t('filter.all')"
           style="width: 10rem"
           :options="roleCatalog.map((item) => ({ label: item.name, value: item.id }))"
         />
       </FormItem>
-      <FormItem label="状态">
+      <FormItem :label="t('filter.status')">
         <Select
           v-model:value="query.status"
           allow-clear
-          placeholder="全部"
+          :placeholder="t('filter.all')"
           style="width: 8rem"
           :options="[
-            { label: '启用', value: 1 },
-            { label: '禁用', value: 0 },
+            { label: t('filter.enabled'), value: 1 },
+            { label: t('filter.disabled'), value: 0 },
           ]"
         />
       </FormItem>
       <FormItem>
         <Space>
-          <Button html-type="submit" type="primary">查询</Button>
-          <Button @click="onReset">重置</Button>
-          <Button :loading="exporting" @click="onExport">导出</Button>
+          <Button html-type="submit" type="primary">{{ t('action.query') }}</Button>
+          <Button @click="onReset">{{ t('action.reset') }}</Button>
+          <Button :loading="exporting" @click="onExport">{{ t('action.export') }}</Button>
           <TableColumnPicker table="users" />
           <Button
             v-access="'user:delete'"
@@ -386,10 +390,10 @@ onMounted(async () => {
             danger
             @click="onBatchDelete"
           >
-            删除选中{{ selectedKeys.length ? ` (${selectedKeys.length})` : '' }}
+            {{ t('action.deleteSelected') }}{{ selectedKeys.length ? ` (${selectedKeys.length})` : '' }}
           </Button>
-          <Button v-access="'user:create'" :loading="importing" @click="pickImportFile">导入</Button>
-          <Button v-access="'user:create'" type="primary" @click="onCreate">新建</Button>
+          <Button v-access="'user:create'" :loading="importing" @click="pickImportFile">{{ t('action.import') }}</Button>
+          <Button v-access="'user:create'" type="primary" @click="onCreate">{{ t('action.create') }}</Button>
         </Space>
       </FormItem>
     </Form>
@@ -403,7 +407,7 @@ onMounted(async () => {
         pageSize,
         pageSizeOptions: TABLE_PAGE_SIZE_OPTIONS,
         showSizeChanger: true,
-        showTotal: (count) => `共 ${count} 条`,
+        showTotal: (count) => t('table.total', { count }),
         total,
       }"
       :row-selection="rowSelection"
@@ -419,7 +423,7 @@ onMounted(async () => {
         </template>
         <template v-else-if="column.dataIndex === 'status'">
           <Tag :color="toUser(record).status === 1 ? 'success' : 'default'">
-            {{ toUser(record).status === 1 ? '启用' : '禁用' }}
+            {{ toUser(record).status === 1 ? t('filter.enabled') : t('filter.disabled') }}
           </Tag>
         </template>
         <template v-else-if="column.key === 'actions'">

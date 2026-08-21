@@ -5,6 +5,7 @@ import { storeToRefs } from 'pinia'
 
 import { leaveSessionView } from '@/auth/session-leave'
 import AppearanceMenu from '@/components/AppearanceMenu.vue'
+import MenuIcon from '@/icons/MenuIcon.vue'
 import { resolveMenuIcon } from '@/icons/menu-icons'
 import { normalizeNavLayout } from '@/preferences/nav-layout'
 import {
@@ -15,6 +16,7 @@ import {
   sidebarWidthFromDrag,
 } from '@/preferences/sidebar-width'
 import { extraTabNames, menuItemTo, useAccessMenu } from '@/router/access-menu'
+import { useDisplayTitle } from '@/i18n/display'
 import { staticLayoutNames } from '@/router/routes'
 import { useAuthStore } from '@/stores/auth'
 import { useLinksStore } from '@/stores/links'
@@ -36,7 +38,6 @@ import {
   isIconOnlySidebar,
   isSidebarExpanded,
   sidebarChrome,
-  sidebarToggleLabel,
   showsHeaderNav,
   showsSidebarResizer,
   showsSidebarToggle,
@@ -58,6 +59,14 @@ const dragWidth = ref<number | null>(null)
 const dragStart = ref<{ startWidth: number; startX: number } | null>(null)
 const { cachedNames } = storeToRefs(tabsStore)
 const menuGroups = useAccessMenu()
+const { groupTitle, menuTitle, routeTitle, t } = useDisplayTitle()
+const labeledMenu = computed(() =>
+  menuGroups.value.map((group) => ({
+    ...group,
+    title: groupTitle(group.title),
+    items: group.items.map((item) => ({ ...item, title: menuTitle(item) })),
+  })),
+)
 const narrow = useNarrowViewport()
 const drawerOpen = ref(false)
 const contentFullscreen = ref(false)
@@ -81,7 +90,9 @@ const asideHidden = computed(
 )
 const iconOnly = computed(() => isIconOnlySidebar(chrome.value))
 const showTitles = computed(() => isSidebarExpanded(chrome.value))
-const toggleLabel = computed(() => sidebarToggleLabel(chrome.value))
+const toggleLabel = computed(() =>
+  isSidebarExpanded(chrome.value) ? t('chrome.collapseMenu') : t('chrome.expandMenu'),
+)
 const sidebarResizer = computed(() => showsSidebarResizer(chrome.value))
 const appliedSidebarWidth = computed(
   () => dragWidth.value ?? normalizeSidebarWidth(sidebarWidth.value),
@@ -132,9 +143,9 @@ function onResizeKey(event: KeyboardEvent) {
 const pageTitle = computed(() => {
   if (route.name === 'embed-link') {
     const code = typeof route.params.code === 'string' ? route.params.code : ''
-    return linksStore.titleFor(code) || route.meta.title || appName.value
+    return linksStore.titleFor(code) || routeTitle('embed-link', String(route.meta.title ?? '')) || appName.value
   }
-  return route.meta.title ?? appName.value
+  return routeTitle(String(route.name ?? ''), String(route.meta.title ?? '')) || appName.value
 })
 const keepAliveInclude = computed(() =>
   excludeCachedName(cachedNames.value, evictedViewName.value),
@@ -283,7 +294,7 @@ async function onLogout() {
     <aside id="app-sidebar" :aria-hidden="asideHidden" :inert="asideHidden">
       <div class="brand">{{ iconOnly ? appName.charAt(0) : appName }}</div>
       <nav>
-        <div v-for="group in menuGroups" :key="group.key" class="group">
+        <div v-for="group in labeledMenu" :key="group.key" class="group">
           <p v-if="group.title && showTitles">{{ group.title }}</p>
           <RouterLink
             v-for="item in group.items"
@@ -291,11 +302,7 @@ async function onLogout() {
             :to="menuItemTo(item)"
             :title="item.title"
           >
-            <component
-              v-if="resolveMenuIcon(item.icon)"
-              :is="resolveMenuIcon(item.icon)"
-              class="menu-icon"
-            />
+            <MenuIcon v-if="resolveMenuIcon(item.icon)" :name="item.icon" class="menu-icon" />
             <span v-else-if="iconOnly">{{ item.title.slice(0, 1) }}</span>
             <span v-if="showTitles">{{ item.title }}</span>
           </RouterLink>
@@ -306,12 +313,12 @@ async function onLogout() {
         class="sidebar-resizer"
         role="separator"
         tabindex="0"
-        aria-label="调整侧栏宽度"
+        :aria-label="t('chrome.resizeSidebar')"
         aria-orientation="vertical"
         :aria-valuenow="appliedSidebarWidth"
         :aria-valuemin="SIDEBAR_WIDTH_MIN"
         :aria-valuemax="SIDEBAR_WIDTH_MAX"
-        title="拖动调整侧栏宽度，双击恢复 220"
+        :title="t('chrome.resizeSidebarHint')"
         @pointerdown="onResizeStart"
         @pointermove="onResizeMove"
         @pointerup="onResizeEnd"
@@ -333,8 +340,8 @@ async function onLogout() {
           {{ toggleLabel }}
         </button>
         <span v-if="headerNav" class="header-brand">{{ appName }}</span>
-        <nav v-if="headerNav" class="header-nav" aria-label="主导航">
-          <div v-for="group in menuGroups" :key="group.key" class="group">
+        <nav v-if="headerNav" class="header-nav" :aria-label="t('chrome.mainNav')">
+          <div v-for="group in labeledMenu" :key="group.key" class="group">
             <p v-if="group.title">{{ group.title }}</p>
             <RouterLink
               v-for="item in group.items"
@@ -342,11 +349,7 @@ async function onLogout() {
               :to="menuItemTo(item)"
               :title="item.title"
             >
-              <component
-                v-if="resolveMenuIcon(item.icon)"
-                :is="resolveMenuIcon(item.icon)"
-                class="menu-icon"
-              />
+              <MenuIcon v-if="resolveMenuIcon(item.icon)" :name="item.icon" class="menu-icon" />
               <span>{{ item.title }}</span>
             </RouterLink>
           </div>
@@ -356,8 +359,8 @@ async function onLogout() {
           <AppSearch />
           <AppNoticeBell />
           <AppShortcutHelp />
-          <button type="button" title="重挂当前页，不是浏览器刷新" @click="refreshCurrentView">
-            刷新
+          <button type="button" :title="t('chrome.refreshView')" @click="refreshCurrentView">
+            {{ t('tab.refresh') }}
           </button>
           <button type="button" :title="contentFullscreenLabel(false)" @click="enterContentFullscreen">
             {{ contentFullscreenLabel(false) }}
@@ -379,8 +382,8 @@ async function onLogout() {
     </div>
   </div>
   <div v-if="contentFullscreen && !locked" class="full-actions">
-    <button type="button" title="重挂当前页，不是浏览器刷新" @click="refreshCurrentView">
-      刷新
+    <button type="button" :title="t('chrome.refreshView')" @click="refreshCurrentView">
+      {{ t('tab.refresh') }}
     </button>
     <button type="button" @click="exitContentFullscreen">
       {{ contentFullscreenLabel(true) }}

@@ -4,6 +4,7 @@ defineOptions({ name: 'DeptsView' })
 import type { TableColumnsType } from 'ant-design-vue'
 import { Button, Form, FormItem, Input, Modal, Select, Space, Table, Tag, message } from 'ant-design-vue'
 import { computed, onMounted, reactive, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { onBeforeRouteLeave } from 'vue-router'
 
 import { useAccess } from '@/access/use-access'
@@ -16,6 +17,7 @@ import { useTableColumnsStore } from '@/stores/table-columns'
 import { useTableExpandStore } from '@/stores/table-expand'
 import { batchDeleteDoneText, normalizeIds } from '@app/tables/batch'
 import { tableColumnKey } from '@app/tables/columns'
+import { useDisplayTitle } from '@/i18n/display'
 import { csvFileName } from '@app/tables/csv'
 
 import {
@@ -39,6 +41,8 @@ import {
 } from './depts/query'
 import type { DeptFormValues, SystemDept, UserStatus } from './depts/types'
 
+const { t } = useI18n()
+const { columnTitle } = useDisplayTitle()
 const loading = ref(false)
 const exporting = ref(false)
 const importing = ref(false)
@@ -77,15 +81,15 @@ const tree = computed(() =>
 
 const columns = computed<TableColumnsType<SystemDept>>(() => {
   const base: TableColumnsType<SystemDept> = [
-    { dataIndex: 'name', title: '部门名称' },
-    { dataIndex: 'userCount', title: '人数', width: 80 },
-    { dataIndex: 'status', title: '状态', width: 100 },
-    { dataIndex: 'remark', title: '备注' },
-    { dataIndex: 'createTime', title: '创建时间', width: 180 },
+    { dataIndex: 'name', title: columnTitle('depts', 'name') },
+    { dataIndex: 'userCount', title: columnTitle('depts', 'userCount'), width: 80 },
+    { dataIndex: 'status', title: columnTitle('depts', 'status'), width: 100 },
+    { dataIndex: 'remark', title: columnTitle('depts', 'remark') },
+    { dataIndex: 'createTime', title: columnTitle('depts', 'createTime'), width: 180 },
   ]
   const visible = base.filter((column) => tableColumns.isVisible('depts', tableColumnKey(column)))
   if (!hasAnyAction('dept:create', 'dept:update', 'dept:delete')) return visible
-  return [...visible, { key: 'actions', title: '操作', width: 220 }]
+  return [...visible, { key: 'actions', title: t('column.actions'), width: 220 }]
 })
 
 const flat = computed(() => flattenDepts(catalog.value))
@@ -224,7 +228,7 @@ function onBatchDelete() {
     content: batchDeleteDeptsConfirmText(ids.length),
     okText: '删除',
     okType: 'danger',
-    title: '批量删除',
+    title: t('confirm.batchDelete'),
     async onOk() {
       const result = await deleteDepts(ids)
       message.success(batchDeleteDoneText(result.deleted, '个部门', result.skipped))
@@ -247,7 +251,7 @@ function onDelete(row: SystemDept) {
     content: `确定删除 ${row.name}？内存 mock，刷新页面后种子数据会回来。`,
     okText: '删除',
     okType: 'danger',
-    title: '删除部门',
+    title: t('confirm.deleteDept'),
     async onOk() {
       await deleteDept(row.id)
       message.success('已删除')

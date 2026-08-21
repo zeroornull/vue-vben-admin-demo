@@ -63,4 +63,4 @@ bun run build
 
 ## 下一轮从哪里开始
 
-第 71 轮：`@app/core` 薄核。只放主题 token 和 Form / Modal / message 的 adapter **类型**，第一份实现仍是 antd，由 `apps/web` 注册。不要复制 `legacy/packages/@core`。路线见 [75](./75-phase-2-roadmap.md)。
+第 71 轮已做，见 [78-round-71-core.md](./78-round-71-core.md)。下一轮是第 72 轮 Turbo。

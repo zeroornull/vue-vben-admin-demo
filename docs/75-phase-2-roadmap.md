@@ -13,11 +13,11 @@
 ```text
 基建     第 69  bun catalog          ← 已完成
          第 70  packages/ 薄拆       ← 已完成
-         第 71  @app/core（薄核 + adapter 口子）
-         第 72  Turbo
+         第 71  @app/core（薄核 + adapter 口子）← 已完成
+         第 72  Turbo                 ← 已完成
 
-产品     第 73  i18n
-         第 74  Iconify
+产品     第 73  i18n                  ← 已完成
+         第 74  Iconify               ← 已完成
          第 75  第二套皮肤（Element Plus）
 
 展开     第 76  VitePress

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Button, Form, FormItem, Input } from 'ant-design-vue'
 import { reactive, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
 
 import AntdPage from '@/components/AntdPage.vue'
@@ -11,6 +12,7 @@ import { useLastRouteStore } from '@/stores/last-route'
 
 import { validateLoginForm } from './login/query'
 
+const { t } = useI18n()
 const authStore = useAuthStore()
 const lastRouteStore = useLastRouteStore()
 const route = useRoute()
@@ -23,9 +25,9 @@ const form = reactive({
 const errorMessage = ref('')
 
 const accounts = [
-  { username: 'vben', roles: '登录 admin+user · 菜单 biz-admin' },
-  { username: 'admin', roles: '登录 admin · 菜单 biz-admin' },
-  { username: 'user', roles: '登录 user · 菜单 viewer' },
+  { username: 'vben', rolesKey: 'login.vben' },
+  { username: 'admin', rolesKey: 'login.admin' },
+  { username: 'user', rolesKey: 'login.user' },
 ] as const
 
 function useAccount(username: string) {
@@ -38,7 +40,7 @@ async function onSubmit() {
   errorMessage.value = ''
   const checked = validateLoginForm(form)
   if (!checked.ok) {
-    errorMessage.value = checked.message
+    errorMessage.value = t(checked.message)
     return
   }
   try {
@@ -47,7 +49,7 @@ async function onSubmit() {
       resolveLoginLanding(route.query.redirect, lastRouteStore.pathFor(user.username), user),
     )
   } catch (error) {
-    errorMessage.value = error instanceof Error ? error.message : '登录失败'
+    errorMessage.value = error instanceof Error ? error.message : t('login.failed')
   }
 }
 </script>
@@ -57,20 +59,20 @@ async function onSubmit() {
     <AntdPage>
       <section class="card">
         <div class="title-row">
-          <h1>登录</h1>
+          <h1>{{ t('login.title') }}</h1>
           <AppearanceMenu />
         </div>
-        <p class="lead">账号走 Vite mock。连错 3 次锁 1 分钟。登录角色管「关于」；业务角色管侧栏菜单。</p>
+        <p class="lead">{{ t('login.lead') }}</p>
 
         <Form layout="vertical" @submit.prevent="onSubmit">
-          <FormItem label="用户名">
+          <FormItem :label="t('login.username')">
             <Input
               v-model:value="form.username"
               autocomplete="username"
               name="username"
             />
           </FormItem>
-          <FormItem label="密码">
+          <FormItem :label="t('login.password')">
             <Input.Password
               v-model:value="form.password"
               autocomplete="current-password"
@@ -82,7 +84,7 @@ async function onSubmit() {
 
           <FormItem>
             <Button :loading="authStore.loginLoading" block html-type="submit" type="primary">
-              登录
+              {{ t('login.submit') }}
             </Button>
           </FormItem>
         </Form>
@@ -92,7 +94,7 @@ async function onSubmit() {
             <button type="button" @click="useAccount(item.username)">
               {{ item.username }} / 123456
             </button>
-            <span>{{ item.roles }}</span>
+            <span>{{ t(item.rolesKey) }}</span>
           </li>
         </ul>
       </section>

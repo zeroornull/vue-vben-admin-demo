@@ -75,9 +75,13 @@
 第 68 轮 边角一次收完
 第 69 轮 bun catalog
 第 70 轮 packages 薄拆
+第 71 轮 @app/core 薄核
+第 72 轮 Turbo
+第 73 轮 i18n
+第 74 轮 Iconify
 ```
 
-第一期到此结束。二期路线见 [75-phase-2-roadmap.md](./75-phase-2-roadmap.md)。第 69 轮 catalog、第 70 轮拆包已落地。当前 ← 第 70 轮。执行记录见 [76](./76-round-69-catalog.md)、[77](./77-round-70-packages.md)。
+第一期到此结束。二期路线见 [75-phase-2-roadmap.md](./75-phase-2-roadmap.md)。第 69–74 轮已落地。当前 ← 第 74 轮。执行记录见 [76](./76-round-69-catalog.md) 至 [81](./81-round-74-iconify.md)。
 
 轮次可以按实际卡点拆开（例如第 3 轮只做登录、第 3b 轮再做动态路由），但不要跳过「可运行」去堆包。
 
@@ -194,7 +198,7 @@
 - lint / format（不要同时上 eslint + oxlint + stylelint，先选一套）
 - Vitest 覆盖请求拦截和路由守卫
 - CI：`bun ci` + typecheck + build
-- 再评估要不要 Turbo：单 app 时 `bun run --filter` 足够
+- 再评估要不要 Turbo：单 app 时 `bun run --filter` 足够。第 72 轮拆包后已上，见 [79](./79-round-72-turbo.md)
 
 ## 第 7 轮 · 分析页
 
@@ -266,7 +270,7 @@
 
 > 已完成，执行记录见 [24-round-18-menu-icons.md](./24-round-18-menu-icons.md)。
 
-`@ant-design/icons-vue@7.0.1`。`meta.icon` 是登记名。不上 Iconify。登录页 Form 仍不做。
+`@ant-design/icons-vue@7.0.1`。`meta.icon` 是登记名。不上 Iconify。登录页 Form 仍不做。第 74 轮已改 Iconify，见 [81](./81-round-74-iconify.md)。
 
 ## 第 19 轮 · 页签图标
 
@@ -580,6 +584,30 @@ path 变了就 abort 上一页 GET。写操作和轮询不挂。
 
 `@app/access` / `@app/request` / `@app/tables` 三个本地包。指令、页面、mock 仍在 app。
 
+## 第 71 轮 · `@app/core` 薄核
+
+> 已完成，执行记录见 [78-round-71-core.md](./78-round-71-core.md)。
+
+主题 token 和 adapter 注册表进核。antd 实现由 app 注册。核不依赖 UI 库。
+
+## 第 72 轮 · Turbo
+
+> 已完成，执行记录见 [79-round-72-turbo.md](./79-round-72-turbo.md)。
+
+`lint` / `test` / `typecheck` / `build` 走 `turbo run`。开发仍 `bun run --filter @app/web dev`。
+
+## 第 73 轮 · i18n
+
+> 已完成，执行记录见 [80-round-73-i18n.md](./80-round-73-i18n.md)。
+
+`vue-i18n`；`zh-CN` + `en-US`。语言进 preferences。不翻译 mock 种子。
+
+## 第 74 轮 · Iconify
+
+> 已完成，执行记录见 [81-round-74-iconify.md](./81-round-74-iconify.md)。
+
+`@iconify/vue` 离线白名单。`meta.icon` 仍是登记名。app 不再直接依赖 `@ant-design/icons-vue`。
+
 ## 决策记录（第 1 轮已拍板）
 
 | 议题 | 决定 | 原因 |
@@ -592,9 +620,9 @@ path 变了就 abort 上一页 GET。写操作和轮询不挂。
 | 包管理 | Bun | 用户指定；workspace 已有。catalog 第 69 轮落地（vue / router / pinia / vite / ts / vue-tsc / plugin-vue），见 [76](./76-round-69-catalog.md) |
 | 第 2 轮如何初始化 | **`bun x create-vue@latest apps/web`**，再套 Bun workspace | 官方模板对齐最新稳定 Vue/Vite/TS；手写配置容易漏；monorepo 是后加的一层，不是手写整个 app 的理由 |
 | 第 6 轮 lint | 只上 oxlint | 不叠 ESLint / Stylelint |
-| 第 6 轮 Turbo | 不上 | 单 app，`bun run --filter` 足够 |
+| 第 6 轮 Turbo | 第 72 轮上 | 第 6 轮单 app 时不上；拆包后缓存才有对象，见 [79](./79-round-72-turbo.md) |
 | 第 8 轮组件库 | ant-design-vue 4.2.6 | 对照仓是 `web-antd`；官方包最新稳定是 4.x。不上 antdv-next、vxe-table、五套皮肤 |
-| 第 18 轮图标 | `@ant-design/icons-vue` 具名引入 | 已跟 antd；不上 Iconify / unplugin-icons |
+| 第 18 轮图标 | 第 74 轮改为 `@iconify/vue` 离线白名单 | 第 18 轮先跟 antd 具名引入；第 74 轮换成登记名，见 [81](./81-round-74-iconify.md) |
 
 需要改上述决定时，开新一轮文档，不要默默改这一节而不留痕迹。二期若真做多皮肤 / Iconify / vxe-table / Turbo / VitePress，按 [75](./75-phase-2-roadmap.md) 在**执行当轮**再改上表对应行，不要提前把「否」改成「是」。
 

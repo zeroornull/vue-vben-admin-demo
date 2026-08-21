@@ -2,12 +2,14 @@
 import { computed } from 'vue'
 import { storeToRefs } from 'pinia'
 
-import { colorFilterLabels, nextColorFilter, normalizeColorFilter } from '@/preferences/color-filter'
+import { nextColorFilter, normalizeColorFilter } from '@app/core'
+import { useI18n } from 'vue-i18n'
 import { usePreferencesStore } from '@/stores/preferences'
 
+const { t } = useI18n()
 const preferences = usePreferencesStore()
 const { colorFilter } = storeToRefs(preferences)
-const label = computed(() => colorFilterLabels[normalizeColorFilter(colorFilter.value)])
+const label = computed(() => t(`vision.${normalizeColorFilter(colorFilter.value)}`))
 
 function cycle() {
   preferences.setColorFilter(nextColorFilter(normalizeColorFilter(colorFilter.value)))

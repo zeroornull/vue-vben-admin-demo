@@ -17,10 +17,13 @@
   },
   "scripts": {
     "dev": "bun run --filter @app/web dev",
-    "build": "bun run --filter @app/web build",
+    "build": "turbo run build",
     "preview": "bun run --filter @app/web preview",
-    "typecheck": "bun run --filter '*' type-check",
-    "test": "bun run --filter '*' test",
-    "lint": "bun run --filter '*' lint"
+    "typecheck": "turbo run type-check",
+    "test": "turbo run test",
+    "lint": "turbo run lint"
+  },
+  "devDependencies": {
+    "turbo": "^2.10.11"
   }
 }

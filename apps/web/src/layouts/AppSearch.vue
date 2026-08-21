@@ -3,6 +3,8 @@ import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 
+import { useDisplayTitle } from '@/i18n/display'
+import MenuIcon from '@/icons/MenuIcon.vue'
 import { resolveMenuIcon } from '@/icons/menu-icons'
 import { menuItemTo, useSearchItems, type AccessMenuItem } from '@/router/access-menu'
 import {
@@ -26,6 +28,17 @@ const { userInfo } = storeToRefs(authStore)
 const recentsStore = useSearchRecentsStore()
 const router = useRouter()
 const items = useSearchItems()
+const { groupTitle, menuTitle } = useDisplayTitle()
+const labeledItems = computed(() =>
+  items.value.map((item) => {
+    const group = 'group' in item ? item.group : undefined
+    return {
+      ...item,
+      group: groupTitle(group) ?? group,
+      title: menuTitle(item),
+    }
+  }),
+)
 const open = ref(false)
 const keyword = ref('')
 const input = ref<HTMLInputElement | null>(null)
@@ -33,9 +46,9 @@ const panel = ref<HTMLElement | null>(null)
 const cursor = ref(0)
 const username = computed(() => userInfo.value?.username ?? '')
 const recents = computed(() =>
-  keyword.value.trim() ? [] : recentsStore.listFor(username.value, items.value),
+  keyword.value.trim() ? [] : recentsStore.listFor(username.value, labeledItems.value),
 )
-const rest = computed(() => searchListWithoutRecents(items.value, keyword.value, recents.value))
+const rest = computed(() => searchListWithoutRecents(labeledItems.value, keyword.value, recents.value))
 const flat = computed(() => flattenSearchHits(recents.value, rest.value))
 const empty = computed(() => !flat.value.length)
 const recentOffset = computed(() => recents.value.length)
@@ -178,11 +191,7 @@ onUnmounted(() => {
                   @mouseenter="onHover(index)"
                   @click="go(item)"
                 >
-                  <component
-                    v-if="resolveMenuIcon(item.icon)"
-                    :is="resolveMenuIcon(item.icon)"
-                    class="icon"
-                  />
+                  <MenuIcon v-if="resolveMenuIcon(item.icon)" :name="item.icon" class="icon" />
                   <span>{{ item.title }}</span>
                   <small v-if="item.group">{{ item.group }}</small>
                 </button>
@@ -197,11 +206,7 @@ onUnmounted(() => {
                   @mouseenter="onHover(restIndex(index))"
                   @click="go(item)"
                 >
-                  <component
-                    v-if="resolveMenuIcon(item.icon)"
-                    :is="resolveMenuIcon(item.icon)"
-                    class="icon"
-                  />
+                  <MenuIcon v-if="resolveMenuIcon(item.icon)" :name="item.icon" class="icon" />
                   <span>{{ item.title }}</span>
                   <small v-if="item.group">{{ item.group }}</small>
                 </button>

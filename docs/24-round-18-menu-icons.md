@@ -10,6 +10,8 @@
 
 不装 Iconify、`unplugin-icons`、`@vben/icons`。七个菜单不需要按需编译整仓图标。
 
+> 第 74 轮已改成 `@iconify/vue` 离线白名单，见 [81-round-74-iconify.md](./81-round-74-iconify.md)。
+
 路由只写登记名：`meta.icon: 'users'`。组件对照写在 `menuIcons`。不要把 `TeamOutlined` 写进路由——路由应是可序列化的字串。
 
 收起侧栏只留图标，标题走 `title` 提示。未登记的 key 收起时才退回第一个字。

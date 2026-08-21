@@ -13,7 +13,7 @@ const isAdmin = computed(() => userInfo.value?.roles.includes('admin'))
 <template>
   <div class="page">
     <p>
-      access / request / tables 已经拆到 packages。页面和壳还在 app 里。
+      侧栏图标走 Iconify 离线白名单。登记名以外的字符串不会去拉远程。
     </p>
     <p v-access:role="'admin'">
       这段用 <code>v-access:role="'admin'"</code>，看的是登录角色，不是业务角色码 biz-admin。

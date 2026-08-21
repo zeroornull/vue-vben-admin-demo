@@ -14,10 +14,10 @@ export function validateLoginForm(values: {
   const username = typeof values.username === 'string' ? values.username.trim() : ''
   const password = typeof values.password === 'string' ? values.password : ''
   if (!username) {
-    return { message: '请输入用户名', ok: false }
+    return { message: 'login.needUsername', ok: false }
   }
   if (!password) {
-    return { message: '请输入密码', ok: false }
+    return { message: 'login.needPassword', ok: false }
   }
   return { ok: true, value: { password, username } }
 }

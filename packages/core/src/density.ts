@@ -1,7 +1,5 @@
 export type Density = 'comfortable' | 'compact'
 
-export type AntdComponentSize = 'middle' | 'small'
-
 export const densities: Density[] = ['comfortable', 'compact']
 
 export const densityLabels: Record<Density, string> = {
@@ -20,10 +18,6 @@ export function normalizeDensity(value: unknown): Density {
 export function nextDensity(density: Density): Density {
   const index = densities.indexOf(density)
   return densities[(index + 1) % densities.length] ?? 'comfortable'
-}
-
-export function antdComponentSize(density: Density): AntdComponentSize {
-  return density === 'compact' ? 'small' : 'middle'
 }
 
 export function applyDensityDataset(root: { dataset: DOMStringMap }, density: Density) {

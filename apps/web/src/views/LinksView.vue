@@ -4,6 +4,7 @@ defineOptions({ name: 'LinksView' })
 import type { TableColumnsType, TablePaginationConfig } from 'ant-design-vue'
 import { Button, Form, FormItem, Input, Modal, Select, Space, Table, Tag, message } from 'ant-design-vue'
 import { computed, onMounted, reactive, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { onBeforeRouteLeave } from 'vue-router'
 
 import { useAccess } from '@/access/use-access'
@@ -16,6 +17,7 @@ import { useTableColumnsStore } from '@/stores/table-columns'
 import { useTablePageStore } from '@/stores/table-page'
 import { useTableSortStore } from '@/stores/table-sort'
 import { tableColumnKey } from '@app/tables/columns'
+import { useDisplayTitle } from '@/i18n/display'
 import { batchDeleteDoneText, nextPageAfterDeletes, normalizeIds } from '@app/tables/batch'
 import { csvFileName } from '@app/tables/csv'
 import { TABLE_PAGE_SIZE_OPTIONS } from '@app/tables/page-size'
@@ -31,6 +33,8 @@ import {
 } from './links/query'
 
 const linksStore = useLinksStore()
+const { t } = useI18n()
+const { columnTitle } = useDisplayTitle()
 const loading = ref(false)
 const exporting = ref(false)
 const importing = ref(false)
@@ -67,15 +71,15 @@ const columns = computed<TableColumnsType<EmbedLink>>(() => {
   const allowed = TABLE_SORT_FIELDS.links
   const current = sort.value
   const base: TableColumnsType<EmbedLink> = [
-    { dataIndex: 'title', title: '名称', ...tableColumnSort('title', allowed, current) },
-    { dataIndex: 'code', title: '编码', width: 140, ...tableColumnSort('code', allowed, current) },
-    { dataIndex: 'iframeSrc', title: '地址' },
-    { dataIndex: 'status', title: '状态', width: 100, ...tableColumnSort('status', allowed, current) },
-    { dataIndex: 'createTime', title: '创建时间', width: 180, ...tableColumnSort('createTime', allowed, current) },
+    { dataIndex: 'title', title: columnTitle('links', 'title'), ...tableColumnSort('title', allowed, current) },
+    { dataIndex: 'code', title: columnTitle('links', 'code'), width: 140, ...tableColumnSort('code', allowed, current) },
+    { dataIndex: 'iframeSrc', title: columnTitle('links', 'iframeSrc') },
+    { dataIndex: 'status', title: columnTitle('links', 'status'), width: 100, ...tableColumnSort('status', allowed, current) },
+    { dataIndex: 'createTime', title: columnTitle('links', 'createTime'), width: 180, ...tableColumnSort('createTime', allowed, current) },
   ]
   const visible = base.filter((column) => tableColumns.isVisible('links', tableColumnKey(column)))
   if (!hasAnyAction('link:update', 'link:delete')) return visible
-  return [...visible, { key: 'actions', title: '操作', width: 160 }]
+  return [...visible, { key: 'actions', title: t('column.actions'), width: 160 }]
 })
 
 async function load() {
@@ -230,7 +234,7 @@ function onBatchDelete() {
     content: batchDeleteLinksConfirmText(ids.length),
     okText: '删除',
     okType: 'danger',
-    title: '批量删除',
+    title: t('confirm.batchDelete'),
     async onOk() {
       const result = await deleteLinks(ids)
       message.success(batchDeleteDoneText(result.deleted, '条外链', result.skipped))
@@ -247,7 +251,7 @@ function onDelete(row: EmbedLink) {
     content: `确定删除 ${row.title}？侧栏上的「${row.title}」会一起去掉。`,
     okText: '删除',
     okType: 'danger',
-    title: '删除外链',
+    title: t('confirm.deleteLink'),
     async onOk() {
       await deleteLink(row.id)
       message.success('已删除')

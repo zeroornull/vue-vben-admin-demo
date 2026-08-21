@@ -22,10 +22,10 @@
 | --- | --- | --- |
 | 交互选 app 开发 | `pnpm dev` → `turbo-run` | 单 app：`bun run dev` |
 | 指定 app 开发 | `pnpm dev:antd` / `pnpm -F @vben/web-antd run dev` | `bun run --filter @app/web dev` |
-| 全仓构建 | `pnpm build` → `turbo build` | 前期：`bun run --filter @app/web build` |
-| 类型检查 | `pnpm check:type` → `turbo typecheck` | `bun run typecheck`（内部仍是 `vue-tsc`） |
-| lint | `pnpm lint` → eslint/oxlint 多套 | `bun run lint`（只有 oxlint） |
-| 单测 | `pnpm test:unit` → vitest | `bun run test` |
+| 全仓构建 | `pnpm build` → `turbo build` | `bun run build` → `turbo run build` |
+| 类型检查 | `pnpm check:type` → `turbo typecheck` | `bun run typecheck` → `turbo run type-check` |
+| lint | `pnpm lint` → eslint/oxlint 多套 | `bun run lint` → `turbo run lint`（只有 oxlint） |
+| 单测 | `pnpm test:unit` → vitest | `bun run test` → `turbo run test` |
 | CI 安装 | `pnpm install --frozen-lockfile` | `bun ci` |
 | 清产物 | `pnpm clean` | 第 2 轮写一个 `rm -rf dist node_modules` 脚本即可 |
 
@@ -61,7 +61,7 @@
 | catalog 在 yaml | catalog 在 `package.json` |
 | `pnpm-lock.yaml` | `bun.lock` |
 | `.npmrc`（pnpm） | 一般不需要；私有源再写 `.npmrc` |
-| `turbo.json` | 单 app 阶段省略 |
+| `turbo.json` | 第 72 轮起有；dev 仍不走 turbo |
 | `lefthook.yml` | 需要 git hook 时再加 |
 | `VITE_*` | 不变，仍是 Vite 环境变量 |
 

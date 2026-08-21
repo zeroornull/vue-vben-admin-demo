@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { onUnmounted, ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { storeToRefs } from 'pinia'
 
 import { TOAST_MS } from '@app/request'
 import { useRequestStore } from '@/stores/request'
 
+const { t } = useI18n()
 const request = useRequestStore()
 const { notice } = storeToRefs(request)
 const visible = ref(false)
@@ -33,6 +35,7 @@ onUnmounted(() => {
     class="toast"
     type="button"
     role="alert"
+    :aria-label="t('toast.dismiss')"
     @click="request.dismiss()"
   >
     {{ notice }}

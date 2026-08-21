@@ -15,9 +15,11 @@ import {
   message,
 } from 'ant-design-vue'
 import { computed, onMounted, reactive, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { onBeforeRouteLeave, useRoute, useRouter } from 'vue-router'
 
 import { formatActionCodes, menuTitleByCode } from '@app/access/catalog'
+import { useDisplayTitle } from '@/i18n/display'
 import { useAccess } from '@/access/use-access'
 import { createRole, deleteRole, deleteRoles, getRoleList, updateRole } from '@/api/system/role'
 import AntdPage from '@/components/AntdPage.vue'
@@ -46,6 +48,8 @@ import type { RoleFormValues, SystemRole, UserStatus } from './roles/types'
 const router = useRouter()
 const route = useRoute()
 const authStore = useAuthStore()
+const { t } = useI18n()
+const { columnTitle } = useDisplayTitle()
 const loading = ref(false)
 const exporting = ref(false)
 const importing = ref(false)
@@ -82,18 +86,18 @@ const columns = computed<TableColumnsType<SystemRole>>(() => {
   const allowed = TABLE_SORT_FIELDS.roles
   const current = sort.value
   const base: TableColumnsType<SystemRole> = [
-    { dataIndex: 'name', title: '角色名称', ...tableColumnSort('name', allowed, current) },
-    { dataIndex: 'code', title: '编码', width: 140, ...tableColumnSort('code', allowed, current) },
-    { dataIndex: 'menuCodes', title: '菜单', width: 200 },
-    { dataIndex: 'actionCodes', title: '操作权限', width: 240 },
-    { dataIndex: 'userCount', title: '人数', width: 80 },
-    { dataIndex: 'status', title: '状态', width: 100, ...tableColumnSort('status', allowed, current) },
-    { dataIndex: 'remark', title: '备注' },
-    { dataIndex: 'createTime', title: '创建时间', width: 180, ...tableColumnSort('createTime', allowed, current) },
+    { dataIndex: 'name', title: columnTitle('roles', 'name'), ...tableColumnSort('name', allowed, current) },
+    { dataIndex: 'code', title: columnTitle('roles', 'code'), width: 140, ...tableColumnSort('code', allowed, current) },
+    { dataIndex: 'menuCodes', title: columnTitle('roles', 'menuCodes'), width: 200 },
+    { dataIndex: 'actionCodes', title: columnTitle('roles', 'actionCodes'), width: 240 },
+    { dataIndex: 'userCount', title: columnTitle('roles', 'userCount'), width: 80 },
+    { dataIndex: 'status', title: columnTitle('roles', 'status'), width: 100, ...tableColumnSort('status', allowed, current) },
+    { dataIndex: 'remark', title: columnTitle('roles', 'remark') },
+    { dataIndex: 'createTime', title: columnTitle('roles', 'createTime'), width: 180, ...tableColumnSort('createTime', allowed, current) },
   ]
   const visible = base.filter((column) => tableColumns.isVisible('roles', tableColumnKey(column)))
   if (!hasAnyAction('role:update', 'role:delete')) return visible
-  return [...visible, { key: 'actions', title: '操作', width: 160 }]
+  return [...visible, { key: 'actions', title: t('column.actions'), width: 160 }]
 })
 
 async function load() {
@@ -270,7 +274,7 @@ function onBatchDelete() {
     content: batchDeleteRolesConfirmText(ids.length),
     okText: '删除',
     okType: 'danger',
-    title: '批量删除',
+    title: t('confirm.batchDelete'),
     async onOk() {
       const result = await deleteRoles(ids)
       message.success(batchDeleteDoneText(result.deleted, '个角色', result.skipped))
@@ -292,7 +296,7 @@ function onDelete(row: SystemRole) {
     content: `确定删除 ${row.name}？编码 ${row.code} 会一起去掉。`,
     okText: '删除',
     okType: 'danger',
-    title: '删除角色',
+    title: t('confirm.deleteRole'),
     async onOk() {
       await deleteRole(row.id)
       message.success('已删除')

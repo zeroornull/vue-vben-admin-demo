@@ -123,7 +123,7 @@ CI 用 `bun ci` 或 `bun install --frozen-lockfile`，和 `pnpm install --frozen
 
 Corepack 对 Bun 不如对 pnpm 那么常用，以本机 `bun` 为准即可。
 
-**Turbo。** Turbo 能在 Bun 仓里跑，但第 2 轮只有一个 app，先不用。少一个守护进程，问题更好查。
+**Turbo。** 第 2 轮只有一个 app，先不用。第 72 轮拆完包后加上，见 [79](./79-round-72-turbo.md)。`dev` 仍不走 turbo。
 
 ## 建议的本地练习（第 2 轮之前可做）
 

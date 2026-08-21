@@ -23,7 +23,7 @@
 | 路由 | vue-router 5.2 | 跟随 Vue 生态最新稳定版 |
 | 状态 | Pinia 4 + persistedstate | 同上，先保持 Pinia，不换别的 store |
 | 构建 | Vite 8 + 自研 `@vben/vite-config` | Vite 最新稳定版，配置从自研包收成「够用即可」 |
-| 单体仓 | pnpm workspace + catalog + Turbo | Bun workspaces + catalog；任务先用 `bun run --filter`，Turbo 是否保留第 2 轮再定 |
+| 单体仓 | pnpm workspace + catalog + Turbo | Bun workspaces + catalog；`dev` 用 `--filter`，第 72 轮起 lint/test/typecheck/build 走 Turbo |
 | 应用形态 | 5 个皮肤 app + mock + playground | **一个 `apps/web`**。文档和代码都不复制五套 UI；对照只看 `legacy/apps/web-antd` |
 
 「最新 Vue 依赖」在本项目里的定义：

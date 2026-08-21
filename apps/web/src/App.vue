@@ -9,9 +9,17 @@ import AppOfflineBar from '@/components/AppOfflineBar.vue'
 import AppToast from '@/components/AppToast.vue'
 import AppUpdateBar from '@/components/AppUpdateBar.vue'
 import AppWatermark from '@/components/AppWatermark.vue'
-import { applyColorFilterDataset, normalizeColorFilter } from '@/preferences/color-filter'
-import { applyDensityDataset, normalizeDensity } from '@/preferences/density'
-import { applyThemeDataset } from '@/preferences/theme'
+import {
+  applyColorFilterDataset,
+  applyDensityDataset,
+  applyHtmlLang,
+  applyThemeDataset,
+  normalizeColorFilter,
+  normalizeDensity,
+  normalizeLocale,
+} from '@app/core'
+import { useDisplayTitle } from '@/i18n/display'
+import { i18n } from '@/i18n'
 import { useTheme } from '@/preferences/use-theme'
 import { applyDocumentTitle, documentTitle, readRouteTitle } from '@/router/document-title'
 import { useLinksStore } from '@/stores/links'
@@ -22,6 +30,7 @@ useSessionSync()
 const { themeMode } = useTheme()
 const preferences = usePreferencesStore()
 const linksStore = useLinksStore()
+const { routeTitle } = useDisplayTitle()
 
 watch(
   themeMode,
@@ -48,11 +57,25 @@ watch(
 )
 
 watch(
+  () => preferences.locale,
+  (value) => {
+    const locale = normalizeLocale(value)
+    if (locale !== value) preferences.setLocale(locale)
+    i18n.global.locale.value = locale
+    applyHtmlLang(document.documentElement, locale)
+  },
+  { immediate: true },
+)
+
+watch(
   () => {
     const fallback = readRouteTitle(route.meta)
-    if (route.name !== 'embed-link') return [fallback, preferences.appName] as const
-    const code = typeof route.params.code === 'string' ? route.params.code : ''
-    return [linksStore.titleFor(code) || fallback, preferences.appName] as const
+    const name = String(route.name ?? '')
+    if (name === 'embed-link') {
+      const code = typeof route.params.code === 'string' ? route.params.code : ''
+      return [linksStore.titleFor(code) || fallback, preferences.appName] as const
+    }
+    return [routeTitle(name, fallback), preferences.appName] as const
   },
   ([page, appName]) => {
     applyDocumentTitle(document, documentTitle(page, appName))

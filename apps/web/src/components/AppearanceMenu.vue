@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 import ColorFilterToggle from '@/components/ColorFilterToggle.vue'
+import LocaleToggle from '@/components/LocaleToggle.vue'
 import DensityToggle from '@/components/DensityToggle.vue'
 import IdleLockToggle from '@/components/IdleLockToggle.vue'
 import NavLayoutToggle from '@/components/NavLayoutToggle.vue'
@@ -10,6 +12,7 @@ import ThemeToggle from '@/components/ThemeToggle.vue'
 import WatermarkToggle from '@/components/WatermarkToggle.vue'
 import { shouldClosePopover } from '@/layouts/popover'
 
+const { t } = useI18n()
 const open = ref(false)
 const root = ref<HTMLElement | null>(null)
 
@@ -49,16 +52,17 @@ onUnmounted(() => {
       class="trigger"
       :aria-expanded="open"
       aria-haspopup="menu"
-      title="水印、色弱、深浅、疏密、布局、闲置锁屏、侧栏宽度"
+      :title="t('appearance.hint')"
       @click="toggle"
     >
-      外观
+      {{ t('appearance.title') }}
     </button>
     <div v-if="open" class="panel" role="menu">
       <WatermarkToggle />
       <ColorFilterToggle />
       <ThemeToggle />
       <DensityToggle />
+      <LocaleToggle />
       <NavLayoutToggle />
       <IdleLockToggle />
       <SidebarWidthReset />

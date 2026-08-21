@@ -13,16 +13,18 @@
     "lint": "oxlint src vite"
   },
   "dependencies": {
-    "@ant-design/icons-vue": "7.0.1",
     "@app/access": "workspace:*",
+    "@app/core": "workspace:*",
     "@app/request": "workspace:*",
     "@app/tables": "workspace:*",
+    "@iconify/vue": "^5.0.0",
     "ant-design-vue": "^4.2.6",
     "axios": "^1.19.0",
     "echarts": "^6.0.0",
     "pinia": "catalog:",
     "pinia-plugin-persistedstate": "^4.7.1",
     "vue": "catalog:",
+    "vue-i18n": "^11.1.12",
     "vue-router": "catalog:"
   },
   "devDependencies": {

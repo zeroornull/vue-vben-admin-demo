@@ -8,7 +8,7 @@ import {
   normalizeThemeMode,
   resolveTheme,
   themeModeLabels,
-} from './theme'
+} from '@app/core'
 
 const systemDark = ref(false)
 let media: MediaQueryList | null = null

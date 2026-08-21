@@ -2,12 +2,14 @@
 import { computed } from 'vue'
 import { storeToRefs } from 'pinia'
 
-import { densityLabels, nextDensity, normalizeDensity } from '@/preferences/density'
+import { nextDensity, normalizeDensity } from '@app/core'
+import { useI18n } from 'vue-i18n'
 import { usePreferencesStore } from '@/stores/preferences'
 
+const { t } = useI18n()
 const preferences = usePreferencesStore()
 const { density } = storeToRefs(preferences)
-const label = computed(() => densityLabels[normalizeDensity(density.value)])
+const label = computed(() => t(`density.${normalizeDensity(density.value)}`))
 
 function cycle() {
   preferences.setDensity(nextDensity(normalizeDensity(density.value)))

@@ -2,6 +2,7 @@
 import { computed } from 'vue'
 import { Button, Checkbox, Popover } from 'ant-design-vue'
 
+import { useDisplayTitle } from '@/i18n/display'
 import { useTableColumnsStore } from '@/stores/table-columns'
 import { TABLE_COLUMN_SPECS, type TableColumnKey } from '@app/tables/columns'
 
@@ -11,6 +12,7 @@ const props = defineProps<{
 
 const tableColumns = useTableColumnsStore()
 const spec = computed(() => TABLE_COLUMN_SPECS[props.table])
+const { columnTitle, t } = useDisplayTitle()
 </script>
 
 <template>
@@ -23,12 +25,12 @@ const spec = computed(() => TABLE_COLUMN_SPECS[props.table])
           :checked="tableColumns.isVisible(table, key)"
           @change="tableColumns.toggle(table, key)"
         >
-          {{ spec.labels[key] }}
+          {{ columnTitle(table, key, spec.labels[key]) }}
         </Checkbox>
-        <Button type="link" @click="tableColumns.reset(table)">恢复默认</Button>
+        <Button type="link" @click="tableColumns.reset(table)">{{ t('column.reset') }}</Button>
       </div>
     </template>
-    <Button>列</Button>
+    <Button>{{ t('column.picker') }}</Button>
   </Popover>
 </template>
 

@@ -113,6 +113,8 @@ Vben 的表单、弹窗、消息不是绑死 Ant Design。每个 app 在 `adapte
 
 新仓如果只做一套 UI，adapter 可以极薄，甚至先不抽包。等第二个皮肤出现再抽。不要为「理论上要多皮肤」先建四套目录。
 
+第 71 轮只开口子：`@app/core` 有注册表和类型，antd 实现仍在 `apps/web/src/adapter/antd.ts`。见 [78](./78-round-71-core.md)。
+
 ## 7. 布局
 
 `layouts/basic.vue` 大多是对 `@vben/layouts` 的薄封装。真正的侧边栏、顶栏、标签页、偏好抽屉在 effects/layouts 和 `@core/ui-kit`。

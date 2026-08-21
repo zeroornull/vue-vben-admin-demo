@@ -20,7 +20,7 @@ declare module 'vue-router' {
     viewName?: string
     /** 页签不可关闭（工作台） */
     affixTab?: boolean
-    /** 侧栏图标登记名，见 menuIcons；不是 antd 组件名 */
+    /** 侧栏图标登记名，见 menuIcons；不是 Iconify 任意 id */
     icon?: string
     /** iframe 地址；只认 http(s) 或同源路径，见 safeIframeSrc */
     iframeSrc?: string

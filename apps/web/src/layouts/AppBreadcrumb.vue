@@ -2,9 +2,12 @@
 import { computed } from 'vue'
 import { RouterLink, useRoute } from 'vue-router'
 
+import { useDisplayTitle } from '@/i18n/display'
+
 import { crumbsFromRoute, shouldShowCrumbs } from './breadcrumb'
 
 const route = useRoute()
+const { groupTitle, routeTitle, t } = useDisplayTitle()
 
 const crumbs = computed(() =>
   crumbsFromRoute({
@@ -14,16 +17,21 @@ const crumbs = computed(() =>
 )
 
 const visible = computed(() => shouldShowCrumbs(crumbs.value))
+
+function crumbTitle(crumb: { name?: string; title: string }) {
+  if (crumb.name) return routeTitle(crumb.name, crumb.title)
+  return groupTitle(crumb.title) ?? crumb.title
+}
 </script>
 
 <template>
-  <nav v-if="visible" class="crumbs" aria-label="面包屑">
+  <nav v-if="visible" class="crumbs" :aria-label="t('chrome.breadcrumb')">
     <ol>
       <li v-for="(crumb, index) in crumbs" :key="`${crumb.title}-${index}`">
         <RouterLink v-if="crumb.name && !crumb.current" :to="{ name: crumb.name }">
-          {{ crumb.title }}
+          {{ crumbTitle(crumb) }}
         </RouterLink>
-        <span v-else :aria-current="crumb.current ? 'page' : undefined">{{ crumb.title }}</span>
+        <span v-else :aria-current="crumb.current ? 'page' : undefined">{{ crumbTitle(crumb) }}</span>
       </li>
     </ol>
   </nav>

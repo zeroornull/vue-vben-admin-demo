@@ -15,8 +15,14 @@ describe('validateLoginForm', () => {
   })
 
   it('rejects a blank username or password', () => {
-    expect(validateLoginForm({ password: '123456', username: '   ' }).ok).toBe(false)
-    expect(validateLoginForm({ password: '', username: 'vben' }).ok).toBe(false)
+    expect(validateLoginForm({ password: '123456', username: '   ' })).toEqual({
+      message: 'login.needUsername',
+      ok: false,
+    })
+    expect(validateLoginForm({ password: '', username: 'vben' })).toEqual({
+      message: 'login.needPassword',
+      ok: false,
+    })
     expect(validateLoginForm({ password: 123456, username: 'vben' }).ok).toBe(false)
   })
 })

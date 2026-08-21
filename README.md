@@ -8,7 +8,7 @@
 | --- | --- |
 | [`docs/`](./docs/README.md) | 迁移与学习文档（按轮次推进） |
 | [`apps/web`](./apps/web) | Vue + TS 应用（登录 + 布局壳 + 工作区） |
-| [`packages/`](./packages) | `@app/access` / `@app/request` / `@app/tables` |
+| [`packages/`](./packages) | `@app/access` / `@app/core` / `@app/request` / `@app/tables` |
 | `legacy/` | 原 Vben 完整源码，仅作本地对照，已被 `.gitignore` 忽略 |
 
 ## 先读文档

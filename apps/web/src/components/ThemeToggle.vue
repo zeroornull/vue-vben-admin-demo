@@ -1,11 +1,16 @@
 <script setup lang="ts">
+import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
+
 import { useTheme } from '@/preferences/use-theme'
 
-const { cycleTheme, themeLabel } = useTheme()
+const { t } = useI18n()
+const { cycleTheme, themeMode } = useTheme()
+const themeLabel = computed(() => t(`theme.${themeMode.value}`))
 </script>
 
 <template>
-  <button class="theme-toggle" type="button" :title="`外观：${themeLabel}`" @click="cycleTheme">
+  <button class="theme-toggle" type="button" :title="`${t('theme.prefix')}：${themeLabel}`" @click="cycleTheme">
     {{ themeLabel }}
   </button>
 </template>
