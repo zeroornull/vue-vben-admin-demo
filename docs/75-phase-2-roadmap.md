@@ -28,7 +28,7 @@
          第 81  TDesign               ← 已完成
          第 82  antdv-next            ← 已完成
 
-收口     第 83  Playwright + 自动 CI
+收口     第 83  Playwright + 自动 CI  ← 已完成
          第 84  Vue 3.6 实验（默认仍是 3.5）
 ```
 

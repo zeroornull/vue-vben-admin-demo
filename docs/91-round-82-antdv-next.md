@@ -39,4 +39,4 @@ bun run dev:antdv-next
 
 ## 下一轮从哪里开始
 
-第 83 轮：Playwright + 自动 CI。只测默认 `apps/web`。见 [75-phase-2-roadmap.md](./75-phase-2-roadmap.md)。
+第 83 轮已做，见 [92-round-83-playwright.md](./92-round-83-playwright.md)。下一轮是第 84 轮 Vue 3.6 实验。

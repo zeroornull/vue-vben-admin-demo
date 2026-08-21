@@ -27,6 +27,7 @@
     "preview": "bun run --filter @app/web preview",
     "typecheck": "turbo run type-check",
     "test": "turbo run test",
+    "test:e2e": "bun run --filter @app/web test:e2e",
     "lint": "turbo run lint"
   },
   "devDependencies": {

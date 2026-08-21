@@ -26,6 +26,7 @@
 | 类型检查 | `pnpm check:type` → `turbo typecheck` | `bun run typecheck` → `turbo run type-check` |
 | lint | `pnpm lint` → eslint/oxlint 多套 | `bun run lint` → `turbo run lint`（只有 oxlint） |
 | 单测 | `pnpm test:unit` → vitest | `bun run test` → `turbo run test` |
+| e2e | `pnpm test:e2e` → Playwright | `bun run test:e2e`（只测 `@app/web`，不进 turbo） |
 | CI 安装 | `pnpm install --frozen-lockfile` | `bun ci` |
 | 清产物 | `pnpm clean` | 第 2 轮写一个 `rm -rf dist node_modules` 脚本即可 |
 

@@ -44,7 +44,7 @@ bun run typecheck
 bun run build
 ```
 
-CI：`.github/workflows/ci.yml` 仍保留，但 **push / PR 已关掉**（只留 `workflow_dispatch`），避免频繁提交刷 Actions。本地照常跑上面四条。要恢复自动跑，把 `on` 加回 `push` / `pull_request`。
+CI：第 6 轮曾关掉 push / PR 自动跑。第 83 轮已恢复：`pull_request` + `push` 到 `master` 会跑 `ci` 和 `e2e` 两个 job。见 [92-round-83-playwright.md](./92-round-83-playwright.md)。
 
 ## 学习笔记
 

@@ -31,7 +31,7 @@ bun run dev
 # 学习文档：bun run docs
 ```
 
-构建与类型检查：`bun run build`、`bun run typecheck`。质量门：`bun run lint`、`bun run test`。
+构建与类型检查：`bun run build`、`bun run typecheck`。质量门：`bun run lint`、`bun run test`。默认 app 的 e2e：`bun run test:e2e`。
 
 ## 已完成轮次
 

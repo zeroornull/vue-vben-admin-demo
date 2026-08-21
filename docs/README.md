@@ -86,7 +86,7 @@
 | 72 | [round-66-table-columns.md](./72-round-66-table-columns.md) | 第 66 轮 | 角色/外链/日志列显隐 |
 | 73 | [round-67-expand-iframe.md](./73-round-67-expand-iframe.md) | 第 67 轮 | 部门树展开 persist；iframe 重载 |
 | 74 | [round-68-leftovers.md](./74-round-68-leftovers.md) | 第 68 轮 | 登录 Form / 页签右键拖拽 / 改密 / 日志导入 / 部门列 |
-| 75 | [phase-2-roadmap.md](./75-phase-2-roadmap.md) | 二期规划 | catalog / 拆包 / 薄核 / i18n / 多皮肤 / e2e；第 69–82 轮 |
+| 75 | [phase-2-roadmap.md](./75-phase-2-roadmap.md) | 二期规划 | catalog / 拆包 / 薄核 / i18n / 多皮肤 / e2e；第 69–83 轮 |
 | 76 | [round-69-catalog.md](./76-round-69-catalog.md) | 第 69 轮 | bun catalog；核心 7 个版本收进根 |
 | 77 | [round-70-packages.md](./77-round-70-packages.md) | 第 70 轮 | packages 薄拆；access / request / tables |
 | 78 | [round-71-core.md](./78-round-71-core.md) | 第 71 轮 | @app/core 薄核；antd adapter 口子 |
@@ -103,6 +103,7 @@
 | 89 | [round-80-naive.md](./89-round-80-naive.md) | 第 80 轮 | web-naive；登录 / 用户 / 部门 / 改密 |
 | 90 | [round-81-tdesign.md](./90-round-81-tdesign.md) | 第 81 轮 | web-tdesign；登录 / 用户 / 部门 / 改密 |
 | 91 | [round-82-antdv-next.md](./91-round-82-antdv-next.md) | 第 82 轮 | web-antdv-next；与 antd 4 隔离 |
+| 92 | [round-83-playwright.md](./92-round-83-playwright.md) | 第 83 轮 | Playwright 烟测默认 app；push / PR 自动 CI |
 
 后续轮次会继续加 `08-…`、`09-…`，并在本表追加一行。已拍板的结论不要默默改掉；必须修正时在原文加短注并改决策表（第 1 轮已按此修正：第 2 轮改用 `create-vue`，见 [03](./03-migration-roadmap.md)）。二期若改「一套皮肤 / 不上 Iconify」等决定，按 [75](./75-phase-2-roadmap.md) 执行并回写 [03](./03-migration-roadmap.md) 的表。
 
