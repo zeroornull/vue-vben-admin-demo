@@ -33,7 +33,7 @@
 
 | 目的 | 旧命令 | 新仓 |
 | --- | --- | --- |
-| 开官方文档站 | `pnpm dev:docs` | 需要时在 `legacy/` 用原方式；或看 https://doc.vben.pro/ |
+| 开官方文档站 | `pnpm dev:docs` | 本仓学习记录：`bun run docs`。Vben 官方站仍看 https://doc.vben.pro/ 或 `legacy/docs` |
 | playground | `pnpm dev:play` | 只作对照，不迁 |
 
 ## Vite 相关

@@ -20,4 +20,4 @@
 
 ## 下一轮从哪里开始
 
-第 78 轮：用现有 `docs/*.md` 做 VitePress 站点。见 [75-phase-2-roadmap.md](./75-phase-2-roadmap.md)。
+第 78 轮已做，见 [87-round-78-vitepress.md](./87-round-78-vitepress.md)。下一轮是第 79 轮 vxe-table。

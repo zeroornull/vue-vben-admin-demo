@@ -18,6 +18,8 @@
   "scripts": {
     "dev": "bun run --filter @app/web dev",
     "dev:ele": "bun run --filter @app/web-ele dev",
+    "docs": "bun run --filter @app/docs dev",
+    "docs:build": "bun run --filter @app/docs build",
     "build": "turbo run build",
     "preview": "bun run --filter @app/web preview",
     "typecheck": "turbo run type-check",
@@ -25,6 +27,7 @@
     "lint": "turbo run lint"
   },
   "devDependencies": {
-    "turbo": "^2.10.11"
+    "turbo": "^2.10.11",
+    "vue": "catalog:"
   }
 }

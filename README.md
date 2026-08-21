@@ -6,7 +6,7 @@
 
 | 路径 | 作用 |
 | --- | --- |
-| [`docs/`](./docs/README.md) | 迁移与学习文档（按轮次推进） |
+| [`docs/`](./docs/README.md) | 迁移与学习文档；`bun run docs` 开 VitePress |
 | [`apps/web`](./apps/web) | 默认 app（ant-design-vue） |
 | [`apps/web-ele`](./apps/web-ele) | 第二套 app（Element Plus，第 75–77 轮） |
 | [`packages/`](./packages) | `@app/access` / `@app/core` / `@app/mock` / `@app/request` / `@app/tables` |
@@ -22,6 +22,7 @@
 bun install
 bun run dev
 # Element 皮肤：bun run dev:ele
+# 学习文档：bun run docs
 ```
 
 构建与类型检查：`bun run build`、`bun run typecheck`。质量门：`bun run lint`、`bun run test`。

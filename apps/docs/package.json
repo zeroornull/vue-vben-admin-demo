@@ -1,0 +1,21 @@
+{
+  "name": "@app/docs",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vitepress dev . --port 5175",
+    "build": "vitepress build .",
+    "preview": "vitepress preview . --port 4175",
+    "lint": "oxlint .vitepress",
+    "type-check": "tsc --noEmit -p tsconfig.json"
+  },
+  "dependencies": {
+    "vue": "catalog:"
+  },
+  "devDependencies": {
+    "oxlint": "^1.0.0",
+    "typescript": "catalog:",
+    "vitepress": "^1.6.4"
+  }
+}

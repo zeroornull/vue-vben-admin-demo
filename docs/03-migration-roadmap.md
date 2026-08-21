@@ -82,9 +82,10 @@
 第 75 轮 ele 空壳 + 登录
 第 76 轮 ele 用户表 + 改密
 第 77 轮 ele 其余系统页
+第 78 轮 VitePress
 ```
 
-第一期到此结束。二期路线见 [75-phase-2-roadmap.md](./75-phase-2-roadmap.md)。第 69–77 轮已落地。当前 ← 第 77 轮。下一轮是第 78 轮 VitePress。执行记录见 [76](./76-round-69-catalog.md) 至 [85](./85-round-77-ele-system.md)。
+第一期到此结束。二期路线见 [75-phase-2-roadmap.md](./75-phase-2-roadmap.md)。第 69–78 轮已落地。当前 ← 第 78 轮。下一轮是第 79 轮 vxe-table。执行记录见 [76](./76-round-69-catalog.md) 至 [87](./87-round-78-vitepress.md)。
 
 轮次可以按实际卡点拆开（例如第 3 轮只做登录、第 3b 轮再做动态路由），但不要跳过「可运行」去堆包。
 
@@ -628,6 +629,12 @@ Element 用户表、用户弹窗、个人中心改密。CSV / 权限 / mock 不�
 > 已完成，执行记录见 [85-round-77-ele-system.md](./85-round-77-ele-system.md)。
 
 部门树、角色、外链、操作日志。`user` 仍只有工作区 / 分析 / 内嵌。
+
+## 第 78 轮 · VitePress
+
+> 已完成，执行记录见 [87-round-78-vitepress.md](./87-round-78-vitepress.md)。
+
+现有 `docs/` 做成站点。`bun run docs`。加 [86-adapter.md](./86-adapter.md)。不搬 `legacy/docs`。
 
 ## 决策记录（第 1 轮已拍板）
 

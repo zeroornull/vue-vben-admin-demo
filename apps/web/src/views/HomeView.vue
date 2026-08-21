@@ -13,7 +13,7 @@ const isAdmin = computed(() => userInfo.value?.roles.includes('admin'))
 <template>
   <div class="page">
     <p>
-      默认皮肤仍是 ant-design-vue。`bun run dev:ele` 已有整套系统页。
+      默认皮肤仍是 ant-design-vue。学习文档：`bun run docs`。
     </p>
     <p v-access:role="'admin'">
       这段用 <code>v-access:role="'admin'"</code>，看的是登录角色，不是业务角色码 biz-admin。

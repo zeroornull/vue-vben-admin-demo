@@ -22,7 +22,7 @@
          第 76  ele 用户表 + 改密    ← 已完成
          第 77  ele 其余系统页       ← 已完成
 
-展开     第 78  VitePress
+展开     第 78  VitePress             ← 已完成
          第 79  vxe-table（先一张表）
          第 80  Naive UI
          第 81  TDesign
@@ -154,6 +154,8 @@ views、layouts、stores、vite mock **留在 app**。测试跟着代码走。�
 **验收：** `user` 在 ele 里仍只有工作区 / 分析 / 内嵌；`vben` 能改部门树和角色勾选。
 
 ## 第 78 轮 · VitePress
+
+> 已完成，见 [87-round-78-vitepress.md](./87-round-78-vitepress.md)。
 
 **做：** 用现有 `docs/*.md` 做站点（例如 `apps/docs` 或根 `docs/.vitepress`），把已有文档编进侧栏。加「二期 / adapter」一章。开发 `bun run docs`。
 

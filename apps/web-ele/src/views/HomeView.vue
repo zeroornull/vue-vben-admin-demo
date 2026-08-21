@@ -13,7 +13,7 @@ const isAdmin = computed(() => userInfo.value?.roles.includes('admin'))
 <template>
   <div class="page">
     <p>
-      这是 Element Plus 皮肤。系统页这一轮写完。默认 app 仍是 ant-design-vue。
+      这是 Element Plus 皮肤。学习文档：`bun run docs`。
     </p>
     <p v-access:role="'admin'">
       这段用 <code>v-access:role="'admin'"</code>，看的是登录角色，不是业务角色码 biz-admin。
