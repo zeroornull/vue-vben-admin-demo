@@ -10,7 +10,7 @@ import {
   rowsToCsv,
   stripBom,
   stripFormulaPrefix,
-} from '../csv'
+} from '../csv.ts'
 
 describe('rowsToCsv', () => {
   it('adds a BOM and escapes formulas', () => {

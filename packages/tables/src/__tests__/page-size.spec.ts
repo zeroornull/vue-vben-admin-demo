@@ -6,7 +6,7 @@ import {
   normalizeTablePageSize,
   normalizeTablePageSizes,
   TABLE_PAGE_SIZE_DEFAULT,
-} from '../page-size'
+} from '../page-size.ts'
 
 describe('normalizeTablePageSize', () => {
   it('keeps 10 / 20 / 50 / 100 and falls back to 10', () => {

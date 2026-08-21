@@ -3,8 +3,8 @@ import type { FormInstance } from 'ant-design-vue'
 import { Checkbox, Form, FormItem, Input, Modal, Select } from 'ant-design-vue'
 import { reactive, ref, watch } from 'vue'
 
-import { actionsForMenu, groupMenuCatalog } from '@/access/catalog'
-import { dropActionsForMenu, grantParentMenus, uniqueCodes } from '@/access/resolve'
+import { actionsForMenu, groupMenuCatalog } from '@app/access/catalog'
+import { dropActionsForMenu, grantParentMenus, uniqueCodes } from '@app/access/resolve'
 
 import { useUnsavedForm } from '@/forms/use-unsaved'
 

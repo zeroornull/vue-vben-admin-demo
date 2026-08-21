@@ -10,7 +10,7 @@ import {
   toggleColumn,
   type TableColumnKey,
   type TableColumns,
-} from '@/tables/columns'
+} from '@app/tables/columns'
 
 export const useTableColumnsStore = defineStore(
   'table-columns',

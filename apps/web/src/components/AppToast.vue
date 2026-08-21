@@ -2,7 +2,7 @@
 import { onUnmounted, ref, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 
-import { TOAST_MS } from '@/api/toast'
+import { TOAST_MS } from '@app/request'
 import { useRequestStore } from '@/stores/request'
 
 const request = useRequestStore()

@@ -3,7 +3,7 @@ import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 
-import { canAccessRoute, type AccessViewer } from '@/access/resolve'
+import { canAccessRoute, type AccessViewer } from '@app/access/resolve'
 import { noticeMatchesRoute, noticeTimeLabel } from '@/notices/query'
 import { layoutChildren } from '@/router/routes'
 import { useAuthStore } from '@/stores/auth'

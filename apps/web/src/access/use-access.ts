@@ -2,7 +2,7 @@ import { computed } from 'vue'
 
 import { useAuthStore } from '@/stores/auth'
 
-import { matchAccess } from './match'
+import { matchAccess } from '@app/access/match'
 
 export function useAccess() {
   const authStore = useAuthStore()

@@ -1,7 +1,7 @@
 import type { LocationQuery, RouteMeta, Router } from 'vue-router'
 
-import { canAccessRoute, filterDynamicRoutes } from '@/access/resolve'
-import { rotatePageAbort, shouldRotatePageAbort } from '@/api/abort'
+import { canAccessRoute, filterDynamicRoutes } from '@app/access/resolve'
+import { rotatePageAbort, shouldRotatePageAbort } from '@app/request'
 import { HOME_PATH, LOGIN_PATH } from '@/constants/auth'
 import { useAuthStore } from '@/stores/auth'
 import { useLastRouteStore } from '@/stores/last-route'

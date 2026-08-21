@@ -1,4 +1,4 @@
-import { BATCH_DELETE_MAX, batchDeleteConfirmText, normalizeIds } from '../../tables/batch'
+import { BATCH_DELETE_MAX, batchDeleteConfirmText, normalizeIds } from '@app/tables/batch'
 
 import type {
   DeptFormValues,

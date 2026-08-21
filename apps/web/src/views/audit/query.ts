@@ -1,4 +1,4 @@
-import { parseSortParams, sortListByQuery, TABLE_SORT_FIELDS } from '../../tables/sort'
+import { parseSortParams, sortListByQuery, TABLE_SORT_FIELDS } from '@app/tables/sort'
 
 export const AUDIT_MAX = 100
 export const AUDIT_DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/

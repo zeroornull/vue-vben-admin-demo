@@ -1,4 +1,4 @@
-import { formatActionCodes, menuTitleByCode } from '../../access/catalog'
+import { formatActionCodes, menuTitleByCode } from '@app/access/catalog'
 import { formatCodeList } from '../../layouts/user-menu'
 import type { UserInfo } from '../../types/user'
 

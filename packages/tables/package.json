@@ -1,0 +1,25 @@
+{
+  "name": "@app/tables",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./batch": "./src/batch.ts",
+    "./columns": "./src/columns.ts",
+    "./csv": "./src/csv.ts",
+    "./expand": "./src/expand.ts",
+    "./page-size": "./src/page-size.ts",
+    "./sort": "./src/sort.ts"
+  },
+  "scripts": {
+    "lint": "oxlint src",
+    "test": "vitest run",
+    "type-check": "tsc --noEmit -p tsconfig.json"
+  },
+  "devDependencies": {
+    "oxlint": "^1.0.0",
+    "typescript": "catalog:",
+    "vitest": "^4.0.0"
+  }
+}

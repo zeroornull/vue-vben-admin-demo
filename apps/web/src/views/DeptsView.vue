@@ -14,9 +14,9 @@ import type { UnsavedFormHandle } from '@/forms/use-unsaved'
 
 import { useTableColumnsStore } from '@/stores/table-columns'
 import { useTableExpandStore } from '@/stores/table-expand'
-import { batchDeleteDoneText, normalizeIds } from '@/tables/batch'
-import { tableColumnKey } from '@/tables/columns'
-import { csvFileName } from '@/tables/csv'
+import { batchDeleteDoneText, normalizeIds } from '@app/tables/batch'
+import { tableColumnKey } from '@app/tables/columns'
+import { csvFileName } from '@app/tables/csv'
 
 import {
   addDeptToLookup,

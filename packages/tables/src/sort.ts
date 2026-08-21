@@ -1,4 +1,4 @@
-import { nextTablePage, type TablePageKey, type TablePageSize } from './page-size'
+import { nextTablePage, type TablePageKey, type TablePageSize } from './page-size.ts'
 
 export const TABLE_SORT_FIELDS: Record<TablePageKey, readonly string[]> = {
   audit: ['at', 'actor'],

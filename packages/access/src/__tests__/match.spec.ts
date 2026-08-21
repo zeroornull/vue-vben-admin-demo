@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { heldCodes, matchAccess, normalizeAccessCodes, readAccessKind } from '../match'
+import { heldCodes, matchAccess, normalizeAccessCodes, readAccessKind } from '../match.ts'
 
 const viewer = {
   actionCodes: ['user:create', 'user:update'],

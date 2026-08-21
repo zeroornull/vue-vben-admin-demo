@@ -1,4 +1,4 @@
-import { csvCell, importCsvSummary, readCsvBody, rowsToCsv, type CsvRejected } from '../../tables/csv'
+import { csvCell, importCsvSummary, readCsvBody, rowsToCsv, type CsvRejected } from '@app/tables/csv'
 
 import {
   auditActionLabels,

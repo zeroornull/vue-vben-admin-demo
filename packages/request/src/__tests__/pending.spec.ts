@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { hideDelayMs, nextPending, shouldTrackLoading } from '../pending'
+import { hideDelayMs, nextPending, shouldTrackLoading } from '../pending.ts'
 
 describe('nextPending', () => {
   it('counts up and never goes below zero', () => {

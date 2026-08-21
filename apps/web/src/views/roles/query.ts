@@ -1,7 +1,7 @@
-import { isActionCode, isMenuCode } from '../../access/catalog'
-import { grantParentMenus, sanitizeActionCodes, uniqueCodes } from '../../access/resolve'
-import { BATCH_DELETE_MAX, batchDeleteConfirmText } from '../../tables/batch'
-import { parseSortParams, sortListByQuery, TABLE_SORT_FIELDS } from '../../tables/sort'
+import { isActionCode, isMenuCode } from '@app/access/catalog'
+import { grantParentMenus, sanitizeActionCodes, uniqueCodes } from '@app/access/resolve'
+import { BATCH_DELETE_MAX, batchDeleteConfirmText } from '@app/tables/batch'
+import { parseSortParams, sortListByQuery, TABLE_SORT_FIELDS } from '@app/tables/sort'
 
 import type {
   FormValidation,

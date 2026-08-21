@@ -6,7 +6,7 @@ import {
   readAntdSorter,
   sortByTableSort,
   TABLE_SORT_FIELDS,
-} from '../sort'
+} from '../sort.ts'
 
 describe('normalizeTableSort / readAntdSorter', () => {
   it('keeps allowed field+order and reads the first antd sorter', () => {

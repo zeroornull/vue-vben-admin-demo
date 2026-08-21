@@ -1,4 +1,4 @@
-import { canAccessRoute } from '@/access/resolve'
+import { canAccessRoute } from '@app/access/resolve'
 import { HOME_PATH } from '@/constants/auth'
 
 import { matchLayoutChild } from './dynamic-access'

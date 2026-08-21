@@ -5,7 +5,7 @@ import {
   readCsvBody,
   rowsToCsv,
   type CsvRejected,
-} from '../../tables/csv'
+} from '@app/tables/csv'
 
 import { validateLinkForm, type EmbedLink, type LinkFormValues } from './query'
 

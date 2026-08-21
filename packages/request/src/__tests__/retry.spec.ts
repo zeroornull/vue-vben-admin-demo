@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { RETRY_LIMIT, retryCountOf, shouldRetryRequest } from '../retry'
+import { RETRY_LIMIT, retryCountOf, shouldRetryRequest } from '../retry.ts'
 
 describe('retryCountOf', () => {
   it('treats missing or junk as zero', () => {

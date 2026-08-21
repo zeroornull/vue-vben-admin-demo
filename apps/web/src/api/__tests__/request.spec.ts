@@ -6,7 +6,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { useAuthStore } from '@/stores/auth'
 import { useRequestStore } from '@/stores/request'
 
-import { rotatePageAbort, withPageAbort } from '../abort'
+import { rotatePageAbort, withPageAbort } from '@app/request'
+
 import { get, post, requestClient, unwrapBody } from '../request'
 
 vi.mock('@/router', () => ({

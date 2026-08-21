@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { formatActionCodes } from '../../../access/catalog'
+import { formatActionCodes } from '@app/access/catalog'
 import { parseActionLabels, parseMenuLabels, parseRoleCsv, roleCsvRow, rolesToCsv } from '../csv'
 import type { SystemRole } from '../types'
 

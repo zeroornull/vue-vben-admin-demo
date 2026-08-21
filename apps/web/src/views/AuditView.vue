@@ -11,10 +11,10 @@ import TableColumnPicker from '@/components/TableColumnPicker.vue'
 import { useTableColumnsStore } from '@/stores/table-columns'
 import { useTablePageStore } from '@/stores/table-page'
 import { useTableSortStore } from '@/stores/table-sort'
-import { tableColumnKey } from '@/tables/columns'
-import { csvFileName } from '@/tables/csv'
-import { TABLE_PAGE_SIZE_OPTIONS } from '@/tables/page-size'
-import { nextTableQuery, TABLE_SORT_FIELDS, tableColumnSort } from '@/tables/sort'
+import { tableColumnKey } from '@app/tables/columns'
+import { csvFileName } from '@app/tables/csv'
+import { TABLE_PAGE_SIZE_OPTIONS } from '@app/tables/page-size'
+import { nextTableQuery, TABLE_SORT_FIELDS, tableColumnSort } from '@app/tables/sort'
 import {
   AUDIT_CSV_MAX_ROWS,
   auditCsvRow,

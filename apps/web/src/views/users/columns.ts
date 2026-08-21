@@ -5,7 +5,7 @@ import {
   tableColumnKey,
   tableColumnOrder,
   toggleColumn,
-} from '../../tables/columns'
+} from '@app/tables/columns'
 
 const spec = TABLE_COLUMN_SPECS.users
 

@@ -9,7 +9,7 @@ import {
   resolvePersistedColumns,
   tableColumnKey,
   toggleColumn,
-} from '../columns'
+} from '../columns.ts'
 
 describe('normalizeColumns / toggleColumn', () => {
   it('keeps the locked column and drops unknown keys', () => {

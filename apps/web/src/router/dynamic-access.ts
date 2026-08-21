@@ -1,6 +1,6 @@
 import type { RouteRecordRaw, Router } from 'vue-router'
 
-import { filterDynamicRoutes } from '@/access/resolve'
+import { filterDynamicRoutes } from '@app/access/resolve'
 import { useAuthStore } from '@/stores/auth'
 
 import { dynamicLayoutChildren, layoutChildren } from './routes'

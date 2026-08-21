@@ -6,7 +6,7 @@ import {
   batchDeleteDoneText,
   nextPageAfterDeletes,
   normalizeIds,
-} from '../batch'
+} from '../batch.ts'
 
 describe('normalizeIds / nextPageAfterDeletes', () => {
   it('dedupes ids and steps back when the page is emptied', () => {

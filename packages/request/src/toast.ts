@@ -1,4 +1,4 @@
-import { isCanceledError } from './abort'
+import { isCanceledError } from './abort.ts'
 
 export const TOAST_MS = 4000
 

@@ -2,7 +2,7 @@ import type { IncomingMessage, ServerResponse } from 'node:http'
 
 import type { Connect, Plugin } from 'vite'
 
-import { hasAccessCode, resolveActionCodes, resolveMenuCodes } from '../src/access/resolve.ts'
+import { hasAccessCode, resolveActionCodes, resolveMenuCodes } from '@app/access/resolve'
 import {
   isLoginLocked,
   loginLockMessage,
@@ -14,7 +14,7 @@ import { passwordsMatch, readUnlockPassword } from '../src/auth/unlock.ts'
 import type { SystemDept } from '../src/views/depts/types.ts'
 import { applyAuditImports, auditSummary, type AuditAction, type AuditTarget } from '../src/views/audit/query.ts'
 import { validatePasswordChange, validateProfileForm } from '../src/views/profile/query.ts'
-import { BATCH_DELETE_MAX, normalizeIds } from '../src/tables/batch.ts'
+import { BATCH_DELETE_MAX, normalizeIds } from '@app/tables/batch'
 import { orderDeptIdsForDelete } from '../src/views/depts/query.ts'
 import { normalizeUserIds, USER_BATCH_DELETE_MAX } from '../src/views/users/query.ts'
 

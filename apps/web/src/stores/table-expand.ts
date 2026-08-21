@@ -7,7 +7,7 @@ import {
   normalizeExpandKeys,
   normalizeTableExpandState,
   type TableExpandKey,
-} from '@/tables/expand'
+} from '@app/tables/expand'
 
 export const useTableExpandStore = defineStore(
   'table-expand',

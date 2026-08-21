@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { mergeExpandedKeys, normalizeExpandKeys, normalizeTableExpandState } from '../expand'
+import { mergeExpandedKeys, normalizeExpandKeys, normalizeTableExpandState } from '../expand.ts'
 
 describe('normalizeExpandKeys / mergeExpandedKeys', () => {
   it('expands every row until the user changes one', () => {

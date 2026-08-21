@@ -73,9 +73,11 @@
 第 66 轮 三表列显隐
 第 67 轮 部门展开 + iframe 重载
 第 68 轮 边角一次收完
+第 69 轮 bun catalog
+第 70 轮 packages 薄拆
 ```
 
-第一期到此结束。二期路线见 [75-phase-2-roadmap.md](./75-phase-2-roadmap.md)。第 69 轮 catalog 已落地，执行记录见 [76-round-69-catalog.md](./76-round-69-catalog.md)。当前 ← 第 69 轮。
+第一期到此结束。二期路线见 [75-phase-2-roadmap.md](./75-phase-2-roadmap.md)。第 69 轮 catalog、第 70 轮拆包已落地。当前 ← 第 70 轮。执行记录见 [76](./76-round-69-catalog.md)、[77](./77-round-70-packages.md)。
 
 轮次可以按实际卡点拆开（例如第 3 轮只做登录、第 3b 轮再做动态路由），但不要跳过「可运行」去堆包。
 
@@ -571,6 +573,12 @@ path 变了就 abort 上一页 GET。写操作和轮询不挂。
 > 已完成，执行记录见 [76-round-69-catalog.md](./76-round-69-catalog.md)。
 
 根 workspace 加上 catalog。vue / router / pinia / vite / typescript / vue-tsc / plugin-vue 只在根上写版本。没有拆包，没有升 3.6。
+
+## 第 70 轮 · packages/ 薄拆
+
+> 已完成，执行记录见 [77-round-70-packages.md](./77-round-70-packages.md)。
+
+`@app/access` / `@app/request` / `@app/tables` 三个本地包。指令、页面、mock 仍在 app。
 
 ## 决策记录（第 1 轮已拍板）
 

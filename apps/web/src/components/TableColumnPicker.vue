@@ -3,7 +3,7 @@ import { computed } from 'vue'
 import { Button, Checkbox, Popover } from 'ant-design-vue'
 
 import { useTableColumnsStore } from '@/stores/table-columns'
-import { TABLE_COLUMN_SPECS, type TableColumnKey } from '@/tables/columns'
+import { TABLE_COLUMN_SPECS, type TableColumnKey } from '@app/tables/columns'
 
 const props = defineProps<{
   table: TableColumnKey

@@ -6,7 +6,7 @@ import {
   normalizeTablePageSize,
   normalizeTablePageSizes,
   type TablePageKey,
-} from '@/tables/page-size'
+} from '@app/tables/page-size'
 
 export const useTablePageStore = defineStore(
   'table-page',

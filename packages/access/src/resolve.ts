@@ -6,7 +6,7 @@ import {
   parentMenuOfAction,
   type ActionCode,
   type MenuCode,
-} from './catalog'
+} from './catalog.ts'
 
 export type AccessViewer = {
   menuCodes: string[]

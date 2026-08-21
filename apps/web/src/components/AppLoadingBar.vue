@@ -2,7 +2,7 @@
 import { onUnmounted, ref, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 
-import { hideDelayMs, MIN_BAR_VISIBLE_MS } from '@/api/pending'
+import { hideDelayMs, MIN_BAR_VISIBLE_MS } from '@app/request'
 import { useRequestStore } from '@/stores/request'
 
 const { active } = storeToRefs(useRequestStore())

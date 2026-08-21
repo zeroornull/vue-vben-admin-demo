@@ -13,14 +13,14 @@
       "vue-router": "^5.2.0",
       "vue-tsc": "^3.3.7"
     },
-    "packages": ["apps/*"]
+    "packages": ["apps/*", "packages/*"]
   },
   "scripts": {
     "dev": "bun run --filter @app/web dev",
     "build": "bun run --filter @app/web build",
     "preview": "bun run --filter @app/web preview",
-    "typecheck": "bun run --filter @app/web type-check",
-    "test": "bun run --filter @app/web test",
-    "lint": "bun run --filter @app/web lint"
+    "typecheck": "bun run --filter '*' type-check",
+    "test": "bun run --filter '*' test",
+    "lint": "bun run --filter '*' lint"
   }
 }

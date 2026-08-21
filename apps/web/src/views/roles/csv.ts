@@ -1,4 +1,4 @@
-import { actionCatalog, menuCatalog } from '../../access/catalog'
+import { actionCatalog, menuCatalog } from '@app/access/catalog'
 import {
   csvCell,
   importCsvSummary,
@@ -6,7 +6,7 @@ import {
   readCsvBody,
   rowsToCsv,
   type CsvRejected,
-} from '../../tables/csv'
+} from '@app/tables/csv'
 import { validateRoleForm } from './query'
 import type { RoleFormValues, SystemRole } from './types'
 

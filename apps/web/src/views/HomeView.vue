@@ -13,7 +13,7 @@ const isAdmin = computed(() => userInfo.value?.roles.includes('admin'))
 <template>
   <div class="page">
     <p>
-      根上有 bun catalog。vue / vite / typescript 的版本只写一份。下一刀才是拆 packages。
+      access / request / tables 已经拆到 packages。页面和壳还在 app 里。
     </p>
     <p v-access:role="'admin'">
       这段用 <code>v-access:role="'admin'"</code>，看的是登录角色，不是业务角色码 biz-admin。

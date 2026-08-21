@@ -1,7 +1,7 @@
 import type { AxiosRequestConfig } from 'axios'
 
 import { del, get, post, put } from '@/api/request'
-import type { BatchDeleteResult } from '@/tables/batch'
+import type { BatchDeleteResult } from '@app/tables/batch'
 import type { EmbedLink, LinkFormValues, LinkListQuery, LinkListResult } from '@/views/links/query'
 
 export function getLinkList(params: LinkListQuery) {

@@ -1,122 +1,10 @@
-import axios, { type AxiosError, type AxiosRequestConfig } from 'axios'
+import { createRequestClient } from '@app/request'
 
 import { LOGIN_PATH } from '@/constants/auth'
 import { useAuthStore } from '@/stores/auth'
 import { useRequestStore } from '@/stores/request'
 
-import { isCanceledError, withPageAbort } from './abort'
-import { shouldTrackLoading } from './pending'
-import { retryCountOf, shouldRetryRequest } from './retry'
-import { errorToastText, requestError, shouldAnnounceError } from './toast'
-
-export type ApiBody<T> = {
-  code: number
-  data: T
-  message: string
-}
-
-export function unwrapBody<T>(body: ApiBody<T>): T {
-  if (body.code !== 0) {
-    throw new Error(body.message || '请求失败')
-  }
-  return body.data
-}
-
-export const requestClient = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE || '/api',
-  timeout: 10_000,
-})
-
-function finishLoading(config: AxiosRequestConfig | undefined) {
-  if (!config || !shouldTrackLoading(config)) return
-  useRequestStore().end()
-}
-
-requestClient.interceptors.request.use((config) => {
-  const token = useAuthStore().accessToken
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`
-  }
-  if (shouldTrackLoading(config) && retryCountOf(config) === 0) {
-    useRequestStore().begin()
-  }
-  return config
-})
-
-requestClient.interceptors.response.use(
-  (response) => {
-    finishLoading(response.config)
-    const body = response.data as ApiBody<unknown>
-    if (body.code === 401) {
-      void handleUnauthorized()
-    }
-    return response
-  },
-  (error: AxiosError<ApiBody<unknown>>) => {
-    const config = error.config
-    if (isCanceledError(error)) {
-      finishLoading(config)
-      return Promise.reject(requestError('已取消', true))
-    }
-    const status = error.response?.status
-    const unauthorized = status === 401
-    if (unauthorized) {
-      void handleUnauthorized()
-    }
-    if (
-      config &&
-      shouldRetryRequest({
-        code: error.code,
-        method: config.method,
-        retryCount: config.retryCount,
-        skipRetry: config.skipRetry,
-        status,
-      })
-    ) {
-      config.retryCount = retryCountOf(config) + 1
-      return requestClient.request(config)
-    }
-    finishLoading(config)
-    const message =
-      error.response?.data?.message || error.message || '网络错误'
-    return Promise.reject(requestError(message, unauthorized))
-  },
-)
-
-async function unwrap<T>(
-  request: Promise<{ data: ApiBody<T> }>,
-  config?: AxiosRequestConfig,
-): Promise<T> {
-  try {
-    const { data: body } = await request
-    if (body.code === 401) {
-      throw requestError(body.message || '未登录或登录已过期', true)
-    }
-    return unwrapBody(body)
-  } catch (error) {
-    if (shouldAnnounceError(error, config)) {
-      useRequestStore().fail(errorToastText(error))
-    }
-    throw error
-  }
-}
-
-export function get<T>(url: string, config?: AxiosRequestConfig) {
-  const next = withPageAbort(config)
-  return unwrap(requestClient.get<ApiBody<T>>(url, next), next)
-}
-
-export function post<T>(url: string, data?: unknown, config?: AxiosRequestConfig) {
-  return unwrap(requestClient.post<ApiBody<T>>(url, data, config), config)
-}
-
-export function put<T>(url: string, data?: unknown, config?: AxiosRequestConfig) {
-  return unwrap(requestClient.put<ApiBody<T>>(url, data, config), config)
-}
-
-export function del<T>(url: string, config?: AxiosRequestConfig) {
-  return unwrap(requestClient.delete<ApiBody<T>>(url, config), config)
-}
+export { unwrapBody, type ApiBody } from '@app/request'
 
 async function handleUnauthorized() {
   const authStore = useAuthStore()
@@ -131,3 +19,18 @@ async function handleUnauthorized() {
     query: currentPath === '/' ? {} : { redirect: currentPath },
   })
 }
+
+const api = createRequestClient({
+  announceError: (text) => useRequestStore().fail(text),
+  baseURL: import.meta.env.VITE_API_BASE || '/api',
+  beginLoading: () => useRequestStore().begin(),
+  endLoading: () => useRequestStore().end(),
+  getAccessToken: () => useAuthStore().accessToken,
+  onUnauthorized: handleUnauthorized,
+})
+
+export const requestClient = api.requestClient
+export const get = api.get
+export const post = api.post
+export const put = api.put
+export const del = api.del

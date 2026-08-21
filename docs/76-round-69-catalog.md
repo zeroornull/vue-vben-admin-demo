@@ -58,4 +58,4 @@ bun run build
 
 ## 下一轮从哪里开始
 
-第 70 轮：`packages/` 薄拆。先搬 `@app/access`、`@app/request`、`@app/tables`。views / layouts / mock 留在 app。路线见 [75](./75-phase-2-roadmap.md)。
+第 70 轮已做，见 [77-round-70-packages.md](./77-round-70-packages.md)。下一轮是第 71 轮 `@app/core`。

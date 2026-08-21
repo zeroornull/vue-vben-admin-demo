@@ -4,7 +4,7 @@ import {
   readCsvBody,
   rowsToCsv,
   type CsvRejected,
-} from '../../tables/csv'
+} from '@app/tables/csv'
 
 import { validateUserForm } from './query'
 import type { FormValidation, SystemUser, UserFormValues } from './types'
@@ -16,7 +16,7 @@ export {
   parseCsv,
   stripBom,
   stripFormulaPrefix,
-} from '../../tables/csv'
+} from '@app/tables/csv'
 
 export type UserCsvRejected = CsvRejected
 

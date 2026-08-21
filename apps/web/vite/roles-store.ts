@@ -1,4 +1,4 @@
-import { seedActionCodes, seedMenuCodes } from '../src/access/catalog.ts'
+import { seedActionCodes, seedMenuCodes } from '@app/access/catalog'
 import {
   isRoleCodeTaken,
   isRoleNameTaken,

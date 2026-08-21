@@ -1,6 +1,6 @@
-import { allMenuCodes } from '../../access/catalog'
-import { BATCH_DELETE_MAX, batchDeleteConfirmText } from '../../tables/batch'
-import { parseSortParams, sortListByQuery, TABLE_SORT_FIELDS } from '../../tables/sort'
+import { allMenuCodes } from '@app/access/catalog'
+import { BATCH_DELETE_MAX, batchDeleteConfirmText } from '@app/tables/batch'
+import { parseSortParams, sortListByQuery, TABLE_SORT_FIELDS } from '@app/tables/sort'
 import { safeIframeSrc } from '../iframe/src'
 
 export type EmbedLink = {

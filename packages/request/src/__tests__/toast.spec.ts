@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { errorToastText, requestError, shouldAnnounceError } from '../toast'
+import { errorToastText, requestError, shouldAnnounceError } from '../toast.ts'
 
 describe('errorToastText', () => {
   it('uses the error message or a fallback', () => {

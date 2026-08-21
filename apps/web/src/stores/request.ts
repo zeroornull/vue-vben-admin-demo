@@ -1,7 +1,7 @@
 import { computed, ref } from 'vue'
 import { defineStore } from 'pinia'
 
-import { nextPending } from '@/api/pending'
+import { nextPending } from '@app/request'
 
 export const useRequestStore = defineStore('request', () => {
   const pending = ref(0)

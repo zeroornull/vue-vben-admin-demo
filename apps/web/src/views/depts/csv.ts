@@ -5,7 +5,7 @@ import {
   readCsvBody,
   rowsToCsv,
   type CsvRejected,
-} from '../../tables/csv'
+} from '@app/tables/csv'
 import { deptNameById, flattenDepts } from './query'
 import type { DeptFormValues, FormValidation, SystemDept } from './types'
 

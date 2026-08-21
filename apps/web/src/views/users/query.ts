@@ -1,5 +1,5 @@
-import { BATCH_DELETE_MAX, nextPageAfterDeletes, normalizeIds } from '../../tables/batch'
-import { parseSortParams, sortListByQuery, TABLE_SORT_FIELDS } from '../../tables/sort'
+import { BATCH_DELETE_MAX, nextPageAfterDeletes, normalizeIds } from '@app/tables/batch'
+import { parseSortParams, sortListByQuery, TABLE_SORT_FIELDS } from '@app/tables/sort'
 
 import type {
   FormValidation,

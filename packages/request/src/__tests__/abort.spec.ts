@@ -6,7 +6,7 @@ import {
   shouldAttachPageAbort,
   shouldRotatePageAbort,
   withPageAbort,
-} from '../abort'
+} from '../abort.ts'
 
 describe('shouldRotatePageAbort / shouldAttachPageAbort', () => {
   it('rotates only when the path changes and skips explicit signals', () => {

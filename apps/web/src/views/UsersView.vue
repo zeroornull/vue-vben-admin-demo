@@ -28,14 +28,14 @@ import type { UnsavedFormHandle } from '@/forms/use-unsaved'
 import { useTableColumnsStore } from '@/stores/table-columns'
 import { useTablePageStore } from '@/stores/table-page'
 import { useTableSortStore } from '@/stores/table-sort'
-import { TABLE_PAGE_SIZE_OPTIONS } from '@/tables/page-size'
-import { nextTableQuery, TABLE_SORT_FIELDS, tableColumnSort } from '@/tables/sort'
+import { TABLE_PAGE_SIZE_OPTIONS } from '@app/tables/page-size'
+import { nextTableQuery, TABLE_SORT_FIELDS, tableColumnSort } from '@app/tables/sort'
 import { deptNameById, flattenDepts, toParentOptions } from '@/views/depts/query'
 import type { SystemDept } from '@/views/depts/types'
 import { roleNameById } from '@/views/roles/query'
 import type { SystemRole } from '@/views/roles/types'
 
-import { tableColumnKey } from '@/tables/columns'
+import { tableColumnKey } from '@app/tables/columns'
 
 import UserFormModal from './users/UserFormModal.vue'
 import {

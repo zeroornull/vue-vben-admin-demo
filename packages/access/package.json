@@ -1,0 +1,25 @@
+{
+  "name": "@app/access",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./catalog": "./src/catalog.ts",
+    "./match": "./src/match.ts",
+    "./resolve": "./src/resolve.ts"
+  },
+  "scripts": {
+    "lint": "oxlint src",
+    "test": "vitest run",
+    "type-check": "tsc --noEmit -p tsconfig.json"
+  },
+  "dependencies": {
+    "vue-router": "catalog:"
+  },
+  "devDependencies": {
+    "oxlint": "^1.0.0",
+    "typescript": "catalog:",
+    "vitest": "^4.0.0"
+  }
+}

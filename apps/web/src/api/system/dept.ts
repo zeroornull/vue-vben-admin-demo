@@ -1,7 +1,7 @@
 import type { AxiosRequestConfig } from 'axios'
 
 import { del, get, post, put } from '@/api/request'
-import type { BatchDeleteResult } from '@/tables/batch'
+import type { BatchDeleteResult } from '@app/tables/batch'
 import type { DeptFormValues, DeptListQuery, SystemDept } from '@/views/depts/types'
 
 export function getDeptList(params: DeptListQuery) {

@@ -7,8 +7,8 @@ import {
   normalizeTableSorts,
   TABLE_SORT_FIELDS,
   type TableSort,
-} from '@/tables/sort'
-import type { TablePageKey } from '@/tables/page-size'
+} from '@app/tables/sort'
+import type { TablePageKey } from '@app/tables/page-size'
 
 export const useTableSortStore = defineStore(
   'table-sort',

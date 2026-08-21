@@ -1,7 +1,7 @@
 import type { RouteRecordRaw } from 'vue-router'
 import { computed } from 'vue'
 
-import { canAccessRoute, type AccessViewer } from '@/access/resolve'
+import { canAccessRoute, type AccessViewer } from '@app/access/resolve'
 import { useAuthStore } from '@/stores/auth'
 import { useLinksStore } from '@/stores/links'
 import { extraLinkMenuItems } from '@/views/links/query'

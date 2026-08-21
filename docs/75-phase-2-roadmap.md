@@ -12,7 +12,7 @@
 
 ```text
 基建     第 69  bun catalog          ← 已完成
-         第 70  packages/ 薄拆
+         第 70  packages/ 薄拆       ← 已完成
          第 71  @app/core（薄核 + adapter 口子）
          第 72  Turbo
 

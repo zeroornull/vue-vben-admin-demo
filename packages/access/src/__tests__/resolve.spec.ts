@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { seedActionCodes, seedMenuCodes } from '../catalog'
+import { seedActionCodes, seedMenuCodes } from '../catalog.ts'
 import {
   canAccessRoute,
   dropActionsForMenu,
@@ -11,7 +11,7 @@ import {
   resolveMenuCodes,
   sanitizeActionCodes,
   sanitizeMenuCodes,
-} from '../resolve'
+} from '../resolve.ts'
 
 const roles = [
   {
