@@ -13,7 +13,7 @@ test('three wrong passwords lock the account', async ({ page }) => {
   await page.locator('input[name="password"]').fill('wrong')
 
   for (let attempt = 0; attempt < 3; attempt += 1) {
-    await page.getByRole('button', { name: '登录' }).click()
+    await page.getByRole('button', { name: /登\s*录/ }).click()
     await expect(page.getByRole('alert')).toBeVisible()
   }
 
@@ -25,14 +25,14 @@ test('vben can create a user', async ({ page }) => {
 
   await loginAs(page, 'vben')
   await page.goto('/users')
-  await page.getByRole('button', { name: '新建' }).click()
+  await page.getByRole('button', { name: /新\s*建/ }).click()
   await expect(page.getByRole('dialog')).toBeVisible()
   await page.getByPlaceholder('显示名').fill(name)
-  await page.getByRole('dialog').getByRole('button', { name: '确定' }).click()
+  await page.getByRole('dialog').getByRole('button', { name: /确\s*定/ }).click()
   await expect(page.getByText('已创建')).toBeVisible()
 
   await page.getByPlaceholder('模糊匹配').fill(name)
-  await page.getByRole('button', { name: '查询' }).click()
+  await page.getByRole('button', { name: /查\s*询/ }).click()
   await expect(page.getByText(name)).toBeVisible()
 })
 

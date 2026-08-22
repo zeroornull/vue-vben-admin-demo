@@ -86,7 +86,7 @@
 | 72 | [round-66-table-columns.md](./72-round-66-table-columns.md) | 第 66 轮 | 角色/外链/日志列显隐 |
 | 73 | [round-67-expand-iframe.md](./73-round-67-expand-iframe.md) | 第 67 轮 | 部门树展开 persist；iframe 重载 |
 | 74 | [round-68-leftovers.md](./74-round-68-leftovers.md) | 第 68 轮 | 登录 Form / 页签右键拖拽 / 改密 / 日志导入 / 部门列 |
-| 75 | [phase-2-roadmap.md](./75-phase-2-roadmap.md) | 二期规划 | catalog / 拆包 / 薄核 / i18n / 多皮肤 / e2e；第 69–83 轮 |
+| 75 | [phase-2-roadmap.md](./75-phase-2-roadmap.md) | 二期规划 | catalog / 拆包 / 薄核 / i18n / 多皮肤 / e2e；第 69–84 轮 |
 | 76 | [round-69-catalog.md](./76-round-69-catalog.md) | 第 69 轮 | bun catalog；核心 7 个版本收进根 |
 | 77 | [round-70-packages.md](./77-round-70-packages.md) | 第 70 轮 | packages 薄拆；access / request / tables |
 | 78 | [round-71-core.md](./78-round-71-core.md) | 第 71 轮 | @app/core 薄核；antd adapter 口子 |
@@ -104,13 +104,14 @@
 | 90 | [round-81-tdesign.md](./90-round-81-tdesign.md) | 第 81 轮 | web-tdesign；登录 / 用户 / 部门 / 改密 |
 | 91 | [round-82-antdv-next.md](./91-round-82-antdv-next.md) | 第 82 轮 | web-antdv-next；与 antd 4 隔离 |
 | 92 | [round-83-playwright.md](./92-round-83-playwright.md) | 第 83 轮 | Playwright 烟测默认 app；push / PR 自动 CI |
+| 93 | [round-84-vue36-vapor.md](./93-round-84-vue36-vapor.md) | 第 84 轮 | web-vapor；Vue 3.6 RC + Vapor；默认仍 3.5 |
 
 后续轮次会继续加 `08-…`、`09-…`，并在本表追加一行。已拍板的结论不要默默改掉；必须修正时在原文加短注并改决策表（第 1 轮已按此修正：第 2 轮改用 `create-vue`，见 [03](./03-migration-roadmap.md)）。二期若改「一套皮肤 / 不上 Iconify」等决定，按 [75](./75-phase-2-roadmap.md) 执行并回写 [03](./03-migration-roadmap.md) 的表。
 
 ## 约定
 
 - **对照源码**一律写 `legacy/...` 路径，不要再写仓库根下的旧路径。
-- **新代码**写在 `apps/web`、`apps/web-ele`、`apps/web-naive`、`apps/web-tdesign`、`apps/web-antdv-next`、`apps/docs`（以及 `packages/`）。对照源码仍只写 `legacy/...`。站点用 `bun run docs` 打开。
+- **新代码**写在 `apps/web`、`apps/web-ele`、`apps/web-naive`、`apps/web-tdesign`、`apps/web-antdv-next`、`apps/web-vapor`、`apps/docs`（以及 `packages/`）。对照源码仍只写 `legacy/...`。站点用 `bun run docs` 打开。
 - `legacy/` 只存在于本机，不进 Git。换机器后需要自己再放一份对照仓，或从 [vbenjs/vue-vben-admin](https://github.com/vbenjs/vue-vben-admin) 再克隆。
 - 文档用中文写决策和理由，代码标识符、包名、命令保持原文。
 - **文档不按 UI 库分叉。** 旧仓有 Ant Design Vue / Element Plus / Naive UI / TDesign / antdv-next 五套皮肤，那是 Vben 模板的卖点。本仓库只维护一份教程。盘点里列出五套，只为说明旧仓结构，不会写成五份平行书。对照默认仍是 `legacy/apps/web-antd`。二期若开第二套皮肤，只加一篇 adapter 专章和该皮肤的短记录，见 [75](./75-phase-2-roadmap.md)。

@@ -1,0 +1,32 @@
+{
+  "name": "@app/web-vapor",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1 --port 5176 --strictPort",
+    "build": "run-p type-check \"build-only {@}\" --",
+    "preview": "vite preview --host 127.0.0.1 --port 4176 --strictPort",
+    "build-only": "vite build",
+    "type-check": "vue-tsc --build",
+    "test": "vitest run",
+    "lint": "oxlint src"
+  },
+  "dependencies": {
+    "@vue/runtime-vapor": "3.6.0-rc.4",
+    "vue": "3.6.0-rc.4"
+  },
+  "devDependencies": {
+    "@tsconfig/node24": "^24.0.4",
+    "@types/node": "^24.13.3",
+    "@vitejs/plugin-vue": "catalog:",
+    "@vue/tsconfig": "^0.9.1",
+    "happy-dom": "^20.0.0",
+    "npm-run-all2": "^9.0.2",
+    "oxlint": "^1.0.0",
+    "typescript": "catalog:",
+    "vitest": "^4.0.0",
+    "vite": "catalog:",
+    "vue-tsc": "catalog:"
+  }
+}

@@ -11,7 +11,7 @@
 3. `vben` 新建用户
 4. `user` 打开 `/users` 落到 403
 
-e2e 起的是 `vite dev`，不是 `vite preview`。mock 仍是现有 Vite 插件，没有第二套后端。
+e2e 起的是 `vite dev`，不是 `vite preview`。mock 仍是现有 Vite 插件，没有第二套后端。antd 两字按钮无障碍名中间会插空格（「登 录」），选择器用 `/登\s*录/`。
 
 `.github/workflows/ci.yml` 恢复自动跑：`pull_request` 和 `push` 到 `master` 会走 `ci` + `e2e` 两个 job。`workflow_dispatch` 还在。`e2e` 单独装 Chromium，缓存 `~/.cache/ms-playwright`。
 
@@ -45,4 +45,4 @@ bun run test:e2e
 
 ## 下一轮从哪里开始
 
-第 84 轮：Vue 3.6 实验。默认仍锁 3.5。见 [75-phase-2-roadmap.md](./75-phase-2-roadmap.md)。
+第 84 轮已做，见 [93-round-84-vue36-vapor.md](./93-round-84-vue36-vapor.md)。默认仍锁 3.5。

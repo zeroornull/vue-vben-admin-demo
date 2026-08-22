@@ -1,0 +1,92 @@
+:root {
+  color: #1f2328;
+  background: #f4f5f7;
+  font-family: system-ui, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+.page {
+  max-width: 36rem;
+  margin: 0 auto;
+  padding: 2.5rem 1.25rem;
+}
+
+.kicker {
+  margin: 0 0 0.35rem;
+  color: #6b7280;
+  font-size: 0.85rem;
+}
+
+h1 {
+  margin: 0 0 0.5rem;
+  font-size: 1.75rem;
+}
+
+.lead {
+  margin: 0 0 1.5rem;
+  color: #4b5563;
+}
+
+.card {
+  padding: 1.25rem 1.35rem 1rem;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 1px 2px rgb(15 23 42 / 6%);
+}
+
+.card header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.card h2 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.card strong {
+  font-size: 1.35rem;
+}
+
+.bars {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  align-items: end;
+  gap: 0.55rem;
+  height: 8rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.bars li {
+  display: grid;
+  justify-items: center;
+  align-content: end;
+  gap: 0.35rem;
+  height: 100%;
+}
+
+.bar {
+  width: 100%;
+  max-width: 1.6rem;
+  min-height: 4px;
+  border-radius: 4px 4px 0 0;
+  background: #1677ff;
+}
+
+.label {
+  color: #6b7280;
+  font-size: 0.75rem;
+}

@@ -132,6 +132,7 @@ export const sidebar: DefaultTheme.Sidebar = [
       item('90 TDesign', '/90-round-81-tdesign'),
       item('91 antdv-next', '/91-round-82-antdv-next'),
       item('92 Playwright', '/92-round-83-playwright'),
+      item('93 Vue 3.6', '/93-round-84-vue36-vapor'),
     ],
   },
 ]

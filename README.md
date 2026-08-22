@@ -12,6 +12,7 @@
 | [`apps/web-naive`](./apps/web-naive) | 第三套 app（Naive UI，第 80 轮） |
 | [`apps/web-tdesign`](./apps/web-tdesign) | 第四套 app（TDesign Vue，第 81 轮） |
 | [`apps/web-antdv-next`](./apps/web-antdv-next) | 第五套 app（antdv-next，第 82 轮） |
+| [`apps/web-vapor`](./apps/web-vapor) | Vue 3.6 Vapor 实验（第 84 轮，默认仍 3.5） |
 | [`packages/`](./packages) | `@app/access` / `@app/core` / `@app/mock` / `@app/request` / `@app/tables` |
 | `legacy/` | 原 Vben 完整源码，仅作本地对照，已被 `.gitignore` 忽略 |
 
@@ -28,6 +29,7 @@ bun run dev
 # Naive 皮肤：bun run dev:naive
 # TDesign 皮肤：bun run dev:tdesign
 # antdv-next 皮肤：bun run dev:antdv-next
+# Vue 3.6 Vapor 实验：bun run dev:vapor
 # 学习文档：bun run docs
 ```
 

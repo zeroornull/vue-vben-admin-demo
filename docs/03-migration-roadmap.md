@@ -88,9 +88,10 @@
 第 81 轮 TDesign
 第 82 轮 antdv-next
 第 83 轮 Playwright + 自动 CI
+第 84 轮 Vue 3.6 Vapor 实验
 ```
 
-第一期到此结束。二期路线见 [75-phase-2-roadmap.md](./75-phase-2-roadmap.md)。第 69–83 轮已落地。当前 ← 第 83 轮。下一轮是第 84 轮 Vue 3.6 实验。执行记录见 [76](./76-round-69-catalog.md) 至 [92](./92-round-83-playwright.md)。
+第一期到此结束。二期路线见 [75-phase-2-roadmap.md](./75-phase-2-roadmap.md)。第 69–84 轮已落地。当前 ← 第 84 轮。二期名单到此为止；不要把默认运行时改成 3.6。执行记录见 [76](./76-round-69-catalog.md) 至 [93](./93-round-84-vue36-vapor.md)。
 
 轮次可以按实际卡点拆开（例如第 3 轮只做登录、第 3b 轮再做动态路由），但不要跳过「可运行」去堆包。
 
@@ -670,6 +671,12 @@ Element 用户表、用户弹窗、个人中心改密。CSV / 权限 / mock 不�
 > 已完成，执行记录见 [92-round-83-playwright.md](./92-round-83-playwright.md)。
 
 只测默认 `@app/web`。`vite dev` + 现有 mock。push / PR 自动跑 `ci` + `e2e`。
+
+## 第 84 轮 · Vue 3.6 Vapor 实验
+
+> 已完成，执行记录见 [93-round-84-vue36-vapor.md](./93-round-84-vue36-vapor.md)。
+
+`apps/web-vapor`。Vue 锁 3.6.0-rc.4。一张无 UI 库工作区卡片。默认仍是 3.5.41。
 
 ## 决策记录（第 1 轮已拍板）
 

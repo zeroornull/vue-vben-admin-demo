@@ -21,6 +21,7 @@
     "dev:naive": "bun run --filter @app/web-naive dev",
     "dev:tdesign": "bun run --filter @app/web-tdesign dev",
     "dev:antdv-next": "bun run --filter @app/web-antdv-next dev",
+    "dev:vapor": "bun run --filter @app/web-vapor dev",
     "docs": "bun run --filter @app/docs dev",
     "docs:build": "bun run --filter @app/docs build",
     "build": "turbo run build",
